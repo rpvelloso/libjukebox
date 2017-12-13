@@ -21,7 +21,10 @@ void Sound::stop() {
 }
 
 int Sound::getVolume() {
-	return impl->getVolume();
+	auto vol = impl->getVolume();
+	vol = std::min(vol, 100);
+	vol = std::max(vol, 0);
+	return vol;
 }
 
 void Sound::setVolume(int vol) {
