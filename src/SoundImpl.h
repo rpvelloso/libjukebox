@@ -15,6 +15,7 @@ public:
 	SoundImpl();
 	virtual ~SoundImpl();
 	virtual void play() = 0;
+	virtual void stop() = 0;
 };
 
 } /* namespace jukebox */

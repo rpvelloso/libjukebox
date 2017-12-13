@@ -18,6 +18,7 @@ class Sound {
 public:
 	Sound(SoundImpl *impl);
 	void play();
+	void stop();
 private:
 	std::unique_ptr<SoundImpl> impl;
 };

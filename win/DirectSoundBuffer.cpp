@@ -56,6 +56,12 @@ void DirectSoundBuffer::play() {
 		throw std::runtime_error("failed Play");
 }
 
+void DirectSoundBuffer::stop() {
+	auto hr = pDsb->Stop();
+	if (FAILED(hr))
+		throw std::runtime_error("failed Stop");
+}
+
 void DirectSoundBuffer::prepare() {
 	memset((void *)&wfx, 0, sizeof(wfx));
 	memset((void *)&dsbdesc, 0, sizeof(dsbdesc));

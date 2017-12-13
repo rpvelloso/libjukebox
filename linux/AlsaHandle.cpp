@@ -27,13 +27,16 @@ AlsaHandle::AlsaHandle(SoundFile &file) : soundFile(file), handlePtr(nullptr, cl
 }
 
 void AlsaHandle::play() {
+	static size_t minFrames = 100;
+	
+	stopPlayback = false;
 	playThread = std::thread([this]() {
 		size_t frameSize = (soundFile.getBitsPerSample()/8) * soundFile.getNumChannels();
 		size_t numFrames = soundFile.getDataSize() / frameSize;
 		const char *buf = soundFile.getData();
 
-		while (numFrames > 0) {
-			auto n = snd_pcm_writei(handlePtr.get(), buf, numFrames);
+		while (numFrames > 0 && !stopPlayback) {
+			auto n = snd_pcm_writei(handlePtr.get(), buf, std::min(numFrames, minFrames));
 			if (n > 0) {
 				numFrames -= n;
 				buf += (n * frameSize);
@@ -43,9 +46,16 @@ void AlsaHandle::play() {
 	});
 }
 
-AlsaHandle::~AlsaHandle() {
-	if (playThread.joinable())
+void AlsaHandle::stop() {
+	if (!stopPlayback && playThread.joinable()) {
+		stopPlayback = true;
 		playThread.join();
+		snd_pcm_drop(handlePtr.get());
+	}
+}
+
+AlsaHandle::~AlsaHandle() {
+	stop();
 };
 
 void AlsaHandle::prepare() {

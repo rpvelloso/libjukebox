@@ -23,6 +23,7 @@ class DirectSoundBuffer: public SoundImpl {
 public:
 	DirectSoundBuffer(SoundFile &file);
 	void play() override;
+	void stop() override;
 private:
 	SoundFile &soundFile;
 	WAVEFORMATEX wfx;

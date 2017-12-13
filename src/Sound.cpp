@@ -16,4 +16,8 @@ void Sound::play() {
 	impl->play();
 }
 
+void Sound::stop() {
+	impl->stop();
+}
+
 } /* namespace jukebox */

@@ -10,6 +10,7 @@
 
 #include <thread>
 #include <memory>
+#include <atomic>
 #include <alsa/asoundlib.h>
 
 #include "Sound.h"
@@ -23,12 +24,14 @@ void closeAlsaHandle(snd_pcm_t *);
 class AlsaHandle: public SoundImpl {
 public:
 	AlsaHandle(SoundFile &file);
-	void play();
+	void play() override;
+	void stop() override;
 	~AlsaHandle();
 private:
 	SoundFile &soundFile;
 	std::unique_ptr<snd_pcm_t, decltype(&closeAlsaHandle)> handlePtr;
 	std::thread playThread;
+	std::atomic<bool> stopPlayback;
 
 	void prepare();
 };
