@@ -79,6 +79,15 @@ void AlsaHandle::prepare() {
 		throw std::runtime_error("snd_pcm_prepare error.");
 }
 
+int AlsaHandle::getVolume() {
+	//TODO AlsaHandle::getVolume
+}
+
+void AlsaHandle::setVolume(int vol) {
+	//TODO AlsaHandle::setVolume
+}
+
+
 namespace factory {
 
 Sound makeSound(SoundFile& file) {

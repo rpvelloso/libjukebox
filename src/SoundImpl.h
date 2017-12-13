@@ -16,6 +16,8 @@ public:
 	virtual ~SoundImpl();
 	virtual void play() = 0;
 	virtual void stop() = 0;
+	virtual int getVolume() = 0;
+	virtual void setVolume(int) = 0;
 };
 
 } /* namespace jukebox */

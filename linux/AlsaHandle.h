@@ -26,6 +26,8 @@ public:
 	AlsaHandle(SoundFile &file);
 	void play() override;
 	void stop() override;
+	int getVolume() override;
+	void setVolume(int) override;
 	~AlsaHandle();
 private:
 	SoundFile &soundFile;

@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <array>
+#include <unistd.h>
 
 #include "libjukebox.h"
 
@@ -30,9 +31,11 @@ int main(int argc, char **argv) {
 	auto sound = jukebox::factory::makeSound(wav);
 	auto sound2 = jukebox::factory::makeSound(wav2);
 
+	sound.setVolume(30);
 	sound.play();
 	char n;
 	std::cin >> n;
+	sound2.setVolume(100);
 	sound2.play();
 	std::cin >> n;
 }

@@ -5,7 +5,9 @@
  *      Author: rvelloso
  */
 
+#include <iostream>
 #include <string.h>
+#include <cmath>
 
 #include "DirectSoundBuffer.h"
 
@@ -126,6 +128,27 @@ void DirectSoundBuffer::prepare() {
 	pDsb->SetCurrentPosition(0);
 }
 
+/*
+ * dB to linear scale and vice-versa:
+ * https://stackoverflow.com/questions/36072054/get-the-inverse-of-a-function-millibels-to-percentage-percentage-to-millibels
+ * */
+
+int DirectSoundBuffer::getVolume() {
+	LONG vol;
+	pDsb->GetVolume(&vol);
+
+	double exponent = ((((double)vol) / 1000.0) + 10);
+	double numerator = 100.0 * (std::pow(2, exponent) - 1);
+	return numerator / 1023.0;
+}
+
+void DirectSoundBuffer::setVolume(int vol) {
+	double attenuation = 1.0 / 1024.0 + ((double)vol) / 100.0 * 1023.0 / 1024.0;
+	double db = 10 * std::log10(attenuation) / std::log10(2);
+	std::cout << db * 100 << std::endl;
+	pDsb->SetVolume(db * 100);
+}
+
 namespace factory {
 
 Sound makeSound(SoundFile& file) {
@@ -135,4 +158,3 @@ Sound makeSound(SoundFile& file) {
 }
 
 } /* namespace jukebox */
-
