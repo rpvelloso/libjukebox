@@ -12,14 +12,16 @@
 #include <memory>
 #include <alsa/asoundlib.h>
 
-#include "SoundFile.h"
+#include "Sound.h"
 #include "SoundImpl.h"
+#include "FileFormats/SoundFile.h"
 
 namespace jukebox {
 
 void closeAlsaHandle(snd_pcm_t *);
 
 class AlsaHandle: public SoundImpl {
+public:
 	AlsaHandle(SoundFile &file);
 	void play();
 	~AlsaHandle();
@@ -30,6 +32,10 @@ private:
 
 	void prepare();
 };
+
+namespace factory {
+	Sound makeSound(SoundFile &file);
+}
 
 } /* namespace jukebox */
 

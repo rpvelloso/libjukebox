@@ -69,4 +69,12 @@ void AlsaHandle::prepare() {
 		throw std::runtime_error("snd_pcm_prepare error.");
 }
 
+namespace factory {
+
+Sound makeSound(SoundFile& file) {
+	return Sound(new AlsaHandle(file));
+}
+
+}
+
 } /* namespace jukebox */
