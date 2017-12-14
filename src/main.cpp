@@ -51,6 +51,7 @@ int main(int argc, char **argv) {
 	char n;
 	std::cin >> n;
 	sound.stop();
+	sound.setVolume(30);
 	sound.play();
 	std::cin >> n;
 	sound2.setVolume(100);

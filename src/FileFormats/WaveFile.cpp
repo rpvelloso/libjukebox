@@ -38,7 +38,7 @@ void WaveFile::load(const std::string& filename) {
 
 	file.read((char *)&header, sizeof(header));
 
-	if (file &&
+	if (file && file.gcount() == sizeof(header) &&
 		(std::string(header.ChunkID, 4) == "RIFF") &&
 		(std::string(header.Format, 4) == "WAVE") &&
 		(std::string(header.Subchunk1ID, 4) == "fmt ") &&
