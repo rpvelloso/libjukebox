@@ -1,8 +1,16 @@
 /*
- * SoundFile.cpp
- *
- *  Created on: 13 de dez de 2017
- *      Author: rvelloso
+    Copyright 2017 Roberto Panerai Velloso.
+    This file is part of libjukebox.
+    libjukebox is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    libjukebox is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <cmath>
@@ -42,8 +50,9 @@ double SoundFile::getDuration() const {
 	return std::round(len/(rate*chan*res));
 }
 
-} /* namespace jukebox */
-
-const std::string& jukebox::SoundFile::getFilename() const {
+const std::string& SoundFile::getFilename() const {
 	return impl->getFilename();
 }
+
+} /* namespace jukebox */
+
