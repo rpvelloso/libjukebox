@@ -38,7 +38,6 @@ public:
 	short getBitsPerSample() const override;
 	const char *getData() const override;
 	int getDataSize() const override;
-
 private:
 	WaveHeader header;
 	std::unique_ptr<char []> data;

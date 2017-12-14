@@ -8,16 +8,21 @@
 #ifndef SOUNDIMPL_H_
 #define SOUNDIMPL_H_
 
+#include "FileFormats/SoundFile.h"
+
 namespace jukebox {
 
 class SoundImpl {
 public:
-	SoundImpl();
+	SoundImpl(SoundFile &file);
 	virtual ~SoundImpl();
 	virtual void play() = 0;
 	virtual void stop() = 0;
 	virtual int getVolume() = 0;
 	virtual void setVolume(int) = 0;
+	SoundFile &getSoundFile();
+protected:
+	SoundFile &soundFile;
 };
 
 } /* namespace jukebox */

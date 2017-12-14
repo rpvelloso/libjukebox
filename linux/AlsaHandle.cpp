@@ -16,7 +16,10 @@ void closeAlsaHandle(snd_pcm_t *handle) {
 	}
 }
 
-AlsaHandle::AlsaHandle(SoundFile &file) : soundFile(file), handlePtr(nullptr, closeAlsaHandle) {
+AlsaHandle::AlsaHandle(SoundFile &file) :
+	SoundImpl(file),
+	handlePtr(nullptr, closeAlsaHandle) {
+
 	snd_pcm_t *handle;
 	auto res = snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0);
 	if (res != 0)

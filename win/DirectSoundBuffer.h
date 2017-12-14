@@ -27,7 +27,6 @@ public:
 	int getVolume() override;
 	void setVolume(int) override;
 private:
-	SoundFile &soundFile;
 	WAVEFORMATEX wfx;
 	DSBUFFERDESC dsbdesc;
 	std::unique_ptr<struct IDirectSoundBuffer, decltype(&ReleaseBuffer)> pDsb;

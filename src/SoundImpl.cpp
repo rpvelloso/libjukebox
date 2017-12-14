@@ -9,10 +9,14 @@
 
 namespace jukebox {
 
-SoundImpl::SoundImpl() {
+SoundImpl::SoundImpl(SoundFile &file) : soundFile(file) {
 }
 
 SoundImpl::~SoundImpl() {
+}
+
+SoundFile& SoundImpl::getSoundFile() {
+	return soundFile;
 }
 
 } /* namespace jukebox */

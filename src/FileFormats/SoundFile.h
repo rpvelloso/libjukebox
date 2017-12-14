@@ -23,6 +23,7 @@ public:
 	const char *getData() const;
 	int getDataSize() const;
 	const std::string &getFilename() const;
+	double getDuration() const;
 private:
 	std::unique_ptr<SoundFileImpl> impl;
 };

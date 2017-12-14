@@ -5,6 +5,8 @@
  *      Author: rvelloso
  */
 
+#include <cmath>
+
 #include "SoundFile.h"
 
 namespace jukebox {
@@ -30,6 +32,15 @@ const char *SoundFile::getData() const {
 int SoundFile::getDataSize() const {
 	return impl->getDataSize();
 };
+
+// sound duration in seconds
+double SoundFile::getDuration() const {
+	double rate = impl->getSampleRate();
+	double chan = impl->getNumChannels();
+	double res = impl->getBitsPerSample()/8;
+	double len = impl->getDataSize();
+	return std::round(len/(rate*chan*res));
+}
 
 } /* namespace jukebox */
 

@@ -30,7 +30,6 @@ public:
 	void setVolume(int) override;
 	~AlsaHandle();
 private:
-	SoundFile &soundFile;
 	std::unique_ptr<snd_pcm_t, decltype(&closeAlsaHandle)> handlePtr;
 	std::thread playThread;
 	std::atomic<bool> playing;

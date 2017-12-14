@@ -11,6 +11,20 @@
 
 #include "libjukebox.h"
 
+std::string formatDuration(double duration) {
+	std::cout << "*** " << duration << std::endl;
+	size_t hr = duration/3600;
+	duration -= hr*3600;
+	size_t min = duration/60;
+	duration -= min*60;
+	size_t secs = duration;
+
+	return
+		std::to_string(hr) + ":" +
+		(min<10?"0":"") + std::to_string(min) + ":" +
+		(secs<10?"0":"") + std::to_string(secs);
+}
+
 void printFileData(const jukebox::SoundFile &file) {
 	static std::array<std::string, 2> channels = {"Mono", "Stereo"};
 
@@ -18,7 +32,8 @@ void printFileData(const jukebox::SoundFile &file) {
 	std::cout << file.getBitsPerSample() << " bits" << std::endl;
 	std::cout << channels[file.getNumChannels() - 1] << std::endl;
 	std::cout << file.getSampleRate() << " Hz" << std::endl;
-	std::cout << file.getDataSize() << " bytes" << std::endl << std::endl;
+	std::cout << file.getDataSize() << " bytes" << std::endl;
+	std::cout << formatDuration(file.getDuration()) << std::endl << std::endl;
 }
 
 int main(int argc, char **argv) {
