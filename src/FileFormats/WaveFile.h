@@ -33,6 +33,7 @@ class WaveFile : public SoundFileImpl {
 	};
 public:
 	WaveFile(const std::string &filename);
+	WaveFile(std::istream &inp);
 	short getNumChannels() const override;
 	int getSampleRate() const override;
 	short getBitsPerSample() const override;
@@ -42,11 +43,12 @@ private:
 	WaveHeader header;
 	std::unique_ptr<char []> data;
 
-	void load(const std::string &filename);
+	void load(std::istream &inp);
 };
 
 namespace factory {
 	SoundFile loadWaveFile(const std::string &filename);
+	SoundFile loadWaveStream(std::istream &inp);
 }
 
 }

@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <array>
+#include <fstream>
 #include <unistd.h>
 
 #include "libjukebox.h"
@@ -38,7 +39,10 @@ void printFileData(const jukebox::SoundFile &file) {
 
 int main(int argc, char **argv) {
 	auto wav = jukebox::factory::loadWaveFile(argv[1]);
-	auto wav2 = jukebox::factory::loadWaveFile(argv[2]);
+
+	std::fstream file(argv[2], std::ios::binary|std::ios::in);
+
+	auto wav2 = jukebox::factory::loadWaveStream(file);
 
 	printFileData(wav);
 	printFileData(wav2);
