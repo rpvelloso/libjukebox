@@ -29,20 +29,26 @@ AlsaHandle::AlsaHandle(SoundFile &file) : soundFile(file), handlePtr(nullptr, cl
 
 class StatusGuard {
 public:
-  StatusGuard(bool &status) : status(status), exitStatus(!status) {};
-  ~StatusGuard() {status = exitStatus;}
+  StatusGuard(std::atomic<bool> &status, bool entry) :
+	  status(status),
+	  exitStatus(!entry) {
+
+	  status = entry;
+  };
+  ~StatusGuard() {
+	  status = exitStatus;
+  }
 private:
-  bool &status;
+  std::atomic<bool> &status;
   bool exitStatus;
 };
 
 void AlsaHandle::play() {
 	static size_t minFrames = 100;
 
-	playing = true;
-	StatusGuard statusGuard(playing, false);
-
 	playThread = std::thread([this]() {
+		StatusGuard statusGuard(playing, true);
+
 		size_t frameSize = (soundFile.getBitsPerSample()/8) * soundFile.getNumChannels();
 		size_t numFrames = soundFile.getDataSize() / frameSize;
 		const char *buf = soundFile.getData();
@@ -59,12 +65,14 @@ void AlsaHandle::play() {
 }
 
 void AlsaHandle::stop() {
-	if (playing && playThread.joinable()) {
-	  playing = false;
+	if (playing)
+		playing = false;
+
+	if (playThread.joinable())
 		playThread.join();
-		snd_pcm_drop(handlePtr.get());
-		prepare();
-	}
+
+	snd_pcm_drop(handlePtr.get());
+	prepare();
 }
 
 AlsaHandle::~AlsaHandle() {
@@ -89,7 +97,7 @@ void AlsaHandle::config() {
 }
 
 void AlsaHandle::prepare() {
-	res = snd_pcm_prepare(handlePtr.get());
+	auto res = snd_pcm_prepare(handlePtr.get());
 	if (res != 0)
 		throw std::runtime_error("snd_pcm_prepare error.");
 
@@ -98,6 +106,7 @@ void AlsaHandle::prepare() {
 
 int AlsaHandle::getVolume() {
 	//TODO AlsaHandle::getVolume
+	return 100;
 }
 
 void AlsaHandle::setVolume(int vol) {

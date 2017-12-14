@@ -36,8 +36,8 @@ int main(int argc, char **argv) {
 	char n;
 	std::cin >> n;
 	sound.stop();
-  sound.play();
-  std::cin >> n;
+	sound.play();
+	std::cin >> n;
 	sound2.setVolume(100);
 	sound2.play();
 	std::cin >> n;

@@ -33,7 +33,7 @@ private:
 	SoundFile &soundFile;
 	std::unique_ptr<snd_pcm_t, decltype(&closeAlsaHandle)> handlePtr;
 	std::thread playThread;
-	std::atomic<bool> stopPlayback;
+	std::atomic<bool> playing;
 
   void config();
   void prepare();
