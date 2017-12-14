@@ -35,7 +35,8 @@ private:
 	std::thread playThread;
 	std::atomic<bool> stopPlayback;
 
-	void prepare();
+  void config();
+  void prepare();
 };
 
 namespace factory {

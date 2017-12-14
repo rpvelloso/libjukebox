@@ -23,19 +23,31 @@ AlsaHandle::AlsaHandle(SoundFile &file) : soundFile(file), handlePtr(nullptr, cl
 		throw std::runtime_error("snd_pcm_open error.");
 
 	handlePtr.reset(handle);
+	config();
 	prepare();
 }
 
+class StatusGuard {
+public:
+  StatusGuard(bool &status) : status(status), exitStatus(!status) {};
+  ~StatusGuard() {status = exitStatus;}
+private:
+  bool &status;
+  bool exitStatus;
+};
+
 void AlsaHandle::play() {
 	static size_t minFrames = 100;
-	
-	stopPlayback = false;
+
+	playing = true;
+	StatusGuard statusGuard(playing, false);
+
 	playThread = std::thread([this]() {
 		size_t frameSize = (soundFile.getBitsPerSample()/8) * soundFile.getNumChannels();
 		size_t numFrames = soundFile.getDataSize() / frameSize;
 		const char *buf = soundFile.getData();
 
-		while (numFrames > 0 && !stopPlayback) {
+		while (numFrames > 0 && playing) {
 			auto n = snd_pcm_writei(handlePtr.get(), buf, std::min(numFrames, minFrames));
 			if (n > 0) {
 				numFrames -= n;
@@ -47,10 +59,11 @@ void AlsaHandle::play() {
 }
 
 void AlsaHandle::stop() {
-	if (!stopPlayback && playThread.joinable()) {
-		stopPlayback = true;
+	if (playing && playThread.joinable()) {
+	  playing = false;
 		playThread.join();
 		snd_pcm_drop(handlePtr.get());
+		prepare();
 	}
 }
 
@@ -58,25 +71,29 @@ AlsaHandle::~AlsaHandle() {
 	stop();
 };
 
+void AlsaHandle::config() {
+  snd_pcm_format_t format = SND_PCM_FORMAT_S8;
+  if (soundFile.getBitsPerSample() == 16)
+    format = SND_PCM_FORMAT_S16_LE;
+
+  auto res = snd_pcm_set_params(
+    handlePtr.get(),
+    format,
+    SND_PCM_ACCESS_RW_INTERLEAVED,
+    soundFile.getNumChannels(),
+    soundFile.getSampleRate(),
+    1,
+    500000);
+  if (res != 0)
+    throw std::runtime_error("snd_pcm_set_params error.");
+}
+
 void AlsaHandle::prepare() {
-	snd_pcm_format_t format = SND_PCM_FORMAT_S8;
-	if (soundFile.getBitsPerSample() == 16)
-		format = SND_PCM_FORMAT_S16_LE;
-
-	auto res = snd_pcm_set_params(
-		handlePtr.get(),
-		format,
-		SND_PCM_ACCESS_RW_INTERLEAVED,
-		soundFile.getNumChannels(),
-		soundFile.getSampleRate(),
-		1,
-		500000);
-	if (res != 0)
-		throw std::runtime_error("snd_pcm_set_params error.");
-
 	res = snd_pcm_prepare(handlePtr.get());
 	if (res != 0)
 		throw std::runtime_error("snd_pcm_prepare error.");
+
+	playing = false;
 }
 
 int AlsaHandle::getVolume() {

@@ -49,13 +49,22 @@ DirectSoundBuffer::DirectSoundBuffer(SoundFile &file) :
 }
 
 void DirectSoundBuffer::play() {
-	auto hr = pDsb->Play(
-	    0,	// Unused.
-	    0,	// Priority for voice management.
-	    0);	// Flags.
+  DWORD status;
 
-	if (FAILED(hr))
-		throw std::runtime_error("failed Play");
+  pDsb->GetStatus(&status);
+
+  if (status != DSBSTATUS_PLAYING) {
+    // rewind the sound
+    pDsb->SetCurrentPosition(0);
+
+    auto hr = pDsb->Play(
+        0,	// Unused.
+        0,	// Priority for voice management.
+        0);	// Flags.
+
+    if (FAILED(hr))
+      throw std::runtime_error("failed Play");
+  }
 }
 
 void DirectSoundBuffer::stop() {
@@ -123,9 +132,6 @@ void DirectSoundBuffer::prepare() {
 		bufLen,		// Size of lock.
 		NULL,		// No wraparound portion.
 		0);			// No wraparound size.
-
-	// rewind the sound
-	pDsb->SetCurrentPosition(0);
 }
 
 /*
