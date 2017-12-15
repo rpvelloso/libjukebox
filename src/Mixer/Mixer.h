@@ -23,11 +23,11 @@ namespace jukebox {
 
 class Mixer {
 public:
-	Mixer(MixerImpl *masterVol, MixerImpl *pcmVol);
-	MixerImpl &master();
-	MixerImpl &PCM();
+	Mixer(MixerImpl *impl);
+	int getVolume();
+	void setVolume(int vol);
 private:
-	std::unique_ptr<MixerImpl> masterPtr, pcmPtr;
+	std::unique_ptr<MixerImpl> impl;
 };
 
 extern Mixer mixer;

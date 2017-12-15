@@ -58,18 +58,18 @@ int main(int argc, char **argv) {
 	auto sound = jukebox::factory::makeSound(wav);
 	auto sound2 = jukebox::factory::makeSound(wav2);
 
-	jukebox::mixer.master().setVolume(50);
+	jukebox::mixer.setVolume(100);
 	//sound.setVolume(100);
 	sound.play();
 	char n;
 	std::cin >> n;
 	sound.stop();
-	jukebox::mixer.master().setVolume(10);
+	jukebox::mixer.setVolume(10);
 	//sound.setVolume(30);
 	sound.play();
 	std::cin >> n;
 	//sound2.setVolume(100);
-	jukebox::mixer.master().setVolume(80);
+	jukebox::mixer.setVolume(80);
 	sound2.play();
 	std::cin >> n;
 }

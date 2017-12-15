@@ -21,9 +21,7 @@
 
 namespace jukebox {
 
-Mixer mixer(
-	new AlsaMixer("default", "Master"),
-	new AlsaMixer("default", "PCM"));
+Mixer mixer(new AlsaMixer("default", "Master"));
 
 void closeMixer(snd_mixer_t *handle) {
 	if (handle != nullptr)

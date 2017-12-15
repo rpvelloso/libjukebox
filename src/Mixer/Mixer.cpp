@@ -17,17 +17,21 @@
 
 namespace jukebox {
 
-Mixer::Mixer(MixerImpl *masterVol, MixerImpl *pcmVol) :
-	masterPtr(masterVol),
-	pcmPtr(pcmVol) {
+Mixer::Mixer(MixerImpl *impl) :
+	impl(impl) {
 }
 
-MixerImpl& Mixer::master() {
-	return *masterPtr;
+int Mixer::getVolume() {
+	auto vol = impl->getVolume();
+	vol = std::min(vol, 100);
+	vol = std::max(vol, 0);
+	return vol;
 }
 
-MixerImpl& Mixer::PCM() {
-	return *pcmPtr;
+void Mixer::setVolume(int vol) {
+	vol = std::min(vol, 100);
+	vol = std::max(vol, 0);
+	impl->setVolume(vol);
 }
 
 } /* namespace jukebox */

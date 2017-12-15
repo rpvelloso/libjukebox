@@ -21,9 +21,7 @@
 
 namespace jukebox {
 
-Mixer mixer(
-	new WindowsMixer(MIXERLINE_COMPONENTTYPE_DST_SPEAKERS),
-	new WindowsMixer(MIXERLINE_COMPONENTTYPE_SRC_WAVEOUT));
+Mixer mixer(new WindowsMixer(MIXERLINE_COMPONENTTYPE_DST_SPEAKERS));
 
 WindowsMixer::WindowsMixer(DWORD device) : MixerImpl() {
 	auto res = mixerOpen(&hMixer, MIXER_OBJECTF_MIXER, 0, 0, 0);
