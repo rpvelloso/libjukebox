@@ -41,9 +41,13 @@ private:
 	std::unique_ptr<snd_pcm_t, decltype(&closeAlsaHandle)> handlePtr;
 	std::thread playThread;
 	std::atomic<bool> playing;
+	int vol = 100;
 
-  void config();
-  void prepare();
+	template <typename T>
+	void applyVolume(T *buf, size_t len);
+
+	void config();
+	void prepare();
 };
 
 namespace factory {

@@ -13,6 +13,8 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <algorithm>
+
 #include "AlsaHandle.h"
 #include "AlsaMixer.h"
 
@@ -66,15 +68,31 @@ void AlsaHandle::play() {
 		size_t frameSize = (soundFile.getBitsPerSample()/8) * soundFile.getNumChannels();
 		size_t numFrames = soundFile.getDataSize() / frameSize;
 		const char *buf = soundFile.getData();
+		std::unique_ptr<char[]> volBuf(new char[minFrames*frameSize]);
 
 		while (numFrames > 0 && playing) {
-			auto n = snd_pcm_writei(handlePtr.get(), buf, std::min(numFrames, minFrames));
+			auto frames = std::min(numFrames, minFrames);
+			std::copy(buf, buf+(frames*frameSize), volBuf.get());
+
+			if (soundFile.getBitsPerSample() == 16)
+				applyVolume((short *)(volBuf.get()), frames*frameSize/2);
+			else
+				applyVolume(volBuf.get(), frames*frameSize);
+
+			auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), frames);
 			if (n > 0) {
 				numFrames -= n;
 				buf += (n * frameSize);
 			} else
 				throw std::runtime_error("snd_pcm_writei error.");
 		}
+	});
+}
+
+template<typename T>
+void AlsaHandle::applyVolume(T *buf, size_t len) {
+	std::for_each(buf, buf+len, [this](T &c){
+		c = static_cast<T>(static_cast<double>(vol)/100.0*static_cast<double>(c));
 	});
 }
 
@@ -119,11 +137,13 @@ void AlsaHandle::prepare() {
 }
 
 int AlsaHandle::getVolume() {
-	return alsaMixer.getVolume();
+	//return alsaMixer.getVolume();
+	return vol;
 }
 
 void AlsaHandle::setVolume(int vol) {
-	alsaMixer.setVolume(vol);
+	//alsaMixer.setVolume(vol);
+	this->vol = vol;
 }
 
 namespace factory {
