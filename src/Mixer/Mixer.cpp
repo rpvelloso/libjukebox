@@ -13,12 +13,21 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBJUKEBOX_H_
-#define LIBJUKEBOX_H_
+#include <Mixer/Mixer.h>
 
-#include "os.h"
-#include "FileFormats/SoundFile.h"
-#include "FileFormats/WaveFile.h"
-#include "Mixer/Mixer.h"
+namespace jukebox {
 
-#endif /* LIBJUKEBOX_H_ */
+Mixer::Mixer(MixerImpl *masterVol, MixerImpl *pcmVol) :
+	masterPtr(masterVol),
+	pcmPtr(pcmVol) {
+}
+
+MixerImpl& Mixer::master() {
+	return *masterPtr;
+}
+
+MixerImpl& Mixer::PCM() {
+	return *pcmPtr;
+}
+
+} /* namespace jukebox */

@@ -53,6 +53,7 @@
 								<option defaultValue="true" id="gnu.cpp.link.mingw.so.debug.option.shared.1349731946" name="Shared (-shared)" superClass="gnu.cpp.link.mingw.so.debug.option.shared" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.libs.181502936" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="dsound"/>
+									<listOptionValue builtIn="false" value="winmm"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.973216390" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -64,8 +65,9 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry excluding="linux|src|FileFormats" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry excluding="FileFormats" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="Mixer|FileFormats" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/FileFormats"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/Mixer"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -121,8 +123,9 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry excluding="linux|src|FileFormats" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry excluding="FileFormats" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="Mixer|FileFormats" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/FileFormats"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src/Mixer"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

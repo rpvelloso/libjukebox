@@ -13,12 +13,25 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBJUKEBOX_H_
-#define LIBJUKEBOX_H_
+#ifndef MIXER_H_
+#define MIXER_H_
 
-#include "os.h"
-#include "FileFormats/SoundFile.h"
-#include "FileFormats/WaveFile.h"
-#include "Mixer/Mixer.h"
+#include <memory>
+#include "MixerImpl.h"
 
-#endif /* LIBJUKEBOX_H_ */
+namespace jukebox {
+
+class Mixer {
+public:
+	Mixer(MixerImpl *masterVol, MixerImpl *pcmVol);
+	MixerImpl &master();
+	MixerImpl &PCM();
+private:
+	std::unique_ptr<MixerImpl> masterPtr, pcmPtr;
+};
+
+extern Mixer mixer;
+
+} /* namespace jukebox */
+
+#endif /* MIXER_H_ */

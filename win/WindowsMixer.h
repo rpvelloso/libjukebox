@@ -13,12 +13,26 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBJUKEBOX_H_
-#define LIBJUKEBOX_H_
+#ifndef WIN_WINDOWSMIXER_H_
+#define WIN_WINDOWSMIXER_H_
 
-#include "os.h"
-#include "FileFormats/SoundFile.h"
-#include "FileFormats/WaveFile.h"
-#include "Mixer/Mixer.h"
+#include <windows.h>
 
-#endif /* LIBJUKEBOX_H_ */
+#include "Mixer/MixerImpl.h"
+
+namespace jukebox {
+
+class WindowsMixer : public MixerImpl {
+public:
+	WindowsMixer(DWORD device);
+	virtual ~WindowsMixer();
+	int getVolume();
+	void setVolume(int vol);
+private:
+	HMIXER hMixer;
+	DWORD controlId;
+};
+
+} /* namespace jukebox */
+
+#endif /* WIN_WINDOWSMIXER_H_ */
