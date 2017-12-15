@@ -60,8 +60,6 @@ AlsaMixer::AlsaMixer(const std::string &devName, const std::string &element) :
 	res = snd_mixer_selem_get_playback_volume_range(element_handle, &minVolume, &maxVolume);
 	if (res != 0)
 		throw std::runtime_error("snd_mixer_selem_get_playback_volume_range error.");
-
-	std::cout << minVolume << " - " <<  maxVolume << std::endl;
 }
 
 int AlsaMixer::getVolume() {

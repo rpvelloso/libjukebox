@@ -34,6 +34,9 @@ public:
 	double getDuration() const;
 private:
 	std::unique_ptr<SoundFileImpl> impl;
+
+	template<typename T>
+	void normalize();
 };
 
 } /* namespace jukebox */

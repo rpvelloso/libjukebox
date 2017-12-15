@@ -13,13 +13,21 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include <cmath>
+#include <limits>
+#include <algorithm>
 
 #include "SoundFile.h"
 
 namespace jukebox {
 
-SoundFile::SoundFile(SoundFileImpl *impl) : impl(impl) {};
+SoundFile::SoundFile(SoundFileImpl *impl) : impl(impl) {
+	if (impl->getBitsPerSample() == 16)
+		normalize<short>();
+	else
+		normalize<char>();
+};
 
 short SoundFile::getNumChannels() const {
 	return impl->getNumChannels();
@@ -52,6 +60,30 @@ double SoundFile::getDuration() const {
 
 const std::string& SoundFile::getFilename() const {
 	return impl->getFilename();
+}
+
+template<typename T>
+void SoundFile::normalize() {
+	auto maxValue = std::numeric_limits<T>::max();
+	auto maxPeak = std::numeric_limits<T>::min();
+	auto beginIt = (T *)impl->getData();
+	auto endIt = (T *)(impl->getData() + (impl->getDataSize()/sizeof(T)));
+
+	std::for_each(beginIt, endIt,
+		[&maxPeak](T &sample){
+			if (sample > maxPeak)
+				maxPeak = sample;
+	});
+
+	double ratio = static_cast<double>(maxValue)/static_cast<double>(maxPeak);
+	std::for_each(
+		beginIt,
+		endIt,
+		[ratio](T &sample){
+			sample = static_cast<T>(static_cast<double>(sample)*ratio);
+	});
+
+	std::cout << maxValue << " " << maxPeak << " " << ratio << std::endl;
 }
 
 } /* namespace jukebox */

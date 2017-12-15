@@ -75,7 +75,7 @@ void AlsaHandle::play() {
 			std::copy(buf, buf+(frames*frameSize), volBuf.get());
 
 			if (soundFile.getBitsPerSample() == 16)
-				applyVolume((short *)(volBuf.get()), frames*frameSize/2);
+				applyVolume((short *)(volBuf.get()), frames*frameSize);
 			else
 				applyVolume(volBuf.get(), frames*frameSize);
 
@@ -91,7 +91,7 @@ void AlsaHandle::play() {
 
 template<typename T>
 void AlsaHandle::applyVolume(T *buf, size_t len) {
-	std::for_each(buf, buf+len, [this](T &c){
+	std::for_each(buf, buf+(len/sizeof(T)), [this](T &c){
 		c = static_cast<T>(static_cast<double>(vol)/100.0*static_cast<double>(c));
 	});
 }
