@@ -19,7 +19,6 @@
 #include <unistd.h>
 
 #include "libjukebox.h"
-#include "WindowsMixer.h"
 
 std::string formatDuration(double duration) {
 	std::cout << "*** " << duration << std::endl;

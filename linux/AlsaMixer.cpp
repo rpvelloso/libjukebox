@@ -16,9 +16,14 @@
 #include <iostream>
 #include <exception>
 
+#include "Mixer/Mixer.h"
 #include "AlsaMixer.h"
 
 namespace jukebox {
+
+Mixer mixer(
+	new AlsaMixer("default", "Master"),
+	new AlsaMixer("default", "PCM"));
 
 void closeMixer(snd_mixer_t *handle) {
 	if (handle != nullptr)
@@ -26,6 +31,7 @@ void closeMixer(snd_mixer_t *handle) {
 }
 
 AlsaMixer::AlsaMixer(const std::string &devName, const std::string &element) :
+	MixerImpl(),
 	handlePtr(nullptr, closeMixer) {
 
 	snd_mixer_t *handle;

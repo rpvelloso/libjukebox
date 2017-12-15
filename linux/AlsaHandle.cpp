@@ -20,8 +20,6 @@
 
 namespace jukebox {
 
-AlsaMixer alsaMixer("default", "PCM");
-
 void closeAlsaHandle(snd_pcm_t *handle) {
 	if (handle != nullptr) {
 		snd_pcm_drain(handle);
@@ -137,12 +135,10 @@ void AlsaHandle::prepare() {
 }
 
 int AlsaHandle::getVolume() {
-	//return alsaMixer.getVolume();
 	return vol;
 }
 
 void AlsaHandle::setVolume(int vol) {
-	//alsaMixer.setVolume(vol);
 	this->vol = vol;
 }
 

@@ -19,11 +19,13 @@
 #include <memory>
 #include <alsa/asoundlib.h>
 
+#include "Mixer/MixerImpl.h"
+
 namespace jukebox {
 
 void closeMixer(snd_mixer_t *handle);
 
-class AlsaMixer {
+class AlsaMixer : public MixerImpl {
 public:
 	AlsaMixer(const std::string &devName, const std::string &element);
 	int getVolume();
