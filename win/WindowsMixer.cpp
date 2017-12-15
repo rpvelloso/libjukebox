@@ -13,6 +13,7 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include <exception>
 #include <string>
 
@@ -25,16 +26,16 @@ Mixer mixer(new WindowsMixer(MIXERLINE_COMPONENTTYPE_DST_SPEAKERS));
 
 WindowsMixer::WindowsMixer(DWORD device) : MixerImpl() {
 	auto res = mixerOpen(&hMixer, MIXER_OBJECTF_MIXER, 0, 0, 0);
-	//if (res != MMSYSERR_NOERROR)
-		//throw std::runtime_error("mixerOpen error " + std::to_string(res));
+	if (res != MMSYSERR_NOERROR)
+		throw std::runtime_error("mixerOpen error " + std::to_string(res));
 
 	MIXERLINE ml = {0};
 
 	ml.cbStruct = sizeof(MIXERLINE);
-	ml.dwComponentType = device; //MIXERLINE_COMPONENTTYPE_DST_SPEAKERS;
+	ml.dwComponentType = device;
 	res = mixerGetLineInfo((HMIXEROBJ) hMixer, &ml, MIXER_GETLINEINFOF_COMPONENTTYPE);
-	//if (res != MMSYSERR_NOERROR)
-		//throw std::runtime_error("mixerGetLineInfo error " + std::to_string(res));
+	if (res != MMSYSERR_NOERROR)
+		throw std::runtime_error("mixerGetLineInfo error " + std::to_string(res));
 
 	MIXERLINECONTROLS mlc = {0};
 	MIXERCONTROL mc = {0};
@@ -46,8 +47,8 @@ WindowsMixer::WindowsMixer(DWORD device) : MixerImpl() {
 	mlc.pamxctrl = &mc;
 	mlc.cbmxctrl = sizeof(MIXERCONTROL);
 	res = mixerGetLineControls((HMIXEROBJ) hMixer, &mlc, MIXER_GETLINECONTROLSF_ONEBYTYPE);
-	//if (res != MMSYSERR_NOERROR)
-		//throw std::runtime_error("mixerGetLineControls error " + std::to_string(res));
+	if (res != MMSYSERR_NOERROR)
+		throw std::runtime_error("mixerGetLineControls error " + std::to_string(res));
 
 	controlId = mc.dwControlID;
 }
@@ -60,7 +61,6 @@ int WindowsMixer::getVolume() {
 	MIXERCONTROLDETAILS mcd = {0};
 	MIXERCONTROLDETAILS_UNSIGNED mcdu;
 
-	// the volume is a number between 0 and 65535
 	mcd.cbStruct = sizeof(MIXERCONTROLDETAILS);
 	mcd.hwndOwner = 0;
 	mcd.dwControlID = controlId;
@@ -68,10 +68,11 @@ int WindowsMixer::getVolume() {
 	mcd.cbDetails = sizeof(MIXERCONTROLDETAILS_UNSIGNED);
 	mcd.cChannels = 1;
 	auto res = mixerGetControlDetails((HMIXEROBJ) hMixer, &mcd, MIXER_GETCONTROLDETAILSF_VALUE);
-	//if (res != MMSYSERR_NOERROR)
-		//throw std::runtime_error("mixerGetLineControls error " + std::to_string(res));
+	if (res != MMSYSERR_NOERROR)
+		throw std::runtime_error("mixerGetLineControls error " + std::to_string(res));
 
-	return static_cast<int>(static_cast<double>(mcdu.dwValue)/65535.0);
+	// the volume is a number between 0 and 65535
+	return static_cast<int>(100.0*static_cast<double>(mcdu.dwValue)/65535.0);
 }
 
 void WindowsMixer::setVolume(int vol) {
@@ -87,8 +88,8 @@ void WindowsMixer::setVolume(int vol) {
 	mcd.cbDetails = sizeof(MIXERCONTROLDETAILS_UNSIGNED);
 	mcd.cChannels = 1;
 	auto res = mixerSetControlDetails((HMIXEROBJ) hMixer, &mcd, MIXER_SETCONTROLDETAILSF_VALUE);
-	//if (res != MMSYSERR_NOERROR)
-		//throw std::runtime_error("mixerGetLineControls error " + std::to_string(res));
+	if (res != MMSYSERR_NOERROR)
+		throw std::runtime_error("mixerGetLineControls error " + std::to_string(res));
 }
 
 } /* namespace jukebox */
