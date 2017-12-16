@@ -16,7 +16,6 @@
 #include <algorithm>
 
 #include "AlsaHandle.h"
-#include "AlsaMixer.h"
 
 namespace jukebox {
 
@@ -32,7 +31,7 @@ AlsaHandle::AlsaHandle(SoundFile &file) :
 	handlePtr(nullptr, closeAlsaHandle) {
 
 	snd_pcm_t *handle;
-	auto res = snd_pcm_open(&handle, "plug:dmix", SND_PCM_STREAM_PLAYBACK, 0);
+	auto res = snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0);
 	if (res != 0)
 		throw std::runtime_error("snd_pcm_open error.");
 

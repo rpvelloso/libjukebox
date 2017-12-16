@@ -21,8 +21,8 @@
 #include <atomic>
 #include <alsa/asoundlib.h>
 
-#include "Sound.h"
-#include "SoundImpl.h"
+#include "Sound/Sound.h"
+#include "Sound/SoundImpl.h"
 #include "FileFormats/SoundFile.h"
 
 namespace jukebox {
