@@ -13,12 +13,29 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBJUKEBOX_H_
-#define LIBJUKEBOX_H_
+#ifndef LINUX_ALSAMIXER_H_
+#define LINUX_ALSAMIXER_H_
 
-#include "os.h"
-#include "FileFormats/SoundFile.h"
-#include "FileFormats/WaveFile.h"
-#include "Mixer/Mixer.h"
+#include <memory>
+#include <alsa/asoundlib.h>
 
-#endif /* LIBJUKEBOX_H_ */
+#include "Mixer/MixerImpl.h"
+
+namespace jukebox {
+
+void closeMixer(snd_mixer_t *handle);
+
+class AlsaMixer : public MixerImpl {
+public:
+	AlsaMixer(const std::string &devName, const std::string &element);
+	int getVolume();
+	void setVolume(int vol);
+private:
+	std::unique_ptr<snd_mixer_t, decltype(&closeMixer)> handlePtr;
+	snd_mixer_elem_t* element_handle = nullptr;
+	long minVolume, maxVolume;
+};
+
+} /* namespace jukebox */
+
+#endif /* LINUX_ALSAMIXER_H_ */

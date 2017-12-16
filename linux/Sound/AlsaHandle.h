@@ -13,39 +13,43 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DIRECTSOUNDBUFFER_H_
-#define DIRECTSOUNDBUFFER_H_
+#ifndef LINUX_ALSAHANDLE_H_
+#define LINUX_ALSAHANDLE_H_
 
-#include <windows.h>
-#include <dsound.h>
+#include <thread>
+#include <memory>
+#include <atomic>
+#include <alsa/asoundlib.h>
 
-#include "SoundImpl.h"
 #include "Sound.h"
+#include "SoundImpl.h"
 #include "FileFormats/SoundFile.h"
 
 namespace jukebox {
 
-void ReleaseBuffer(LPDIRECTSOUNDBUFFER);
+void closeAlsaHandle(snd_pcm_t *);
 
-class DirectSoundBuffer: public SoundImpl {
+class AlsaHandle: public SoundImpl {
 public:
-	DirectSoundBuffer(SoundFile &file);
+	AlsaHandle(SoundFile &file);
 	void play() override;
 	void stop() override;
 	int getVolume() override;
 	void setVolume(int) override;
+	~AlsaHandle();
 private:
-	WAVEFORMATEX wfx;
-	DSBUFFERDESC dsbdesc;
-	std::unique_ptr<struct IDirectSoundBuffer, decltype(&ReleaseBuffer)> pDsb;
+	std::unique_ptr<snd_pcm_t, decltype(&closeAlsaHandle)> handlePtr;
+	std::thread playThread;
+	std::atomic<bool> playing;
+	int vol = 100;
 
+	template <typename T>
+	void applyVolume(T *buf, size_t len);
+
+	void config();
 	void prepare();
 };
 
-namespace factory {
-	Sound makeSound(SoundFile &file);
-}
-
 } /* namespace jukebox */
 
-#endif /* DIRECTSOUNDBUFFER_H_ */
+#endif /* LINUX_ALSAHANDLE_H_ */
