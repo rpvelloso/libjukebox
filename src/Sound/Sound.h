@@ -18,7 +18,7 @@
 
 #include <memory>
 
-#include "SoundImpl.h"
+#include "Sound/SoundImpl.h"
 
 namespace jukebox {
 

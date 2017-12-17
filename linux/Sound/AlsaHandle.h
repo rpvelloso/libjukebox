@@ -27,7 +27,7 @@
 
 namespace jukebox {
 
-void closeAlsaHandle(snd_pcm_t *);
+extern void closeAlsaHandle(snd_pcm_t *);
 
 class AlsaHandle: public SoundImpl {
 public:

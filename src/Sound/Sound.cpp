@@ -13,7 +13,7 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Sound.h"
+#include "Sound/Sound.h"
 
 namespace jukebox {
 

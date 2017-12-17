@@ -13,7 +13,7 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <Mixer/Mixer.h>
+#include "Mixer/Mixer.h"
 
 namespace jukebox {
 

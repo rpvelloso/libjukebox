@@ -17,7 +17,7 @@
 #include <iostream>
 #include <exception>
 
-#include "WaveFile.h"
+#include "FileFormats/WaveFile.h"
 
 namespace jukebox {
 

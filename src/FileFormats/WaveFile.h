@@ -18,8 +18,8 @@
 
 #include <memory>
 
-#include "SoundFile.h"
-#include "SoundFileImpl.h"
+#include "FileFormats/SoundFile.h"
+#include "FileFormats/SoundFileImpl.h"
 
 namespace jukebox {
 
@@ -55,11 +55,6 @@ private:
 
 	void load(std::istream &inp);
 };
-
-namespace factory {
-	SoundFile loadWaveFile(const std::string &filename);
-	SoundFile loadWaveStream(std::istream &inp);
-}
 
 }
 

@@ -9,7 +9,7 @@
 #include <string.h>
 #include <cmath>
 
-#include "DirectSoundBuffer.h"
+#include "Sound/DirectSoundBuffer.h"
 
 namespace jukebox {
 

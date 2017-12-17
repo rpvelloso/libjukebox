@@ -40,6 +40,11 @@ private:
  void normalize();
 };
 
+namespace factory {
+ extern SoundFile loadWaveFile(const std::string &filename);
+ extern SoundFile loadWaveStream(std::istream &inp);
+}
+
 }
 namespace jukebox {
 
@@ -75,11 +80,6 @@ private:
 
  void load(std::istream &inp);
 };
-
-namespace factory {
- SoundFile loadWaveFile(const std::string &filename);
- SoundFile loadWaveStream(std::istream &inp);
-}
 
 }
 namespace jukebox {

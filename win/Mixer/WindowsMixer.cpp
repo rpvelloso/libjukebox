@@ -18,7 +18,7 @@
 #include <string>
 
 #include "Mixer/Mixer.h"
-#include "WindowsMixer.h"
+#include "Mixer/WindowsMixer.h"
 
 namespace jukebox {
 

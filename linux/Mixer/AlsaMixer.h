@@ -23,7 +23,7 @@
 
 namespace jukebox {
 
-void closeMixer(snd_mixer_t *handle);
+extern void closeMixer(snd_mixer_t *handle);
 
 class AlsaMixer : public MixerImpl {
 public:

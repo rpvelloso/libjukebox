@@ -25,7 +25,7 @@
 
 namespace jukebox {
 
-void ReleaseBuffer(LPDIRECTSOUNDBUFFER);
+extern void ReleaseBuffer(LPDIRECTSOUNDBUFFER);
 
 class DirectSoundBuffer: public SoundImpl {
 public:

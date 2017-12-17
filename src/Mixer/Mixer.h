@@ -17,7 +17,7 @@
 #define MIXER_H_
 
 #include <memory>
-#include "MixerImpl.h"
+#include "Mixer/MixerImpl.h"
 
 namespace jukebox {
 

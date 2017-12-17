@@ -18,7 +18,7 @@
 
 #include <memory>
 
-#include "SoundFileImpl.h"
+#include "FileFormats/SoundFileImpl.h"
 
 namespace jukebox {
 
@@ -38,6 +38,11 @@ private:
 	template<typename T>
 	void normalize();
 };
+
+namespace factory {
+	extern SoundFile loadWaveFile(const std::string &filename);
+	extern SoundFile loadWaveStream(std::istream &inp);
+}
 
 } /* namespace jukebox */
 

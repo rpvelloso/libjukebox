@@ -18,7 +18,7 @@
 #include <limits>
 #include <algorithm>
 
-#include "SoundFile.h"
+#include "FileFormats/SoundFile.h"
 
 namespace jukebox {
 
