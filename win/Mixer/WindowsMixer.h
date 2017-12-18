@@ -26,8 +26,6 @@ namespace factory {
 	extern MixerImpl &makeMixerImpl();
 }
 
-using namespace factory;
-
 class WindowsMixer : public MixerImpl {
 	friend MixerImpl & factory::makeMixerImpl();
 public:
@@ -37,6 +35,8 @@ public:
 private:
 	HMIXER hMixer;
 	DWORD controlId;
+
+	WindowsMixer() = delete;
 	WindowsMixer(DWORD device);
 };
 
