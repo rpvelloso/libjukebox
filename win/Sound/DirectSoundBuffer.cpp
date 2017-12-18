@@ -5,14 +5,18 @@
  *      Author: rvelloso
  */
 
+#include <windows.h>
 #include <iostream>
+// TODO use <cstring>
 #include <string.h>
 #include <cmath>
 
-#include "Sound/DirectSoundBuffer.h"
+#include "DirectSoundBuffer.h"
+#include "Sound/Sound.h"
 
 namespace jukebox {
 
+// TODO move the directSoundDevice instance to a local static initializer or to a singleton
 class DSoundDevice {
 public:
 	DSoundDevice() {
@@ -39,7 +43,7 @@ private:
 void ReleaseBuffer(LPDIRECTSOUNDBUFFER pDsb) {
 	if (pDsb != nullptr)
 		pDsb->Release();
-};
+}
 
 DirectSoundBuffer::DirectSoundBuffer(SoundFile &file) :
 	SoundImpl(file),

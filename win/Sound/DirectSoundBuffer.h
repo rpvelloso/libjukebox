@@ -13,14 +13,13 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DIRECTSOUNDBUFFER_H_
-#define DIRECTSOUNDBUFFER_H_
+#ifndef LIBJUKEBOX_DIRECTSOUNDBUFFER_2017_12_17_H_
+#define LIBJUKEBOX_DIRECTSOUNDBUFFER_2017_12_17_H_
 
-#include <windows.h>
 #include <dsound.h>
+#include <mmsystem.h>
 
 #include "Sound/SoundImpl.h"
-#include "Sound/Sound.h"
 #include "FileFormats/SoundFile.h"
 
 namespace jukebox {
@@ -44,4 +43,4 @@ private:
 
 } /* namespace jukebox */
 
-#endif /* DIRECTSOUNDBUFFER_H_ */
+#endif

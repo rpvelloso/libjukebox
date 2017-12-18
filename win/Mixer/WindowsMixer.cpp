@@ -17,11 +17,12 @@
 #include <exception>
 #include <string>
 
+#include "WindowsMixer.h"
 #include "Mixer/Mixer.h"
-#include "Mixer/WindowsMixer.h"
 
 namespace jukebox {
 
+// TODO move this to a singleton
 Mixer mixer(new WindowsMixer(MIXERLINE_COMPONENTTYPE_DST_SPEAKERS));
 
 WindowsMixer::WindowsMixer(DWORD device) : MixerImpl() {
