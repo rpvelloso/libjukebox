@@ -25,6 +25,29 @@
 
 namespace jukebox {
 
+class DSoundDevice {
+public:
+	DSoundDevice() {
+		// create device
+		auto hr = DirectSoundCreate(NULL, &lpds, NULL);
+
+		if (FAILED(hr))
+			throw std::runtime_error("failed DirectSoundCreate");
+
+		// set cooperative level to priority
+		hr = lpds->SetCooperativeLevel(GetConsoleWindow(), DSSCL_PRIORITY);
+
+		if (FAILED(hr))
+			throw std::runtime_error("failed SetCooperativeLevel");
+	}
+
+	struct IDirectSound &getDevice() {
+		return *lpds;
+	}
+private:
+	LPDIRECTSOUND lpds;
+};
+
 extern void ReleaseBuffer(LPDIRECTSOUNDBUFFER);
 
 class DirectSoundBuffer: public SoundImpl {
@@ -35,6 +58,7 @@ public:
 	int getVolume() override;
 	void setVolume(int) override;
 private:
+	static DSoundDevice directSoundDevice;
 	WAVEFORMATEX wfx;
 	DSBUFFERDESC dsbdesc;
 	std::unique_ptr<struct IDirectSoundBuffer, decltype(&ReleaseBuffer)> pDsb;

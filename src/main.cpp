@@ -45,7 +45,7 @@ void printFileData(const jukebox::SoundFile &file) {
 	std::cout << formatDuration(file.getDuration()) << std::endl << std::endl;
 }
 
-int main(int argc, char **argv) {
+void test(int argc, char **argv) {
 	auto wav = jukebox::factory::loadWaveFile(argv[1]);
 
 	std::fstream file(argv[2], std::ios::binary|std::ios::in);
@@ -75,4 +75,15 @@ int main(int argc, char **argv) {
 	std::cout << "vol: " << jukebox::mixer.getVolume() << std::endl;
 	sound2.play();
 	std::cin >> n;
+}
+
+int main(int argc, char **argv) {
+	try {
+		if (argc > 2)
+			test(argc, argv);
+		else
+			std::cerr << "usage: " << argv[0] << " file1.wav file2.wav " << std::endl;
+	} catch(std::exception &e) {
+		std::cerr << e.what() << std::endl;
+	}
 }

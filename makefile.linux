@@ -1,0 +1,27 @@
+CC = gcc
+CXXFLAGS = -Wall -O2 -ggdb -std=c++1y -I./src/ -I./linux/
+CFLAGS = -Wall -O2 -ggdb
+LDFLAGS = -lasound -lpthread
+objects = ./src/main.o ./src/Sound/Sound.o ./src/Sound/SoundImpl.o \
+./src/FileFormats/SoundFile.o ./src/FileFormats/SoundFileImpl.o ./src/FileFormats/WaveFile.o \
+./src/Mixer/Mixer.o ./src/Mixer/MixerImpl.o \
+./linux/AlsaHandle.o ./linux/AlsaMixer.o
+
+all		:	jukebox
+jukebox	:	$(objects)
+	g++ -std=c++1y -ggdb -Wall $(objects) $(LDFLAGS) -o jukebox
+
+./src/main.o						:	./linux/os.h ./src/FileFormats/SoundFile.h ./src/FileFormats/WaveFile.h
+./src/Sound.o						:	./src/Sound/SoundImpl.h ./src/Sound/Sound.h
+./src/SoundImpl.o					:	./src/Sound/SoundImpl.h 
+./src/FileFormats/SoundFile.o		:	./src/FileFormats/SoundFileImpl.h ./src/FileFormats/SoundFile.h
+./src/FileFormats/SoundFileImpl.o	:	./src/FileFormats/SoundFileImpl.h
+./src/FileFormats/WaveFile.o		:	./src/FileFormats/SoundFileImpl.h ./src/FileFormats/SoundFile.h ./src/FileFormats/WaveFile.h
+./src/Mixer.o						:	./src/Mixer/MixerImpl.h ./src/Mixer/Mixer.h
+./src/MixerImpl.o					:	./src/Mixer/MixerImpl.h
+./linux/AlsaHandle.o				:	./src/Sound/Sound.h ./src/Sound/SoundImpl.h ./src/FileFormats/SoundFile.h ./linux/AlsaHandle.h
+./linux/AlsaMixer.o					:	./linux/AlsaMixer.h
+
+.PHONY		:	clean
+clean		:
+	rm -rf $(objects) jukebox

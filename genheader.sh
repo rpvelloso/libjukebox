@@ -2,7 +2,6 @@
 headers=(
 	'src/FileFormats\SoundFileImpl.h'
 	'src/FileFormats\SoundFile.h'
-	'src/FileFormats\WaveFile.h'
 	'src/Sound\SoundImpl.h'
 	'src/Sound\Sound.h'
 	'src/Mixer\MixerImpl.h'
