@@ -1,7 +1,7 @@
 CC = gcc
 CXXFLAGS = -Wall -O3 -ggdb -std=c++1y -fPIC -I./src/ -I./win/
 CFLAGS = -Wall -O3 -ggdb
-LDFLAGS = -ldsound -lwinmm
+LDFLAGS = -ldsound -lwinmm 
 objects = ./src/Sound/Sound.o ./src/Sound/SoundImpl.o \
 ./src/FileFormats/SoundFile.o ./src/FileFormats/SoundFileImpl.o ./src/FileFormats/WaveFile.o \
 ./src/Mixer/Mixer.o ./src/Mixer/MixerImpl.o \
@@ -12,8 +12,6 @@ all						:	./Library/libjukebox.dll
 	g++ -std=c++1y -ggdb -Wall $(objects) -shared $(LDFLAGS) -o Library/libjukebox.dll
 test					:	./src/main.o
 	g++ -std=c++1y -ggdb -Wall ./src/main.o -o ./test/test.exe -L./Library -ljukebox
-test2					:	$(objects) ./src/main.o
-	g++ -std=c++1y -ggdb -Wall $(objects) ./src/main.o $(LDFLAGS) -o test/test.exe
 ./src/main.o						:	genheader
 ./src/Sound/Sound.o					:	./src/Sound/SoundImpl.h ./src/Sound/Sound.h
 ./src/Sound/SoundImpl.o				:	./src/Sound/SoundImpl.h 
@@ -29,5 +27,6 @@ test2					:	$(objects) ./src/main.o
 genheader	:
 	cp ./Library/libjukebox.dll ./test/
 	./genheader.sh
+	mv libjukebox.h ./src/
 clean		:
-	rm -rf $(objects) ./Library/libjukebox.dll ./src/main.o ./test/test.exe
+	rm -rf $(objects) ./Library/libjukebox.dll ./test/libjukebox.dll ./src/main.o ./test/test.exe

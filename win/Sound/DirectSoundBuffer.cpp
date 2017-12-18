@@ -13,8 +13,6 @@
 
 namespace jukebox {
 
-DSoundDevice DirectSoundBuffer::directSoundDevice;
-
 void ReleaseBuffer(LPDIRECTSOUNDBUFFER pDsb) {
 	if (pDsb != nullptr)
 		pDsb->Release();
@@ -82,7 +80,7 @@ void DirectSoundBuffer::prepare() {
 	dsbdesc.lpwfxFormat = &wfx;
 
 	LPDIRECTSOUNDBUFFER bufPtr;
-	auto hr = directSoundDevice.getDevice().CreateSoundBuffer(&dsbdesc, &bufPtr, NULL);
+	auto hr = DSoundDevice::getDevice().CreateSoundBuffer(&dsbdesc, &bufPtr, NULL);
 
 	if (FAILED(hr))
 		throw std::runtime_error("failed CreateSoundBuffer");
