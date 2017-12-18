@@ -17,12 +17,16 @@
 
 namespace jukebox {
 
-Mixer::Mixer(MixerImpl *impl) :
-	impl(impl) {
+namespace factory {
+	extern MixerImpl &makeMixerImpl();
+}
+
+Mixer::Mixer() :
+	impl(factory::makeMixerImpl()) {
 }
 
 int Mixer::getVolume() {
-	auto vol = impl->getVolume();
+	auto vol = impl.getVolume();
 	vol = std::min(vol, 100);
 	vol = std::max(vol, 0);
 	return vol;
@@ -31,7 +35,7 @@ int Mixer::getVolume() {
 void Mixer::setVolume(int vol) {
 	vol = std::min(vol, 100);
 	vol = std::max(vol, 0);
-	impl->setVolume(vol);
+	impl.setVolume(vol);
 }
 
 } /* namespace jukebox */
