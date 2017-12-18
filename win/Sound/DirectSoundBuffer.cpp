@@ -5,7 +5,6 @@
  *      Author: rvelloso
  */
 
-#include <iostream>
 #include <string.h>
 #include <cmath>
 
@@ -128,7 +127,6 @@ int DirectSoundBuffer::getVolume() {
 void DirectSoundBuffer::setVolume(int vol) {
 	double attenuation = 1.0 / 1024.0 + ((double)vol) / 100.0 * 1023.0 / 1024.0;
 	double db = 10 * std::log10(attenuation) / std::log10(2);
-	std::cout << db * 100 << std::endl;
 	pDsb->SetVolume(db * 100);
 }
 

@@ -21,7 +21,6 @@
 #include "libjukebox.h"
 
 std::string formatDuration(double duration) {
-	std::cout << "*** " << duration << std::endl;
 	size_t hr = duration/3600;
 	duration -= hr*3600;
 	size_t min = duration/60;
