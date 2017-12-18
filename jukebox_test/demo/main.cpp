@@ -48,18 +48,16 @@ void printFileData(const jukebox::SoundFile &file) {
 }
 
 int main(int argc, char **argv) {
-	if( argc < 2 ) {
+	if( argc < 3 ) {
 		std::cout << "you need to supply two wave files as arguments" << std::endl;
 		return 1;
 	}
 
 	auto wav = jukebox::factory::loadWaveFile(argv[1]);
+	printFileData(wav);
 
 	std::fstream file(argv[2], std::ios::binary|std::ios::in);
-
 	auto wav2 = jukebox::factory::loadWaveStream(file);
-
-	printFileData(wav);
 	printFileData(wav2);
 
 	auto sound = jukebox::factory::makeSound(wav);
