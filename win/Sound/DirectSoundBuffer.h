@@ -19,8 +19,8 @@
 #include <dsound.h>
 #include <mmsystem.h>
 
-#include "Sound/SoundImpl.h"
-#include "FileFormats/SoundFile.h"
+#include "jukebox/FileFormats/SoundFile.h"
+#include "jukebox/Sound/SoundImpl.h"
 
 namespace jukebox {
 

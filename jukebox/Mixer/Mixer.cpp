@@ -13,33 +13,28 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Sound.h"
+#include <algorithm>
+#include "Mixer.h"
+
+namespace {
+
+int normalize(int vol) { return std::max(0,std::min(vol,100)); }
+
+}
 
 namespace jukebox {
 
-Sound::Sound(SoundImpl *impl) : impl(impl) {
+Mixer::Mixer(MixerImpl *impl) :
+	impl(impl) {
 }
 
-void Sound::play() {
-	impl->play();
-}
-
-void Sound::stop() {
-	impl->stop();
-}
-
-int Sound::getVolume() {
+int Mixer::getVolume() {
 	auto vol = impl->getVolume();
-	vol = std::min(vol, 100);
-	vol = std::max(vol, 0);
-	return vol;
+	return normalize(vol);
 }
 
-void Sound::setVolume(int vol) {
-	vol = std::min(vol, 100);
-	vol = std::max(vol, 0);
-
-	impl->setVolume(vol);
+void Mixer::setVolume(int vol) {
+	impl->setVolume(normalize(vol));
 }
 
 } /* namespace jukebox */

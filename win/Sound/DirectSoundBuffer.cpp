@@ -12,7 +12,7 @@
 #include <cmath>
 
 #include "DirectSoundBuffer.h"
-#include "Sound/Sound.h"
+#include "jukebox/Sound/Sound.h"
 
 namespace jukebox {
 

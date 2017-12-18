@@ -13,12 +13,13 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <windows.h>
 #include <iostream>
 #include <exception>
 #include <string>
 
 #include "WindowsMixer.h"
-#include "Mixer/Mixer.h"
+#include "jukebox/Mixer/Mixer.h"
 
 namespace jukebox {
 

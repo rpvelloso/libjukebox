@@ -13,37 +13,35 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBJUKEBOX_SOUNDFILE_2017_12_17_H_
-#define LIBJUKEBOX_SOUNDFILE_2017_12_17_H_
+#include <algorithm>
+#include "Sound.h"
 
-#include <memory>
+namespace {
 
-#include "SoundFileImpl.h"
+int normalize(int vol) { return std::max(0,std::min(vol,100)); }
+
+}
 
 namespace jukebox {
 
-class SoundFile {
-public:
-	SoundFile(SoundFileImpl *impl);
-	short getNumChannels() const;
-	int getSampleRate() const;
-	short getBitsPerSample() const;
-	const char *getData() const;
-	int getDataSize() const;
-	const std::string &getFilename() const;
-	double getDuration() const;
-private:
-	std::unique_ptr<SoundFileImpl> impl;
+Sound::Sound(SoundImpl *impl) : impl(impl) {
+}
 
-	template<typename T>
-	void normalize();
-};
+void Sound::play() {
+	impl->play();
+}
 
-namespace factory {
-	extern SoundFile loadWaveFile(const std::string &filename);
-	extern SoundFile loadWaveStream(std::istream &inp);
+void Sound::stop() {
+	impl->stop();
+}
+
+int Sound::getVolume() {
+	auto vol = impl->getVolume();
+	return normalize(vol);
+}
+
+void Sound::setVolume(int vol) {
+	impl->setVolume(normalize(vol));
 }
 
 } /* namespace jukebox */
-
-#endif /* SOUNDFILE_H_ */

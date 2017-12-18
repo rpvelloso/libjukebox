@@ -13,26 +13,38 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBJUKEBOX_SOUNDIMPL_2017_12_17_H_
-#define LIBJUKEBOX_SOUNDIMPL_2017_12_17_H_
+#ifndef LIBJUKEBOX_SOUNDFILE_2017_12_17_H_
+#define LIBJUKEBOX_SOUNDFILE_2017_12_17_H_
 
-#include "FileFormats/SoundFile.h"
+#include <memory>
+
+#include "SoundFileImpl.h"
 
 namespace jukebox {
 
-class SoundImpl {
+class SoundFile {
 public:
-	SoundImpl(SoundFile &file);
-	virtual ~SoundImpl() = default;
-	virtual void play() = 0;
-	virtual void stop() = 0;
-	virtual int getVolume() = 0;
-	virtual void setVolume(int) = 0;
-	SoundFile &getSoundFile();
-protected:
-	SoundFile &soundFile;
+	SoundFile(SoundFileImpl *impl);
+	short getNumChannels() const;
+	int getSampleRate() const;
+	short getBitsPerSample() const;
+	const char *getData() const;
+	int getDataSize() const;
+	const std::string &getFilename() const;
+	double getDuration() const;
+private:
+	std::unique_ptr<SoundFileImpl> impl;
+
+	template<typename T>
+	void normalize();
 };
+
+// TODO this is very confusing: a wave file factory in SoundFile.h - perhaps move this factory to there and create a wave file impl, instead?
+namespace factory {
+	extern SoundFile loadWaveFile(const std::string &filename);
+	extern SoundFile loadWaveStream(std::istream &inp);
+}
 
 } /* namespace jukebox */
 
-#endif
+#endif /* SOUNDFILE_H_ */

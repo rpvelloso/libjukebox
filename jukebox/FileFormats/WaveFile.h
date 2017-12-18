@@ -22,6 +22,7 @@
 
 namespace jukebox {
 
+// TODO rename to WaveFileImpl?
 class WaveFile : public SoundFileImpl {
 	struct WaveHeader {
 		char ChunkID[4];
@@ -40,17 +41,17 @@ class WaveFile : public SoundFileImpl {
 	};
 public:
 	WaveFile(const std::string &filename);
-	WaveFile(std::istream &inp);
+	WaveFile(std::istream &inp, const std::string &filename = ":stream:");
 	short getNumChannels() const override;
 	int getSampleRate() const override;
 	short getBitsPerSample() const override;
 	const char *getData() const override;
 	int getDataSize() const override;
-	const std::string &getFilename() const;
+	const std::string &getFilename() const override;
 private:
-	std::string filename;
 	WaveHeader header;
 	std::unique_ptr<char []> data;
+	std::string filename;
 
 	void load(std::istream &inp);
 };

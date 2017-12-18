@@ -14,24 +14,22 @@
  */
 
 #include <fstream>
-#include <iostream>
 #include <exception>
 
 #include "WaveFile.h"
+#include "SoundFile.h"
 
 namespace jukebox {
 
 WaveFile::WaveFile(const std::string& filename) :
-	SoundFileImpl(),
 	filename(filename) {
 
 	std::fstream file(filename, std::ios::binary|std::ios::in);
 	load(file);
 }
 
-WaveFile::WaveFile(std::istream &inp) :
-	SoundFileImpl(),
-	filename(":stream:") {
+WaveFile::WaveFile(std::istream &inp, const std::string &filename) :
+	filename(filename) {
 
 	load(inp);
 }
@@ -63,13 +61,18 @@ void WaveFile::load(std::istream &inp) {
 
 		data.reset(new char[getDataSize()]);
 		inp.read(data.get(), getDataSize());
-		if (inp.gcount() != getDataSize())
-			throw std::runtime_error("error loading " + filename);
+		if (inp.gcount() == getDataSize()) return; // success!!
 	}
+
+	throw std::runtime_error("error loading " + filename);
 }
 
 const char* WaveFile::getData() const {
 	return data.get();
+}
+
+const std::string &WaveFile::getFilename() const {
+	return filename;
 }
 
 namespace factory {
@@ -80,10 +83,6 @@ namespace factory {
 	SoundFile loadWaveStream(std::istream &inp) {
 		return SoundFile(new WaveFile(inp));
 	}
-}
-
-const std::string& WaveFile::getFilename() const {
-	return filename;
 }
 
 }

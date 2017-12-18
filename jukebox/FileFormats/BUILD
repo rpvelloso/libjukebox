@@ -16,5 +16,8 @@ cc_library(
 	name = "wave_file",
 	srcs = ["WaveFile.cpp"],
 	hdrs = ["WaveFile.h"],
-	deps = [":sound_file_impl"],
+	deps = [
+		":sound_file",
+		":sound_file_impl",
+	],
 )

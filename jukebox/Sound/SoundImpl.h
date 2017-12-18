@@ -13,25 +13,26 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Mixer.h"
+#ifndef LIBJUKEBOX_SOUNDIMPL_2017_12_17_H_
+#define LIBJUKEBOX_SOUNDIMPL_2017_12_17_H_
+
+#include "jukebox/FileFormats/SoundFile.h"
 
 namespace jukebox {
 
-Mixer::Mixer(MixerImpl *impl) :
-	impl(impl) {
-}
-
-int Mixer::getVolume() {
-	auto vol = impl->getVolume();
-	vol = std::min(vol, 100);
-	vol = std::max(vol, 0);
-	return vol;
-}
-
-void Mixer::setVolume(int vol) {
-	vol = std::min(vol, 100);
-	vol = std::max(vol, 0);
-	impl->setVolume(vol);
-}
+class SoundImpl {
+public:
+	SoundImpl(SoundFile &file);
+	virtual ~SoundImpl() = default;
+	virtual void play() = 0;
+	virtual void stop() = 0;
+	virtual int getVolume() = 0;
+	virtual void setVolume(int) = 0;
+	SoundFile &getSoundFile();
+protected:
+	SoundFile &soundFile;
+};
 
 } /* namespace jukebox */
+
+#endif

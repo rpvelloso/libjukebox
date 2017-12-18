@@ -11,5 +11,5 @@ cc_library(
 	name = "sound_impl",
 	srcs = ["SoundImpl.cpp"],
 	hdrs = ["SoundImpl.h"],
-	deps = ["//FileFormats:sound_file"],
+	deps = ["//jukebox/FileFormats:sound_file"],
 )

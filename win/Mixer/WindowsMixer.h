@@ -18,7 +18,7 @@
 
 #include <mmsystem.h>
 
-#include "Mixer/MixerImpl.h"
+#include "jukebox/Mixer/MixerImpl.h"
 
 namespace jukebox {
 

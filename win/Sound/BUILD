@@ -5,9 +5,9 @@ cc_library(
 	srcs = ["DirectSoundBuffer.cpp"],
 	hdrs = ["DirectSoundBuffer.h"],
 	deps = [
-		"//FileFormats:sound_file",
-		"//Sound:sound",
-		"//Sound:sound_impl",
+		"//jukebox/FileFormats:sound_file",
+		"//jukebox/Sound:sound",
+		"//jukebox/Sound:sound_impl",
 		"@win32_libs//:dsound",
 		"@win32_libs//:winmm",
 	],
