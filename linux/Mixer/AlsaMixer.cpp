@@ -21,7 +21,13 @@
 
 namespace jukebox {
 
-Mixer mixer(new AlsaMixer("default", "Master"));
+namespace factory {
+	MixerImpl &makeMixerImpl() {
+		static AlsaMixer mixerImpl("default", "Master");
+
+		return mixerImpl;
+	}
+}
 
 void closeMixer(snd_mixer_t *handle) {
 	if (handle != nullptr)
