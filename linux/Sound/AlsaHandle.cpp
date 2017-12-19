@@ -15,7 +15,7 @@
 
 #include <algorithm>
 
-#include "AlsaHandle.h"
+#include "Sound/AlsaHandle.h"
 
 namespace jukebox {
 

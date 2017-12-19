@@ -64,7 +64,7 @@ void test(int argc, char **argv) {
 	char n;
 	std::cin >> n;
 	sound.stop();
-	mixer.setVolume(10);
+	mixer.setVolume(30);
 	std::cout << "vol: " << mixer.getVolume() << std::endl;
 	//sound.setVolume(30);
 	sound.play();
