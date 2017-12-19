@@ -3,9 +3,10 @@ CXXFLAGS = -Wall -O3 -ggdb -std=c++1y -fPIC -I./src/ -I./linux/
 CFLAGS = -Wall -O3 -ggdb
 LDFLAGS = -lasound -lpthread
 objects = ./src/Sound/Sound.o ./src/Sound/SoundImpl.o \
-./src/FileFormats/SoundFile.o ./src/FileFormats/SoundFileImpl.o ./src/FileFormats/WaveFile.o \
+./src/FileFormats/SoundFile.o ./src/FileFormats/SoundFileImpl.o ./src/FileFormats/WaveFile.o ./src/FileFormats/VorbisFile.o \
 ./src/Mixer/Mixer.o ./src/Mixer/MixerImpl.o \
-./linux/Sound/AlsaHandle.o ./linux/Mixer/AlsaMixer.o
+./linux/Sound/AlsaHandle.o ./linux/Mixer/AlsaMixer.o \
+./src/stb_vorbis/stb_vorbis.o
 
 all						:	./Library/libjukebox.so test
 ./Library/libjukebox.so	:	$(objects)
@@ -18,10 +19,12 @@ test					:	./src/main.o
 ./src/FileFormats/SoundFile.o		:	./src/FileFormats/SoundFileImpl.h ./src/FileFormats/SoundFile.h
 ./src/FileFormats/SoundFileImpl.o	:	./src/FileFormats/SoundFileImpl.h
 ./src/FileFormats/WaveFile.o		:	./src/FileFormats/SoundFileImpl.h ./src/FileFormats/SoundFile.h ./src/FileFormats/WaveFile.h
+./src/FileFormats/VorbisFile.o		:	./src/FileFormats/SoundFileImpl.h ./src/FileFormats/SoundFile.h ./src/FileFormats/VorbisFile.h
 ./src/Mixer/Mixer.o					:	./src/Mixer/MixerImpl.h ./src/Mixer/Mixer.h
 ./src/Mixer/MixerImpl.o				:	./src/Mixer/MixerImpl.h
 ./linux/Sound/AlsaHandle.o			:	./src/Sound/Sound.h ./src/Sound/SoundImpl.h ./src/FileFormats/SoundFile.h ./linux/Sound/AlsaHandle.h
 ./linux/Mixer/AlsaMixer.o			:	./linux/Mixer/AlsaMixer.h
+./src/stb_vorbis/stb_vorbis.o		:
 
 .PHONY		:	clean	genheader
 genheader	:

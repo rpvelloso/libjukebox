@@ -45,7 +45,7 @@ void printFileData(const jukebox::SoundFile &file) {
 }
 
 void test(int argc, char **argv) {
-	auto wav = jukebox::factory::loadWaveFile(argv[1]);
+	auto wav = jukebox::factory::loadVorbisFile(argv[1]);
 
 	std::fstream file(argv[2], std::ios::binary|std::ios::in);
 

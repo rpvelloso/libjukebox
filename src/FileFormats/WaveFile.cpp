@@ -27,7 +27,7 @@ WaveFile::WaveFile(const std::string& filename) :
 	SoundFileImpl(),
 	filename(filename) {
 
-	std::fstream file(filename, std::ios::binary|std::ios::in);
+	std::fstream file(this->filename, std::ios::binary|std::ios::in);
 	load(file);
 }
 

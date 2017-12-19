@@ -13,8 +13,8 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SOUNDFILE_H_
-#define SOUNDFILE_H_
+#ifndef VORBISFILE_H_
+#define VORBISFILE_H_
 
 #include <memory>
 
@@ -22,30 +22,28 @@
 
 namespace jukebox {
 
-class SoundFile {
+extern void freeVorbis(char *ptr);
+
+class VorbisFile : public SoundFileImpl {
 public:
-	SoundFile(SoundFileImpl *impl);
-	short getNumChannels() const;
-	int getSampleRate() const;
-	short getBitsPerSample() const;
-	const char *getData() const;
-	int getDataSize() const;
+	VorbisFile(const std::string &filename);
+	VorbisFile(std::istream &inp);
+	short getNumChannels() const override;
+	int getSampleRate() const override;
+	short getBitsPerSample() const override;
+	const char *getData() const override;
+	int getDataSize() const override;
 	const std::string &getFilename() const;
-	double getDuration() const;
 private:
-	std::unique_ptr<SoundFileImpl> impl;
+	short numChannels = 0;
+	int sampleRate = 0;
+	int dataSize = 0;
+	std::unique_ptr<char, decltype(&freeVorbis)> data;
+	std::string filename;
 
-	template<typename T>
-	void normalize();
+	void load(std::istream &inp);
 };
-
-namespace factory {
-	extern SoundFile loadWaveFile(const std::string &filename);
-	extern SoundFile loadWaveStream(std::istream &inp);
-	extern SoundFile loadVorbisFile(const std::string &filename);
-	extern SoundFile loadVorbisStream(std::istream &inp);
-}
 
 } /* namespace jukebox */
 
-#endif /* SOUNDFILE_H_ */
+#endif /* VORBISFILE_H_ */
