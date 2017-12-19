@@ -28,4 +28,4 @@ genheader	:
 	./genheader.sh
 	mv libjukebox.h	./src/	
 clean		:
-	rm -rf $(objects) ./Library/libjukebox.so ./test/test
+	rm -rf $(objects) ./Library/libjukebox.so ./src/main.o ./test/test
