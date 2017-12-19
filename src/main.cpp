@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
 		if (argc > 2)
 			test(argc, argv);
 		else
-			std::cerr << "usage: " << argv[0] << " file1.wav file2.wav " << std::endl;
+			std::cerr << "usage: " << argv[0] << " file1.ogg file2.wav " << std::endl;
 	} catch(std::exception &e) {
 		std::cerr << e.what() << std::endl;
 	}
