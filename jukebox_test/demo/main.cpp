@@ -53,9 +53,11 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
+	std::cout << "ready to load " << argv[1] << " as a file" << std::endl;
 	auto wav = jukebox::factory::loadWaveFile(argv[1]);
 	printFileData(wav);
 
+	std::cout << "ready to load " << argv[2] << " as a stream" << std::endl;
 	std::fstream file(argv[2], std::ios::binary|std::ios::in);
 	auto wav2 = jukebox::factory::loadWaveStream(file);
 	printFileData(wav2);

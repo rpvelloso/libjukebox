@@ -43,6 +43,7 @@ class WaveFile : public SoundFileImpl {
 public:
 	WaveFile(const std::string &filename);
 	WaveFile(std::istream &inp, const std::string &filename = ":stream:");
+	WaveFile(std::istream &&inp, const std::string &filename = ":stream:");
 	short getNumChannels() const override;
 	int getSampleRate() const override;
 	short getBitsPerSample() const override;

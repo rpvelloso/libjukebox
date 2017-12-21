@@ -25,12 +25,16 @@ namespace jukebox {
 constexpr int MAX_WAVE_SIZE = 15'000'000;
 
 WaveFile::WaveFile(const std::string& filename) :
-	WaveFile(std::fstream(filename, std::ios::binary|std::ios::in),filename) {
+	WaveFile(std::fstream(filename,std::ios::binary|std::ios::in),filename) {
 }
 
-// TODO use different classes of exceptions
+WaveFile::WaveFile(std::istream &&inp, const std::string &filename) :
+	WaveFile(inp,filename) {
+}
+
 WaveFile::WaveFile(std::istream &inp, const std::string &filename) :
 	filename(filename) {
+	// TODO use different classes of exceptions
 	if (!inp) throw std::runtime_error("error opening " + filename);
 
 	inp.read((char *)&header, sizeof(header));
