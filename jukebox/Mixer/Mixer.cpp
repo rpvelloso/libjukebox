@@ -33,12 +33,12 @@ Mixer::Mixer() :
 }
 
 int Mixer::getVolume() {
-	auto vol = impl->getVolume();
+	auto vol = impl.getVolume();
 	return normalize(vol);
 }
 
 void Mixer::setVolume(int vol) {
-	impl->setVolume(normalize(vol));
+	impl.setVolume(normalize(vol));
 }
 
 } /* namespace jukebox */

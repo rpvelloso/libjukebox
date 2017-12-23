@@ -13,8 +13,9 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <fstream>
+#include <algorithm>
 #include <exception>
+#include <fstream>
 #include <string>
 
 #include "WaveFile.h"
