@@ -6,7 +6,6 @@
  */
 
 #include <windows.h>
-#include <iostream>
 // TODO use <cstring>
 #include <string.h>
 #include <cmath>
@@ -15,30 +14,6 @@
 #include "jukebox/Sound/Sound.h"
 
 namespace jukebox {
-
-// TODO move the directSoundDevice instance to a local static initializer or to a singleton
-class DSoundDevice {
-public:
-	DSoundDevice() {
-		// create device
-		auto hr = DirectSoundCreate(NULL, &lpds, NULL);
-
-		if (FAILED(hr))
-			throw std::runtime_error("failed DirectSoundCreate");
-
-		// set cooperative level to priority
-		hr = lpds->SetCooperativeLevel(GetConsoleWindow(), DSSCL_PRIORITY);
-
-		if (FAILED(hr))
-			throw std::runtime_error("failed SetCooperativeLevel");
-	}
-
-	struct IDirectSound &getDevice() {
-		return *lpds;
-	}
-private:
-	LPDIRECTSOUND lpds;
-} directSoundDevice;
 
 void ReleaseBuffer(LPDIRECTSOUNDBUFFER pDsb) {
 	if (pDsb != nullptr)
@@ -107,7 +82,7 @@ void DirectSoundBuffer::prepare() {
 	dsbdesc.lpwfxFormat = &wfx;
 
 	LPDIRECTSOUNDBUFFER bufPtr;
-	auto hr = directSoundDevice.getDevice().CreateSoundBuffer(&dsbdesc, &bufPtr, NULL);
+	auto hr = DSoundDevice::getDevice().CreateSoundBuffer(&dsbdesc, &bufPtr, NULL);
 
 	if (FAILED(hr))
 		throw std::runtime_error("failed CreateSoundBuffer");

@@ -14,7 +14,6 @@
  */
 
 #include <windows.h>
-#include <iostream>
 #include <exception>
 #include <string>
 
@@ -22,9 +21,6 @@
 #include "jukebox/Mixer/Mixer.h"
 
 namespace jukebox {
-
-// TODO move this to a singleton
-Mixer mixer(new WindowsMixer(MIXERLINE_COMPONENTTYPE_DST_SPEAKERS));
 
 WindowsMixer::WindowsMixer(DWORD device) : MixerImpl() {
 	auto res = mixerOpen(&hMixer, MIXER_OBJECTF_MIXER, 0, 0, 0);
@@ -92,6 +88,13 @@ void WindowsMixer::setVolume(int vol) {
 	auto res = mixerSetControlDetails((HMIXEROBJ) hMixer, &mcd, MIXER_SETCONTROLDETAILSF_VALUE);
 	if (res != MMSYSERR_NOERROR)
 		throw std::runtime_error("mixerGetLineControls error " + std::to_string(res));
+}
+
+namespace factory {
+	MixerImpl &makeMixerImpl() {
+		static WindowsMixer mixerImpl(MIXERLINE_COMPONENTTYPE_DST_SPEAKERS);
+		return mixerImpl;
+	}
 }
 
 } /* namespace jukebox */

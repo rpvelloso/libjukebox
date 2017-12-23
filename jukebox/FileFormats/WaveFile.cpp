@@ -32,51 +32,69 @@ WaveFile::WaveFile(std::istream &&inp, const std::string &filename) :
 	WaveFile(inp,filename) {
 }
 
+short WaveFile::getNumChannels() const {
+	return header2.NumChannels;
+}
+
+int WaveFile::getSampleRate() const {
+	return header2.SampleRate;
+}
+
+short WaveFile::getBitsPerSample() const {
+	return header2.BitsPerSample;
+}
+
+int WaveFile::getDataSize() const {
+	return header3.Subchunk2Size;
+}
+
 WaveFile::WaveFile(std::istream &inp, const std::string &filename) :
 	filename(filename) {
 	// TODO use different classes of exceptions
 	if (!inp) throw std::runtime_error("error opening " + filename);
 
-	inp.read((char *)&header, sizeof(header));
-	if (inp.gcount() != sizeof(header)) throw std::runtime_error("error loading " + filename + ". invalid header size");
+	inp.read((char *)&header1, sizeof(header1));
+	if (inp.gcount() != sizeof(header1))
+		throw std::runtime_error("error loading " + filename + ". invalid header #1 size");
 
-	if ((std::string(header.ChunkID, 4) != "RIFF") ||
-		(std::string(header.Format, 4) != "WAVE") ||
-		(std::string(header.Subchunk1ID, 4) != "fmt ") ||
-		(std::string(header.Subchunk2ID, 4) != "data")) {
-		throw std::runtime_error("error loading " + filename + ". bad header data");
-	}
+	if ((std::string(header1.ChunkID, 4) != "RIFF") ||
+		(std::string(header1.Format, 4) != "WAVE") ||
+		(std::string(header1.Subchunk1ID, 4) != "fmt "))
+		throw std::runtime_error("error loading " + filename + ". bad header #1 data");
 
-	if (header.Subchunk2Size <= 0) throw std::runtime_error("error loading " + filename + ". invalid data size");
-	if (header.Subchunk2Size > MAX_WAVE_SIZE) throw std::runtime_error("error loading " + filename + ". data size is too big");
+	inp.read((char *)&header2, sizeof(header2));
+	if (inp.gcount() != sizeof(header2))
+		throw std::runtime_error("error loading " + filename + ". invalid header #2 size");
+
+	if (header2.AudioFormat != 1) // PCM
+		throw std::runtime_error("error loading " + filename + ". invalid audio format");
+
+	// skip extra header data
+	inp.seekg(
+		std::max(header1.Subchunk1Size - 16, 0),
+		std::ios::cur);
+
+	inp.read((char *)&header3, sizeof(header3));
+	if (inp.gcount() != sizeof(header3))
+		throw std::runtime_error("error loading " + filename + ". invalid header #3 size");
+
+	if (std::string(header3.Subchunk2ID, 4) != "data")
+		throw std::runtime_error("error loading " + filename + ". bad header #3 data");
+
+	if (header3.Subchunk2Size <= 0)
+		throw std::runtime_error("error loading " + filename + ". invalid data size");
+	if (header3.Subchunk2Size > MAX_WAVE_SIZE)
+		throw std::runtime_error("error loading " + filename + ". data size is too big");
 
 	data.reset(new char[getDataSize()]);
 	inp.read(data.get(), getDataSize());
-	if (inp.gcount() != getDataSize()) throw std::runtime_error("error loading " + filename + ". not enough data to load");
-}
 
-short WaveFile::getNumChannels() const {
-	return header.NumChannels;
-}
-
-int WaveFile::getSampleRate() const {
-	return header.SampleRate;
-}
-
-short WaveFile::getBitsPerSample() const {
-	return header.BitsPerSample;
-}
-
-int WaveFile::getDataSize() const {
-	return header.Subchunk2Size;
+	if (inp.gcount() != getDataSize())
+		throw std::runtime_error("error loading " + filename + ". not enough data to load");
 }
 
 const char* WaveFile::getData() const {
 	return data.get();
-}
-
-const std::string &WaveFile::getFilename() const {
-	return filename;
 }
 
 namespace factory {
@@ -87,6 +105,10 @@ namespace factory {
 	SoundFile loadWaveStream(std::istream &inp) {
 		return SoundFile(new WaveFile(inp));
 	}
+}
+
+const std::string &WaveFile::getFilename() const {
+	return filename;
 }
 
 }

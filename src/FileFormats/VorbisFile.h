@@ -13,33 +13,37 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBJUKEBOX_WINDOWSMIXER_2017_12_17_H_
-#define LIBJUKEBOX_WINDOWSMIXER_2017_12_17_H_
+#ifndef VORBISFILE_H_
+#define VORBISFILE_H_
 
-#include <mmsystem.h>
+#include <memory>
 
-#include "jukebox/Mixer/MixerImpl.h"
+#include "FileFormats/SoundFileImpl.h"
 
 namespace jukebox {
 
-namespace factory {
-	extern MixerImpl &makeMixerImpl();
-}
+extern void freeVorbis(char *ptr);
 
-class WindowsMixer : public MixerImpl {
-	friend MixerImpl & factory::makeMixerImpl();
+class VorbisFile : public SoundFileImpl {
 public:
-	virtual ~WindowsMixer();
-	int getVolume();
-	void setVolume(int vol);
+	VorbisFile(const std::string &filename);
+	VorbisFile(std::istream &inp);
+	short getNumChannels() const override;
+	int getSampleRate() const override;
+	short getBitsPerSample() const override;
+	const char *getData() const override;
+	int getDataSize() const override;
+	const std::string &getFilename() const;
 private:
-	HMIXER hMixer;
-	DWORD controlId;
+	short numChannels = 0;
+	int sampleRate = 0;
+	int dataSize = 0;
+	std::unique_ptr<char, decltype(&freeVorbis)> data;
+	std::string filename;
 
-	WindowsMixer() = delete;
-	WindowsMixer(DWORD device);
+	void load(std::istream &inp);
 };
 
 } /* namespace jukebox */
 
-#endif
+#endif /* VORBISFILE_H_ */

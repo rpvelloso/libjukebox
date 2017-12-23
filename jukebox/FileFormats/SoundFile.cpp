@@ -13,7 +13,6 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
 #include <cmath>
 #include <limits>
 #include <algorithm>
@@ -82,8 +81,6 @@ void SoundFile::normalize() {
 		[ratio](T &sample){
 			sample = static_cast<T>(static_cast<double>(sample)*ratio);
 	});
-
-	std::cout << maxValue << " " << maxPeak << " " << ratio << std::endl;
 }
 
 } /* namespace jukebox */

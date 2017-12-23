@@ -43,6 +43,8 @@ private:
 namespace factory {
 	extern SoundFile loadWaveFile(const std::string &filename);
 	extern SoundFile loadWaveStream(std::istream &inp);
+	extern SoundFile loadVorbisFile(const std::string &filename);
+	extern SoundFile loadVorbisStream(std::istream &inp);
 }
 
 } /* namespace jukebox */

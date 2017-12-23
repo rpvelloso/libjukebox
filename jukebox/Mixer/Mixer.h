@@ -23,15 +23,12 @@ namespace jukebox {
 
 class Mixer {
 public:
-	Mixer(MixerImpl *impl);
+	Mixer();
 	int getVolume();
 	void setVolume(int vol);
 private:
-	std::unique_ptr<MixerImpl> impl;
+	MixerImpl &impl;
 };
-
-// TODO make this a singleton
-extern Mixer mixer;
 
 } /* namespace jukebox */
 

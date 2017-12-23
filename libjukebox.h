@@ -45,43 +45,9 @@ private:
 namespace factory {
  extern SoundFile loadWaveFile(const std::string &filename);
  extern SoundFile loadWaveStream(std::istream &inp);
+ extern SoundFile loadVorbisFile(const std::string &filename);
+ extern SoundFile loadVorbisStream(std::istream &inp);
 }
-
-}
-namespace jukebox {
-
-class WaveFile : public SoundFileImpl {
- struct WaveHeader {
-  char ChunkID[4];
-  int ChunkSize;
-  char Format[4];
-  char Subchunk1ID[4];
-  int Subchunk1Size;
-  short AudioFormat;
-  short NumChannels;
-  int SampleRate;
-  int ByteRate;
-  short BlockAlign;
-  short BitsPerSample;
-  char Subchunk2ID[4];
-  int Subchunk2Size;
- };
-public:
- WaveFile(const std::string &filename);
- WaveFile(std::istream &inp);
- short getNumChannels() const override;
- int getSampleRate() const override;
- short getBitsPerSample() const override;
- const char *getData() const override;
- int getDataSize() const override;
- const std::string &getFilename() const;
-private:
- std::string filename;
- WaveHeader header;
- std::unique_ptr<char []> data;
-
- void load(std::istream &inp);
-};
 
 }
 namespace jukebox {
@@ -133,11 +99,11 @@ namespace jukebox {
 
 class Mixer {
 public:
- Mixer(MixerImpl *impl);
+ Mixer();
  int getVolume();
  void setVolume(int vol);
 private:
- std::unique_ptr<MixerImpl> impl;
+ MixerImpl &impl;
 };
 
 extern Mixer mixer;

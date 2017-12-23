@@ -25,18 +25,22 @@ namespace jukebox {
 // TODO rename to WaveFileImpl?
 class WaveFile : public SoundFileImpl {
 	// TODO use fixed int types
-	struct WaveHeader {
+	struct WaveHeader1 {
 		char ChunkID[4];
 		int ChunkSize;
 		char Format[4];
 		char Subchunk1ID[4];
 		int Subchunk1Size;
+	};
+	struct WaveHeader2 {
 		short AudioFormat;
 		short NumChannels;
 		int SampleRate;
 		int ByteRate;
 		short BlockAlign;
 		short BitsPerSample;
+	};
+	struct WaveHeader3 {
 		char Subchunk2ID[4];
 		int Subchunk2Size;
 	};
@@ -51,9 +55,11 @@ public:
 	int getDataSize() const override;
 	const std::string &getFilename() const override;
 private:
-	WaveHeader header;
-	std::unique_ptr<char []> data;
 	std::string filename;
+	WaveHeader1 header1;
+	WaveHeader2 header2;
+	WaveHeader3 header3;
+	std::unique_ptr<char []> data;
 };
 
 }
