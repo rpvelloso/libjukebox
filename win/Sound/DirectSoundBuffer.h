@@ -13,41 +13,16 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DIRECTSOUNDBUFFER_H_
-#define DIRECTSOUNDBUFFER_H_
+#ifndef LIBJUKEBOX_DIRECTSOUNDBUFFER_2017_12_17_H_
+#define LIBJUKEBOX_DIRECTSOUNDBUFFER_2017_12_17_H_
 
-#include <windows.h>
 #include <dsound.h>
+#include <mmsystem.h>
 
-#include "Sound/SoundImpl.h"
-#include "Sound/Sound.h"
-#include "FileFormats/SoundFile.h"
+#include "jukebox/FileFormats/SoundFile.h"
+#include "jukebox/Sound/SoundImpl.h"
 
 namespace jukebox {
-
-class DSoundDevice {
-public:
-	static struct IDirectSound &getDevice() {
-		static DSoundDevice instance;
-		return *(instance.lpds);
-	}
-private:
-	LPDIRECTSOUND lpds;
-
-	DSoundDevice() {
-		// create device
-		auto hr = DirectSoundCreate(NULL, &lpds, NULL);
-
-		if (FAILED(hr))
-			throw std::runtime_error("failed DirectSoundCreate");
-
-		// set cooperative level to priority
-		hr = lpds->SetCooperativeLevel(GetConsoleWindow(), DSSCL_PRIORITY);
-
-		if (FAILED(hr))
-			throw std::runtime_error("failed SetCooperativeLevel");
-	}
-};
 
 extern void ReleaseBuffer(LPDIRECTSOUNDBUFFER);
 
@@ -68,4 +43,4 @@ private:
 
 } /* namespace jukebox */
 
-#endif /* DIRECTSOUNDBUFFER_H_ */
+#endif

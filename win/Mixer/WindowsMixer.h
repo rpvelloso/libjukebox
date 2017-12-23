@@ -13,12 +13,12 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_WINDOWSMIXER_H_
-#define WIN_WINDOWSMIXER_H_
+#ifndef LIBJUKEBOX_WINDOWSMIXER_2017_12_17_H_
+#define LIBJUKEBOX_WINDOWSMIXER_2017_12_17_H_
 
-#include <windows.h>
+#include <mmsystem.h>
 
-#include "Mixer/MixerImpl.h"
+#include "jukebox/Mixer/MixerImpl.h"
 
 namespace jukebox {
 
@@ -42,4 +42,4 @@ private:
 
 } /* namespace jukebox */
 
-#endif /* WIN_WINDOWSMIXER_H_ */
+#endif

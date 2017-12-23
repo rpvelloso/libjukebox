@@ -1,3 +1,5 @@
+// TODO generate this file or an equivalent one via a deployment target
+
 #ifndef _LIBJUKEBOX_H
 #define _LIBJUKEBOX_H
 
