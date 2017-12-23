@@ -21,3 +21,14 @@ cc_library(
 		":sound_file_impl",
 	],
 )
+
+cc_library(
+	name = "vorbis_file",
+	srcs = ["VorbisFile.cpp"],
+	hdrs = ["VorbisFile.h"],
+	deps = [
+		":sound_file",
+		":sound_file_impl",
+		"//jukebox/FileFormats/stb_vorbis",
+	],
+)

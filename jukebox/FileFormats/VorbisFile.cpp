@@ -18,23 +18,14 @@
 #include <exception>
 #include <stdlib.h>
 
-#include "FileFormats/SoundFile.h"
-#include "FileFormats/VorbisFile.h"
-
-extern "C" {
-extern int stb_vorbis_decode_memory(
-	const unsigned char *mem,
-	int len,
-	int *channels,
-	int *sample_rate,
-	short **output);
-}
+#include "VorbisFile.h"
+#include "SoundFile.h"
+#include "jukebox/FileFormats/stb_vorbis/stb_vorbis.h"
 
 namespace jukebox {
 
 void freeVorbis(char* ptr) {
-	if (ptr != nullptr)
-		free(ptr);
+	free(ptr);
 }
 
 VorbisFile::VorbisFile(const std::string& filename) :
