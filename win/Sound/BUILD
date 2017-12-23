@@ -9,6 +9,7 @@ cc_library(
 		"//jukebox/Sound:sound",
 		"//jukebox/Sound:sound_impl",
 		"@win32_libs//:dsound",
+		"@win32_libs//:user32",
 		"@win32_libs//:winmm",
 	],
 )

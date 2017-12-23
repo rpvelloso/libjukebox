@@ -70,18 +70,26 @@ int main(int argc, char **argv) {
 	std::cout << "vol: " << mixer.getVolume() << std::endl;
 	//sound.setVolume(100);
 	sound.play();
+
+	// TODO replace with a proper key reading
 	char n;
 	std::cin >> n;
+
 	sound.stop();
 	mixer.setVolume(10);
 	std::cout << "vol: " << mixer.getVolume() << std::endl;
 	//sound.setVolume(30);
 	sound.play();
+
+	// TODO replace with a proper key reading
 	std::cin >> n;
+
 	//sound2.setVolume(100);
 	mixer.setVolume(80);
 	std::cout << "vol: " << mixer.getVolume() << std::endl;
 	sound2.play();
+
+	// TODO replace with a proper key reading
 	std::cin >> n;
 
 	return 0;

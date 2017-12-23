@@ -13,6 +13,14 @@ cc_library(
 )
 
 cc_library(
+	name = "user32",
+	srcs = [
+		"User32.lib",
+	],
+	visibility = ["//visibility:public"],
+)
+
+cc_library(
 	name = "winmm",
 	srcs = [
 		"winmm.lib",
