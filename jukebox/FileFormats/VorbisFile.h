@@ -13,12 +13,12 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VORBISFILE_H_
-#define VORBISFILE_H_
+#ifndef LIBJUKEBOX_VORBISFILE_2017_12_23_H_
+#define LIBJUKEBOX_VORBISFILE_2017_12_23_H_
 
 #include <memory>
 
-#include "FileFormats/SoundFileImpl.h"
+#include "SoundFileImpl.h"
 
 namespace jukebox {
 
@@ -46,4 +46,4 @@ private:
 
 } /* namespace jukebox */
 
-#endif /* VORBISFILE_H_ */
+#endif
