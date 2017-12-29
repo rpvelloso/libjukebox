@@ -14,8 +14,31 @@
  */
 
 #include <algorithm>
+#include "AlsaHandle.h"
+#include "jukebox/Sound/Sound.h"
 
-#include "Sound/AlsaHandle.h"
+namespace {
+
+constexpr size_t minFrames = 100;
+
+class StatusGuard {
+public:
+  StatusGuard(std::atomic<bool> &status, bool entry) :
+	  status(status),
+	  exitStatus(!entry) {
+
+	  status = entry;
+  };
+
+  ~StatusGuard() {
+	  status = exitStatus;
+  }
+private:
+  std::atomic<bool> &status;
+  bool exitStatus;
+};
+
+}
 
 namespace jukebox {
 
@@ -25,6 +48,8 @@ void closeAlsaHandle(snd_pcm_t *handle) {
 		snd_pcm_close(handle);
 	}
 }
+
+// AlsaHandle
 
 AlsaHandle::AlsaHandle(SoundFile &file) :
 	SoundImpl(file),
@@ -40,25 +65,7 @@ AlsaHandle::AlsaHandle(SoundFile &file) :
 	prepare();
 }
 
-class StatusGuard {
-public:
-  StatusGuard(std::atomic<bool> &status, bool entry) :
-	  status(status),
-	  exitStatus(!entry) {
-
-	  status = entry;
-  };
-  ~StatusGuard() {
-	  status = exitStatus;
-  }
-private:
-  std::atomic<bool> &status;
-  bool exitStatus;
-};
-
 void AlsaHandle::play() {
-	static size_t minFrames = 100;
-
 	playThread = std::thread([this]() {
 		StatusGuard statusGuard(playing, true);
 

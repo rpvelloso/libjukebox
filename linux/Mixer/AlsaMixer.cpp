@@ -13,11 +13,9 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
 #include <exception>
-
-#include "Mixer/Mixer.h"
-#include "Mixer/AlsaMixer.h"
+#include "AlsaMixer.h"
+#include "jukebox/Mixer/Mixer.h"
 
 namespace jukebox {
 
@@ -35,7 +33,6 @@ void closeMixer(snd_mixer_t *handle) {
 }
 
 AlsaMixer::AlsaMixer(const std::string &devName, const std::string &element) :
-	MixerImpl(),
 	handlePtr(nullptr, closeMixer) {
 
 	snd_mixer_t *handle;
