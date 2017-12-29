@@ -21,9 +21,13 @@
 #define ALSA_DEVICE "sysdefault"
 #endif
 
+#ifndef ALSA_MIN_FRAMES
+#define ALSA_MIN_FRAMES 100
+#endif
+
 namespace {
 
-constexpr size_t minFrames = 100;
+constexpr size_t minFrames = ALSA_MIN_FRAMES;
 
 class StatusGuard {
 public:
