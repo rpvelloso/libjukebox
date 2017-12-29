@@ -17,6 +17,10 @@
 #include "AlsaHandle.h"
 #include "jukebox/Sound/Sound.h"
 
+#ifndef ALSA_DEVICE
+#define ALSA_DEVICE "sysdefault"
+#endif
+
 namespace {
 
 constexpr size_t minFrames = 100;
@@ -56,7 +60,7 @@ AlsaHandle::AlsaHandle(SoundFile &file) :
 	handlePtr(nullptr, closeAlsaHandle) {
 
 	snd_pcm_t *handle;
-	auto res = snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0);
+	auto res = snd_pcm_open(&handle, ALSA_DEVICE, SND_PCM_STREAM_PLAYBACK, 0);
 	if (res != 0)
 		throw std::runtime_error("snd_pcm_open error.");
 
