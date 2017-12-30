@@ -14,8 +14,39 @@
  */
 
 #include <algorithm>
+#include "AlsaHandle.h"
+#include "jukebox/Sound/Sound.h"
 
-#include "Sound/AlsaHandle.h"
+#ifndef ALSA_DEVICE
+#define ALSA_DEVICE "sysdefault"
+#endif
+
+#ifndef ALSA_MIN_FRAMES
+#define ALSA_MIN_FRAMES 100
+#endif
+
+namespace {
+
+constexpr size_t minFrames = ALSA_MIN_FRAMES;
+
+class StatusGuard {
+public:
+  StatusGuard(std::atomic<bool> &status, bool entry) :
+	  status(status),
+	  exitStatus(!entry) {
+
+	  status = entry;
+  };
+
+  ~StatusGuard() {
+	  status = exitStatus;
+  }
+private:
+  std::atomic<bool> &status;
+  bool exitStatus;
+};
+
+}
 
 namespace jukebox {
 
@@ -26,12 +57,14 @@ void closeAlsaHandle(snd_pcm_t *handle) {
 	}
 }
 
+// AlsaHandle
+
 AlsaHandle::AlsaHandle(SoundFile &file) :
 	SoundImpl(file),
 	handlePtr(nullptr, closeAlsaHandle) {
 
 	snd_pcm_t *handle;
-	auto res = snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0);
+	auto res = snd_pcm_open(&handle, ALSA_DEVICE, SND_PCM_STREAM_PLAYBACK, 0);
 	if (res != 0)
 		throw std::runtime_error("snd_pcm_open error.");
 
@@ -40,25 +73,7 @@ AlsaHandle::AlsaHandle(SoundFile &file) :
 	prepare();
 }
 
-class StatusGuard {
-public:
-  StatusGuard(std::atomic<bool> &status, bool entry) :
-	  status(status),
-	  exitStatus(!entry) {
-
-	  status = entry;
-  };
-  ~StatusGuard() {
-	  status = exitStatus;
-  }
-private:
-  std::atomic<bool> &status;
-  bool exitStatus;
-};
-
 void AlsaHandle::play() {
-	static size_t minFrames = 100;
-
 	playThread = std::thread([this]() {
 		StatusGuard statusGuard(playing, true);
 

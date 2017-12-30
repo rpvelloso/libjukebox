@@ -34,11 +34,18 @@ cc_library(
 
 new_local_repository(
 	name = "linux_libs",
-	path = "/usr/lib",
+	path = "/usr/lib/x86_64-linux-gnu",
 	build_file_content = """
 cc_library(
 	name = "asound",
-	srcs = ["x86_64-linux-gnu/asound.so"],
+	srcs = ["libasound.so.2"],
+	deps = [":pthread"],
+	visibility = ["//visibility:public"],
+)
+
+cc_library(
+	name = "pthread",
+	srcs = ["libpthread.so"],
 	visibility = ["//visibility:public"],
 )
 """,

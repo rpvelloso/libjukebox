@@ -13,17 +13,16 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LINUX_ALSAHANDLE_H_
-#define LINUX_ALSAHANDLE_H_
+#ifndef LIBJUKEBOX_LINUX_ALSAHANDLE_2017_12_28_H_
+#define LIBJUKEBOX_LINUX_ALSAHANDLE_2017_12_28_H_
 
-#include <thread>
-#include <memory>
 #include <atomic>
+#include <memory>
+#include <thread>
 #include <alsa/asoundlib.h>
 
-#include "Sound/Sound.h"
-#include "Sound/SoundImpl.h"
-#include "FileFormats/SoundFile.h"
+#include "jukebox/FileFormats/SoundFile.h"
+#include "jukebox/Sound/SoundImpl.h"
 
 namespace jukebox {
 
@@ -52,4 +51,4 @@ private:
 
 } /* namespace jukebox */
 
-#endif /* LINUX_ALSAHANDLE_H_ */
+#endif
