@@ -14,6 +14,7 @@
  */
 
 #include <algorithm>
+#include <cstdint>
 #include "AlsaHandle.h"
 #include "jukebox/Sound/Sound.h"
 
@@ -87,14 +88,14 @@ void AlsaHandle::play() {
 			std::copy(buf, buf+(frames*frameSize), volBuf.get());
 
 			if (soundFile.getBitsPerSample() == 16)
-				applyVolume((short *)(volBuf.get()), frames*frameSize);
+				applyVolume(reinterpret_cast<int16_t *>(volBuf.get()), frames*frameSize);
 			else
 				applyVolume(volBuf.get(), frames*frameSize);
 
 			auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), frames);
 			if (n > 0) {
 				numFrames -= n;
-				buf += (n * frameSize);
+				buf += n * frameSize;
 			} else
 				throw std::runtime_error("snd_pcm_writei error.");
 		}
@@ -124,14 +125,10 @@ AlsaHandle::~AlsaHandle() {
 };
 
 void AlsaHandle::config() {
-  snd_pcm_format_t format = SND_PCM_FORMAT_S8;
-  if (soundFile.getBitsPerSample() == 16)
-    format = SND_PCM_FORMAT_S16_LE;
-
   auto res = snd_pcm_set_params(
     handlePtr.get(),
-    format,
-    SND_PCM_ACCESS_RW_INTERLEAVED,
+	soundFile.getBitsPerSample() == 16 ? SND_PCM_FORMAT_S16_LE : SND_PCM_FORMAT_U8,
+	SND_PCM_ACCESS_RW_INTERLEAVED,
     soundFile.getNumChannels(),
     soundFile.getSampleRate(),
     1,
