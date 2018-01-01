@@ -25,6 +25,10 @@ public:
 	virtual void setVolume(int vol) = 0;
 };
 
+namespace factory {
+	extern MixerImpl &makeMixerImpl();
+}
+
 } /* namespace jukebox */
 
 #endif
