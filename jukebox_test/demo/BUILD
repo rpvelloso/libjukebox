@@ -28,12 +28,4 @@ cc_binary(
 		":main",
 		"//:linux_deps",
 	],
-	
-# I am getting undefined reference to jukebox::factory::makeMixerImpl()
-# even after adding "//linux/Mixer:alsa_mixer" dependency
-# gcc is probably messing up with the linking settings.
-# workaround: manually include AlsaMixer.cpp as a source to get rid of this issue
-# note: :main_win32 does not have this problem and it links properly
-# note: adding AlsaMixer.cpp to //:linux_deps also does not help
-	srcs = ["//linux/Mixer:AlsaMixer.cpp"],
 )

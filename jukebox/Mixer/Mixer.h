@@ -32,4 +32,4 @@ private:
 
 } /* namespace jukebox */
 
-#endif /* MIXER_H_ */
+#endif

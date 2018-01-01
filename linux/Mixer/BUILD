@@ -5,7 +5,6 @@ cc_library(
 	srcs = ["AlsaMixer.cpp"],
 	hdrs = ["AlsaMixer.h"],
 	deps = [
-		"//jukebox/Mixer:mixer",
 		"//jukebox/Mixer:mixer_impl",
 		"@linux_libs//:asound",
 	],
