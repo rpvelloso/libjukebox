@@ -15,9 +15,7 @@ cc_binary(
 	],
 	deps = [
 		":main",
-		"//jukebox/FileFormats:wave_file",  # because the factory implementation is there :-(
-		"//win/Mixer:mixer",
-		"//win/Sound:direct_sound",
+		"//:win_deps",
 	],
 )
 
@@ -28,15 +26,14 @@ cc_binary(
 	],
 	deps = [
 		":main",
-		"//jukebox/FileFormats:wave_file",  # because the factory implementation is there :-(
-		"//linux/Mixer:alsa_mixer",
-		"//linux/Sound:alsa_sound",
+		"//:linux_deps",
 	],
 	
-	# I am getting undefined reference to jukebox::factory::makeMixerImpl()
-	# even after adding "//linux/Mixer:alsa_mixer" dependency
-	# gcc is probably messing up with the linking settings.
-	# I have to manually include AlsaMixer.cpp as a source to get rid of this issue
-	# note that the windows target does not have this problem and it links properly
+# I am getting undefined reference to jukebox::factory::makeMixerImpl()
+# even after adding "//linux/Mixer:alsa_mixer" dependency
+# gcc is probably messing up with the linking settings.
+# workaround: manually include AlsaMixer.cpp as a source to get rid of this issue
+# note: :main_win32 does not have this problem and it links properly
+# note: adding AlsaMixer.cpp to //:linux_deps also does not help
 	srcs = ["//linux/Mixer:AlsaMixer.cpp"],
 )
