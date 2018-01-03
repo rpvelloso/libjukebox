@@ -23,10 +23,6 @@
 
 namespace jukebox {
 
-namespace factory {
-	extern MixerImpl &makeMixerImpl();
-}
-
 extern void closeMixer(snd_mixer_t *handle);
 
 class AlsaMixer : public MixerImpl {

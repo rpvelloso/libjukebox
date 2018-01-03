@@ -15,17 +15,8 @@
 
 #include <exception>
 #include "AlsaMixer.h"
-#include "jukebox/Mixer/Mixer.h"
 
 namespace jukebox {
-
-namespace factory {
-	MixerImpl &makeMixerImpl() {
-		static AlsaMixer mixerImpl("default", "Master");
-
-		return mixerImpl;
-	}
-}
 
 void closeMixer(snd_mixer_t *handle) {
 	if (handle != nullptr)
@@ -85,6 +76,13 @@ void AlsaMixer::setVolume(int vol) {
 	auto res = snd_mixer_selem_set_playback_volume_all(element_handle, alsaVol);
 	if (res != 0)
 		throw std::runtime_error("snd_mixer_selem_set_playback_volume_all error.");
+}
+
+namespace factory {
+	MixerImpl &makeMixerImpl() {
+		static AlsaMixer mixerImpl("default", "Master");
+		return mixerImpl;
+	}
 }
 
 } /* namespace jukebox */

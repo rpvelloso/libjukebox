@@ -18,11 +18,10 @@
 #include <string>
 
 #include "WindowsMixer.h"
-#include "jukebox/Mixer/Mixer.h"
 
 namespace jukebox {
 
-WindowsMixer::WindowsMixer(DWORD device) : MixerImpl() {
+WindowsMixer::WindowsMixer(DWORD device) {
 	auto res = mixerOpen(&hMixer, MIXER_OBJECTF_MIXER, 0, 0, 0);
 	if (res != MMSYSERR_NOERROR)
 		throw std::runtime_error("mixerOpen error " + std::to_string(res));

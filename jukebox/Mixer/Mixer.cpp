@@ -24,10 +24,6 @@ int normalize(int vol) { return std::max(0,std::min(vol,100)); }
 
 namespace jukebox {
 
-namespace factory {
-	extern MixerImpl &makeMixerImpl();
-}
-
 Mixer::Mixer() :
 	impl(factory::makeMixerImpl()) {
 }

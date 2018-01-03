@@ -22,10 +22,6 @@
 
 namespace jukebox {
 
-namespace factory {
-	extern MixerImpl &makeMixerImpl();
-}
-
 class WindowsMixer : public MixerImpl {
 	friend MixerImpl & factory::makeMixerImpl();
 public:
