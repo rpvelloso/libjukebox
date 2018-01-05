@@ -1,5 +1,3 @@
-// TODO generate this file or an equivalent one via a deployment target
-
 #ifndef _LIBJUKEBOX_H
 #define _LIBJUKEBOX_H
 
@@ -12,8 +10,7 @@ namespace jukebox {
 
 class SoundFileImpl {
 public:
- SoundFileImpl();
- virtual ~SoundFileImpl();
+ virtual ~SoundFileImpl() = default;
  virtual short getNumChannels() const = 0;
  virtual int getSampleRate() const = 0;
  virtual short getBitsPerSample() const = 0;
@@ -42,6 +39,7 @@ private:
  void normalize();
 };
 
+
 namespace factory {
  extern SoundFile loadWaveFile(const std::string &filename);
  extern SoundFile loadWaveStream(std::istream &inp);
@@ -55,7 +53,7 @@ namespace jukebox {
 class SoundImpl {
 public:
  SoundImpl(SoundFile &file);
- virtual ~SoundImpl();
+ virtual ~SoundImpl() = default;
  virtual void play() = 0;
  virtual void stop() = 0;
  virtual int getVolume() = 0;
@@ -88,11 +86,14 @@ namespace jukebox {
 
 class MixerImpl {
 public:
- MixerImpl();
- virtual ~MixerImpl();
+ virtual ~MixerImpl() = default;
  virtual int getVolume() = 0;
  virtual void setVolume(int vol) = 0;
 };
+
+namespace factory {
+ extern MixerImpl &makeMixerImpl();
+}
 
 }
 namespace jukebox {
@@ -105,8 +106,6 @@ public:
 private:
  MixerImpl &impl;
 };
-
-extern Mixer mixer;
 
 }
 

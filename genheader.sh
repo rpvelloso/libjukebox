@@ -1,11 +1,11 @@
 #!/bin/bash
 headers=(
-	'src/FileFormats/SoundFileImpl.h'
-	'src/FileFormats/SoundFile.h'
-	'src/Sound/SoundImpl.h'
-	'src/Sound/Sound.h'
-	'src/Mixer/MixerImpl.h'
-	'src/Mixer/Mixer.h'
+	'jukebox/FileFormats/SoundFileImpl.h'
+	'jukebox/FileFormats/SoundFile.h'
+	'jukebox/Sound/SoundImpl.h'
+	'jukebox/Sound/Sound.h'
+	'jukebox/Mixer/MixerImpl.h'
+	'jukebox/Mixer/Mixer.h'
 )
 
 rm -rf tmp.h tmp2.h libjukebox.h
