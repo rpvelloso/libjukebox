@@ -28,6 +28,7 @@ Sound::Sound(SoundImpl *impl) : impl(impl) {
 }
 
 void Sound::play() {
+	impl->stop();
 	impl->play();
 }
 

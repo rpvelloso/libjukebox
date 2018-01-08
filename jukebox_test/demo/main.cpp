@@ -17,6 +17,8 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <unistd.h>
+//#include <windows.h>
 
 #include "libjukebox.h"
 
@@ -68,6 +70,8 @@ int main(int argc, char **argv) {
 	std::cout << "vol: " << mixer.getVolume() << std::endl;
 	//sound.setVolume(100);
 	sound.play();
+	//Sleep(2000);
+	//sound.play();
 
 	// TODO replace with a proper key reading
 	char n;
