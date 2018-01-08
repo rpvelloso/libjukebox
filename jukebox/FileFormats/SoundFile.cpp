@@ -16,6 +16,7 @@
 #include <cmath>
 #include <limits>
 #include <algorithm>
+#include <cstdint>
 
 #include "SoundFile.h"
 
@@ -23,9 +24,9 @@ namespace jukebox {
 
 SoundFile::SoundFile(SoundFileImpl *impl) : impl(impl) {
 	if (impl->getBitsPerSample() == 16)
-		normalize<short>();
+		normalize<int16_t>();
 	else
-		normalize<char>();
+		normalize<uint8_t>();
 };
 
 short SoundFile::getNumChannels() const {

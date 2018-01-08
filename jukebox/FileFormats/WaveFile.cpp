@@ -72,7 +72,7 @@ WaveFile::WaveFile(std::istream &inp, const std::string &filename) :
 
 	// skip extra header data
 	inp.seekg(
-		std::max(header1.Subchunk1Size - 16, 0),
+		std::max(header1.Subchunk1Size - 16, 0U),
 		std::ios::cur);
 
 	inp.read((char *)&header3, sizeof(header3));

@@ -6,8 +6,7 @@
  */
 
 #include <windows.h>
-// TODO use <cstring>
-#include <string.h>
+#include <cstring>
 #include <cmath>
 
 #include "DirectSoundBuffer.h"

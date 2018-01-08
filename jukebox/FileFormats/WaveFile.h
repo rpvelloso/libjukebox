@@ -17,6 +17,7 @@
 #define LIBJUKEBOX_WAVEFILE_2017_12_17_H_
 
 #include <memory>
+#include <cstdint>
 
 #include "SoundFileImpl.h"
 
@@ -24,25 +25,24 @@ namespace jukebox {
 
 // TODO rename to WaveFileImpl?
 class WaveFile : public SoundFileImpl {
-	// TODO use fixed int types
 	struct WaveHeader1 {
 		char ChunkID[4];
-		int ChunkSize;
+		uint32_t ChunkSize;
 		char Format[4];
 		char Subchunk1ID[4];
-		int Subchunk1Size;
+		uint32_t Subchunk1Size;
 	};
 	struct WaveHeader2 {
-		short AudioFormat;
-		short NumChannels;
-		int SampleRate;
-		int ByteRate;
-		short BlockAlign;
-		short BitsPerSample;
+		uint16_t AudioFormat;
+		uint16_t NumChannels;
+		uint32_t SampleRate;
+		uint32_t ByteRate;
+		uint16_t BlockAlign;
+		uint16_t BitsPerSample;
 	};
 	struct WaveHeader3 {
 		char Subchunk2ID[4];
-		int Subchunk2Size;
+		uint32_t Subchunk2Size;
 	};
 public:
 	WaveFile(const std::string &filename);
