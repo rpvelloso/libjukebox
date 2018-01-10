@@ -13,6 +13,7 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include <windows.h>
 #include <cstring>
 #include <cmath>
@@ -59,6 +60,10 @@ DirectSoundBuffer::DirectSoundBuffer(SoundFile &file) :
 	prepare();
 }
 
+DirectSoundBuffer::~DirectSoundBuffer() {
+	if (loadBufferThread.joinable())
+		loadBufferThread.join();
+}
 void DirectSoundBuffer::play() {
   DWORD status;
 
@@ -67,11 +72,15 @@ void DirectSoundBuffer::play() {
   if (status != DSBSTATUS_PLAYING) {
     // rewind the sound
     pDsb->SetCurrentPosition(0);
+    position = 0;
+
+    if (fillBuffer())
+    	startThread();
 
     auto hr = pDsb->Play(
         0,	// Unused.
         0,	// Priority for voice management.
-        0);	// Flags.
+		DSBPLAY_LOOPING);	// Flags.
 
     if (FAILED(hr))
       throw std::runtime_error("failed Play");
@@ -82,6 +91,64 @@ void DirectSoundBuffer::stop() {
 	auto hr = pDsb->Stop();
 	if (FAILED(hr))
 		throw std::runtime_error("failed Stop");
+}
+
+bool DirectSoundBuffer::fillBuffer() {
+	// fill secondary buffer with wav/sound
+	LPVOID bufAddr;
+	DWORD bufLen;
+
+	auto hr = pDsb->Lock(
+	      0,		// Offset at which to start lock.
+	      0,		// Size of lock; ignored because of flag.
+	      &bufAddr,	// Gets address of first part of lock.
+	      &bufLen,	// Gets size of first part of lock.
+	      NULL,		// Address of wraparound not needed.
+	      NULL,		// Size of wraparound not needed.
+	      DSBLOCK_ENTIREBUFFER); // Flag.
+
+	if (FAILED(hr))
+		throw std::runtime_error("failed Lock");
+
+	auto len = soundFile.read((char *)bufAddr, position, bufLen);
+	position += len;
+
+	pDsb->Unlock(
+		bufAddr,	// Address of lock start.
+		bufLen,		// Size of lock.
+		NULL,		// No wraparound portion.
+		0);			// No wraparound size.
+
+	return position < soundFile.getDataSize();
+}
+
+void DirectSoundBuffer::startThread() {
+	LPDIRECTSOUNDNOTIFY notifyIface;
+	DSBPOSITIONNOTIFY notifyPos;
+
+	auto hr = pDsb->QueryInterface(IID_IDirectSoundNotify, (LPVOID*)&notifyIface);
+	if (FAILED(hr))
+		throw std::runtime_error("failed QueryInterface");
+
+	auto event = CreateEvent(nullptr, false, false, nullptr);
+
+	notifyPos.dwOffset = DSBPN_OFFSETSTOP;
+	notifyPos.hEventNotify = event;
+
+	hr = notifyIface->SetNotificationPositions(1, &notifyPos);
+	notifyIface->Release();
+	if (FAILED(hr))
+		throw std::runtime_error("failed SetNotificationPositions");
+
+	loadBufferThread = std::thread(
+		[this](auto event){
+			do {
+				std::cerr << "buf pos: " << position << std::endl;
+				WaitForSingleObject(event, INFINITE);
+			} while (fillBuffer());
+			CloseHandle(event);
+		},
+		event);
 }
 
 void DirectSoundBuffer::prepare() {
@@ -100,6 +167,7 @@ void DirectSoundBuffer::prepare() {
 			DSBCAPS_CTRLPAN |
 			DSBCAPS_CTRLVOLUME |
 			DSBCAPS_CTRLFREQUENCY |
+			DSBCAPS_CTRLPOSITIONNOTIFY |
 			DSBCAPS_GLOBALFOCUS;
 	/*
 	 * DSBCAPS_CTRL3D				The sound source can be moved in 3D space.
@@ -110,7 +178,7 @@ void DirectSoundBuffer::prepare() {
 	 * DSBCAPS_CTRLVOLUME			The volume of the sound can be changed.
 	 */
 
-	dsbdesc.dwBufferBytes = soundFile.getDataSize();
+	dsbdesc.dwBufferBytes = wfx.nBlockAlign * 1024 * 32;
 	dsbdesc.lpwfxFormat = &wfx;
 
 	LPDIRECTSOUNDBUFFER bufPtr;
@@ -120,30 +188,6 @@ void DirectSoundBuffer::prepare() {
 		throw std::runtime_error("failed CreateSoundBuffer");
 
 	pDsb.reset(bufPtr);
-
-	// fill secondary buffer with wav/sound
-	LPVOID bufAddr;
-	DWORD bufLen;
-
-	hr = pDsb->Lock(
-	      0,		// Offset at which to start lock.
-	      0,		// Size of lock; ignored because of flag.
-	      &bufAddr,	// Gets address of first part of lock.
-	      &bufLen,	// Gets size of first part of lock.
-	      NULL,		// Address of wraparound not needed.
-	      NULL,		// Size of wraparound not needed.
-	      DSBLOCK_ENTIREBUFFER); // Flag.
-
-	if (FAILED(hr))
-		throw std::runtime_error("failed Lock");
-
-	soundFile.read((char *)bufAddr, 0, bufLen);
-
-	pDsb->Unlock(
-		bufAddr,	// Address of lock start.
-		bufLen,		// Size of lock.
-		NULL,		// No wraparound portion.
-		0);			// No wraparound size.
 }
 
 /*

@@ -16,6 +16,7 @@
 #ifndef LIBJUKEBOX_DIRECTSOUNDBUFFER_2017_12_17_H_
 #define LIBJUKEBOX_DIRECTSOUNDBUFFER_2017_12_17_H_
 
+#include <thread>
 #include <dsound.h>
 #include <mmsystem.h>
 
@@ -29,6 +30,7 @@ extern void ReleaseBuffer(LPDIRECTSOUNDBUFFER);
 class DirectSoundBuffer: public SoundImpl {
 public:
 	DirectSoundBuffer(SoundFile &file);
+	~DirectSoundBuffer();
 	void play() override;
 	void stop() override;
 	int getVolume() override;
@@ -37,8 +39,12 @@ private:
 	WAVEFORMATEX wfx;
 	DSBUFFERDESC dsbdesc;
 	std::unique_ptr<struct IDirectSoundBuffer, decltype(&ReleaseBuffer)> pDsb;
+	std::thread loadBufferThread;
 
+	int position = 0;
 	void prepare();
+	bool fillBuffer();
+	void startThread();
 };
 
 } /* namespace jukebox */
