@@ -23,7 +23,6 @@
 
 namespace jukebox {
 
-// TODO rename to WaveFileImpl?
 class WaveFileImpl : public SoundFileImpl {
 	struct WaveHeader1 {
 		char ChunkID[4];

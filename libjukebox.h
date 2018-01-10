@@ -14,9 +14,13 @@ public:
  virtual short getNumChannels() const = 0;
  virtual int getSampleRate() const = 0;
  virtual short getBitsPerSample() const = 0;
- virtual const char *getData() const = 0;
  virtual int getDataSize() const = 0;
  virtual const std::string &getFilename() const = 0;
+
+
+
+
+ virtual int read(char *buf, int pos, int len) = 0;
 };
 
 }
@@ -28,15 +32,13 @@ public:
  short getNumChannels() const;
  int getSampleRate() const;
  short getBitsPerSample() const;
- const char *getData() const;
  int getDataSize() const;
  const std::string &getFilename() const;
  double getDuration() const;
+ int read(char* buf, int pos, int len);
 private:
  std::unique_ptr<SoundFileImpl> impl;
-
- template<typename T>
- void normalize();
+ int blockSize;
 };
 
 

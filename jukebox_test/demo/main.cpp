@@ -49,7 +49,7 @@ void printFileData(const jukebox::SoundFile &file) {
 
 int main(int argc, char **argv) {
 	if( argc < 3 ) {
-		std::cout << "you need to supply two wave files as arguments" << std::endl;
+		std::cout << "you need to supply two audio (wav/ogg) files as arguments" << std::endl;
 		return 1;
 	}
 
