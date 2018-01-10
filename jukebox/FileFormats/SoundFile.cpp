@@ -14,19 +14,15 @@
  */
 
 #include <cmath>
-#include <limits>
-#include <algorithm>
-#include <cstdint>
+#include <exception>
 
 #include "SoundFile.h"
 
 namespace jukebox {
 
-SoundFile::SoundFile(SoundFileImpl *impl) : impl(impl) {
-	if (impl->getBitsPerSample() == 16)
-		normalize<int16_t>();
-	else
-		normalize<uint8_t>();
+SoundFile::SoundFile(SoundFileImpl *impl) :
+		impl(impl),
+		blockSize(impl->getNumChannels() * impl->getBitsPerSample()/8) {
 };
 
 short SoundFile::getNumChannels() const {
@@ -39,10 +35,6 @@ int SoundFile::getSampleRate() const {
 
 short SoundFile::getBitsPerSample() const {
 	return impl->getBitsPerSample();
-};
-
-const char *SoundFile::getData() const {
-	return impl->getData();
 };
 
 int SoundFile::getDataSize() const {
@@ -62,26 +54,13 @@ const std::string& SoundFile::getFilename() const {
 	return impl->getFilename();
 }
 
-template<typename T>
-void SoundFile::normalize() {
-	auto maxValue = std::numeric_limits<T>::max();
-	auto maxPeak = std::numeric_limits<T>::min();
-	auto beginIt = (T *)impl->getData();
-	auto endIt = (T *)(impl->getData() + (impl->getDataSize()/sizeof(T)));
+int SoundFile::read(char* buf, int pos, int len) {
+	if (len % blockSize != 0)
+		throw std::runtime_error("invalid buffer size, should be block aligned.");
+	if (pos % blockSize != 0)
+		throw std::runtime_error("invalid stream position, should be block aligned.");
 
-	std::for_each(beginIt, endIt,
-		[&maxPeak](T &sample){
-			if (sample > maxPeak)
-				maxPeak = sample;
-	});
-
-	double ratio = static_cast<double>(maxValue)/static_cast<double>(maxPeak);
-	std::for_each(
-		beginIt,
-		endIt,
-		[ratio](T &sample){
-			sample = static_cast<T>(static_cast<double>(sample)*ratio);
-	});
+	return impl->read(buf, pos, len);
 }
 
 } /* namespace jukebox */

@@ -137,7 +137,8 @@ void DirectSoundBuffer::prepare() {
 	if (FAILED(hr))
 		throw std::runtime_error("failed Lock");
 
-	memcpy((void *)bufAddr, soundFile.getData(), (size_t)bufLen);
+	soundFile.read((char *)bufAddr, 0, bufLen);
+
 	pDsb->Unlock(
 		bufAddr,	// Address of lock start.
 		bufLen,		// Size of lock.

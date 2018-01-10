@@ -53,23 +53,33 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	std::cout << "ready to load " << argv[1] << " as a file" << std::endl;
-	auto wav = jukebox::factory::loadWaveFile(argv[1]);
-	printFileData(wav);
+	std::string filename1(argv[1]);
+	std::string filename2(argv[2]);
 
-	std::cout << "ready to load " << argv[2] << " as a stream" << std::endl;
-	std::fstream file(argv[2], std::ios::binary|std::ios::in);
-	auto wav2 = jukebox::factory::loadWaveStream(file);
-	printFileData(wav2);
+	std::cout << "ready to load " << filename1 << " as a file" << std::endl;
 
-	auto sound = jukebox::factory::makeSound(wav);
-	auto sound2 = jukebox::factory::makeSound(wav2);
+	auto soundFile1 = filename1.back() == 'g'? // ogg?
+			jukebox::factory::loadVorbisFile(filename1):
+			jukebox::factory::loadWaveFile(filename1);
+
+	printFileData(soundFile1);
+
+	std::cout << "ready to load " << filename2 << " as a stream" << std::endl;
+	std::fstream file(filename2, std::ios::binary|std::ios::in);
+	auto soundFile2 = filename2.back() == 'g'?
+			jukebox::factory::loadVorbisStream(file):
+			jukebox::factory::loadWaveStream(file);
+	printFileData(soundFile2);
+
+	auto sound1 = jukebox::factory::makeSound(soundFile1);
+	auto sound11 = jukebox::factory::makeSound(soundFile1); // shared soundFile
+	auto sound2 = jukebox::factory::makeSound(soundFile2);
 
 	jukebox::Mixer mixer;
 	mixer.setVolume(100);
 	std::cout << "vol: " << mixer.getVolume() << std::endl;
 	//sound.setVolume(100);
-	sound.play();
+	sound1.play();
 	//Sleep(2000);
 	//sound.play();
 
@@ -77,11 +87,15 @@ int main(int argc, char **argv) {
 	char n;
 	std::cin >> n;
 
-	sound.stop();
+	sound11.play(); // play same soundFile simultaneously
+	// TODO replace with a proper key reading
+	std::cin >> n;
+
+	sound1.stop();
 	mixer.setVolume(10);
 	std::cout << "vol: " << mixer.getVolume() << std::endl;
 	//sound.setVolume(30);
-	sound.play();
+	sound1.play();
 
 	// TODO replace with a proper key reading
 	std::cin >> n;

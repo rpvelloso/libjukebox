@@ -28,15 +28,13 @@ public:
 	short getNumChannels() const;
 	int getSampleRate() const;
 	short getBitsPerSample() const;
-	const char *getData() const;
 	int getDataSize() const;
 	const std::string &getFilename() const;
 	double getDuration() const;
+	int read(char* buf, int pos, int len);
 private:
 	std::unique_ptr<SoundFileImpl> impl;
-
-	template<typename T>
-	void normalize();
+	int blockSize;
 };
 
 // TODO this is very confusing: a wave file factory in SoundFile.h - perhaps move this factory to there and create a wave file impl, instead?

@@ -13,49 +13,57 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include <algorithm>
 #include <exception>
 #include <fstream>
 #include <string>
 
-#include "WaveFile.h"
+#include "BufferedSoundFileImpl.h"
 #include "SoundFile.h"
+#include "WaveFileImpl.h"
 
 namespace jukebox {
 
 constexpr int MAX_WAVE_SIZE = 15'000'000;
 
-WaveFile::WaveFile(const std::string& filename) :
-	WaveFile(std::fstream(filename,std::ios::binary|std::ios::in),filename) {
+WaveFileImpl::WaveFileImpl(const std::string& filename) :
+	fileStream(filename,std::ios::binary|std::ios::in),
+	inputStream(fileStream.rdbuf()),
+	filename(filename) {
+
+	load();
 }
 
-WaveFile::WaveFile(std::istream &&inp, const std::string &filename) :
-	WaveFile(inp,filename) {
+WaveFileImpl::WaveFileImpl(std::istream &inp, const std::string &filename) :
+	inputStream(inp.rdbuf()),
+	filename(filename) {
+
+	load();
 }
 
-short WaveFile::getNumChannels() const {
+short WaveFileImpl::getNumChannels() const {
 	return header2.NumChannels;
 }
 
-int WaveFile::getSampleRate() const {
+int WaveFileImpl::getSampleRate() const {
 	return header2.SampleRate;
 }
 
-short WaveFile::getBitsPerSample() const {
+short WaveFileImpl::getBitsPerSample() const {
 	return header2.BitsPerSample;
 }
 
-int WaveFile::getDataSize() const {
+int WaveFileImpl::getDataSize() const {
 	return header3.Subchunk2Size;
 }
 
-WaveFile::WaveFile(std::istream &inp, const std::string &filename) :
-	filename(filename) {
+void WaveFileImpl::load() {
 	// TODO use different classes of exceptions
-	if (!inp) throw std::runtime_error("error opening " + filename);
+	if (!inputStream) throw std::runtime_error("error opening " + filename);
 
-	inp.read((char *)&header1, sizeof(header1));
-	if (inp.gcount() != sizeof(header1))
+	inputStream.read((char *)&header1, sizeof(header1));
+	if (inputStream.gcount() != sizeof(header1))
 		throw std::runtime_error("error loading " + filename + ". invalid header #1 size");
 
 	if ((std::string(header1.ChunkID, 4) != "RIFF") ||
@@ -63,20 +71,20 @@ WaveFile::WaveFile(std::istream &inp, const std::string &filename) :
 		(std::string(header1.Subchunk1ID, 4) != "fmt "))
 		throw std::runtime_error("error loading " + filename + ". bad header #1 data");
 
-	inp.read((char *)&header2, sizeof(header2));
-	if (inp.gcount() != sizeof(header2))
+	inputStream.read((char *)&header2, sizeof(header2));
+	if (inputStream.gcount() != sizeof(header2))
 		throw std::runtime_error("error loading " + filename + ". invalid header #2 size");
 
 	if (header2.AudioFormat != 1) // PCM
 		throw std::runtime_error("error loading " + filename + ". invalid audio format");
 
 	// skip extra header data
-	inp.seekg(
+	inputStream.seekg(
 		std::max(header1.Subchunk1Size - 16, 0U),
 		std::ios::cur);
 
-	inp.read((char *)&header3, sizeof(header3));
-	if (inp.gcount() != sizeof(header3))
+	inputStream.read((char *)&header3, sizeof(header3));
+	if (inputStream.gcount() != sizeof(header3))
 		throw std::runtime_error("error loading " + filename + ". invalid header #3 size");
 
 	if (std::string(header3.Subchunk2ID, 4) != "data")
@@ -87,29 +95,33 @@ WaveFile::WaveFile(std::istream &inp, const std::string &filename) :
 	if (header3.Subchunk2Size > MAX_WAVE_SIZE)
 		throw std::runtime_error("error loading " + filename + ". data size is too big");
 
-	data.reset(new char[getDataSize()]);
-	inp.read(data.get(), getDataSize());
-
-	if (inp.gcount() != getDataSize())
-		throw std::runtime_error("error loading " + filename + ". not enough data to load");
-}
-
-const char* WaveFile::getData() const {
-	return data.get();
+	headerSize = inputStream.tellg();
 }
 
 namespace factory {
 	SoundFile loadWaveFile(const std::string &filename) {
-		return SoundFile(new WaveFile(filename));
+		return SoundFile(new BufferedSoundFileImpl(new WaveFileImpl(filename)));
 	}
 
 	SoundFile loadWaveStream(std::istream &inp) {
-		return SoundFile(new WaveFile(inp));
+		return SoundFile(new BufferedSoundFileImpl(new WaveFileImpl(inp)));
 	}
 }
 
-const std::string &WaveFile::getFilename() const {
+const std::string &WaveFileImpl::getFilename() const {
 	return filename;
+}
+
+int WaveFileImpl::read(char *buf, int pos, int len) {
+	std::cerr << pos << " " << len << " " << (getDataSize() - pos) << " " << inputStream.tellg() << std::endl;
+
+	if (pos < getDataSize() && pos >= 0 && len > 0 && buf != nullptr) {
+		inputStream.seekg(headerSize + 1 + pos, std::ios::beg);
+		inputStream.read(buf, len);
+		return inputStream.gcount();
+	}
+
+	return -1;
 }
 
 }
