@@ -17,6 +17,8 @@
 #define LIBJUKEBOX_WAVEFILE_2017_12_17_H_
 
 #include <memory>
+#include <istream>
+#include <fstream>
 #include <cstdint>
 
 #include "SoundFileImpl.h"

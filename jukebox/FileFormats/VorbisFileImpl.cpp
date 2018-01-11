@@ -14,7 +14,7 @@
  */
 
 #include <fstream>
-#include <iostream>
+#include <istream>
 #include <exception>
 #include <stdlib.h>
 
@@ -100,11 +100,18 @@ const std::string& VorbisFileImpl::getFilename() const {
 
 namespace factory {
 	SoundFile loadVorbisFile(const std::string &filename) {
-		return SoundFile(/*new BufferedSoundFileImpl*/(new VorbisFileImpl(filename)));
+		return SoundFile(new VorbisFileImpl(filename));
 	}
 
 	SoundFile loadVorbisStream(std::istream &inp) {
-		return SoundFile(/*new BufferedSoundFileImpl*/(new VorbisFileImpl(inp)));
+		return SoundFile(new VorbisFileImpl(inp));
+	}
+	SoundFile loadBufferedVorbisFile(const std::string &filename) {
+		return SoundFile(new BufferedSoundFileImpl(new VorbisFileImpl(filename)));
+	}
+
+	SoundFile loadBufferedVorbisStream(std::istream &inp) {
+		return SoundFile(new BufferedSoundFileImpl(new VorbisFileImpl(inp)));
 	}
 }
 

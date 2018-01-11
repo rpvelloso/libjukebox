@@ -12,7 +12,6 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
 #include <windows.h>
 #include <cstring>
 #include <cmath>
@@ -123,7 +122,6 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 	if (len < size)
 		memset((char *)bufAddr+len, 0, size-len);
 
-	std::cerr << "*** " << len << std::endl;
 	pDsb->Unlock(
 		bufAddr,	// Address of lock start.
 		bufLen,		// Size of lock.
@@ -148,9 +146,6 @@ void DirectSoundBuffer::startThread() {
 	notifyPos[2].dwOffset = DSCBPN_OFFSET_STOP;
 	notifyPos[2].hEventNotify = notifyPos[0].hEventNotify;
 
-	std::cerr << notifyPos[0].dwOffset << " " << notifyPos[1].dwOffset
-			<< " " << wfx.nBlockAlign << " " << dsbdesc.dwBufferBytes << std::endl;
-
 	hr = notifyIface->SetNotificationPositions(3, notifyPos);
 	notifyIface->Release();
 	if (FAILED(hr))
@@ -165,7 +160,6 @@ void DirectSoundBuffer::startThread() {
 			bool offset = true;
 			do {
 				offset = !offset;
-				std::cerr << "buf pos: " << position << std::endl;
 				WaitForSingleObject(event, INFINITE);
 			} while (
 				(status() & DSBSTATUS_PLAYING) &&

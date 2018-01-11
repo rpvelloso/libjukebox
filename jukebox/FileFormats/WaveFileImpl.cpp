@@ -13,11 +13,8 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
 #include <algorithm>
 #include <exception>
-#include <fstream>
-#include <string>
 
 #include "BufferedSoundFileImpl.h"
 #include "SoundFile.h"
@@ -100,11 +97,18 @@ void WaveFileImpl::load() {
 
 namespace factory {
 	SoundFile loadWaveFile(const std::string &filename) {
-		return SoundFile(/*new BufferedSoundFileImpl*/(new WaveFileImpl(filename)));
+		return SoundFile(new WaveFileImpl(filename));
 	}
 
 	SoundFile loadWaveStream(std::istream &inp) {
-		return SoundFile(/*new BufferedSoundFileImpl*/(new WaveFileImpl(inp)));
+		return SoundFile(new WaveFileImpl(inp));
+	}
+	SoundFile loadBufferedWaveFile(const std::string &filename) {
+		return SoundFile(new BufferedSoundFileImpl(new WaveFileImpl(filename)));
+	}
+
+	SoundFile loadBufferedWaveStream(std::istream &inp) {
+		return SoundFile(new BufferedSoundFileImpl(new WaveFileImpl(inp)));
 	}
 }
 
