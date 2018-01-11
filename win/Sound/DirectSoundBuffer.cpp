@@ -60,26 +60,35 @@ DirectSoundBuffer::DirectSoundBuffer(SoundFile &file) :
 }
 
 DirectSoundBuffer::~DirectSoundBuffer() {
+	stop();
 	if (loadBufferThread.joinable())
 		loadBufferThread.join();
 }
+
+DWORD DirectSoundBuffer::status() {
+	  DWORD st;
+
+	  pDsb->GetStatus(&st);
+	  return st;
+}
+
 void DirectSoundBuffer::play() {
-  DWORD status;
-
-  pDsb->GetStatus(&status);
-
-  if (status != DSBSTATUS_PLAYING) {
+  if (!(status() & DSBSTATUS_PLAYING)) {
     // rewind the sound
     pDsb->SetCurrentPosition(0);
     position = 0;
 
-    if (fillBuffer(0, dsbdesc.dwBufferBytes))
+    DWORD playFlags = 0;
+
+    if (fillBuffer(0, dsbdesc.dwBufferBytes)) {
     	startThread();
+    	playFlags = DSBPLAY_LOOPING;
+    }
 
     auto hr = pDsb->Play(
         0,	// Unused.
         0,	// Priority for voice management.
-		DSBPLAY_LOOPING);	// Flags.
+		playFlags);	// Flags.
 
     if (FAILED(hr))
       throw std::runtime_error("failed Play");
@@ -109,8 +118,10 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 	if (FAILED(hr))
 		throw std::runtime_error("failed Lock");
 
-	auto len = soundFile.read((char *)bufAddr, position, bufLen);
+	size_t len = soundFile.read((char *)bufAddr, position, bufLen);
 	position += len;
+	if (len < size)
+		memset((char *)bufAddr+len, 0, size-len);
 
 	std::cerr << "*** " << len << std::endl;
 	pDsb->Unlock(
@@ -124,7 +135,7 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 
 void DirectSoundBuffer::startThread() {
 	LPDIRECTSOUNDNOTIFY notifyIface;
-	DSBPOSITIONNOTIFY notifyPos[2];
+	DSBPOSITIONNOTIFY notifyPos[3];
 
 	auto hr = pDsb->QueryInterface(IID_IDirectSoundNotify, (LPVOID*)&notifyIface);
 	if (FAILED(hr))
@@ -134,16 +145,19 @@ void DirectSoundBuffer::startThread() {
 	notifyPos[0].hEventNotify = CreateEvent(nullptr, false, false, nullptr);
 	notifyPos[1].dwOffset = dsbdesc.dwBufferBytes - 1;
 	notifyPos[1].hEventNotify = notifyPos[0].hEventNotify;
-	/*notifyPos[2].dwOffset = DSCBPN_OFFSET_STOP;
-	notifyPos[2].hEventNotify = notifyPos[0].hEventNotify;*/
+	notifyPos[2].dwOffset = DSCBPN_OFFSET_STOP;
+	notifyPos[2].hEventNotify = notifyPos[0].hEventNotify;
 
 	std::cerr << notifyPos[0].dwOffset << " " << notifyPos[1].dwOffset
 			<< " " << wfx.nBlockAlign << " " << dsbdesc.dwBufferBytes << std::endl;
 
-	hr = notifyIface->SetNotificationPositions(2, notifyPos);
+	hr = notifyIface->SetNotificationPositions(3, notifyPos);
 	notifyIface->Release();
 	if (FAILED(hr))
 		throw std::runtime_error("failed SetNotificationPositions");
+
+	if (loadBufferThread.joinable())
+		loadBufferThread.join();
 
 	loadBufferThread = std::thread(
 		[this](auto event){
@@ -153,16 +167,16 @@ void DirectSoundBuffer::startThread() {
 				offset = !offset;
 				std::cerr << "buf pos: " << position << std::endl;
 				WaitForSingleObject(event, INFINITE);
+			} while (
+				(status() & DSBSTATUS_PLAYING) &&
+				fillBuffer(offsets[offset], dsbdesc.dwBufferBytes / 2));
 
-				/*DWORD status;
-				pDsb->GetStatus(&status);
-				if (status != DSBSTATUS_PLAYING)
-					break;*/
+			if (status() & DSBSTATUS_PLAYING) {
+				WaitForSingleObject(event, INFINITE);
+				stop();
+			}
 
-			} while (fillBuffer(offsets[offset], dsbdesc.dwBufferBytes / 2));
 			CloseHandle(event);
-			// TODO: wait sound finish & test if user stopped from outside thread
-			stop();
 		},
 		notifyPos[0].hEventNotify);
 }

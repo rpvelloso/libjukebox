@@ -45,6 +45,7 @@ private:
 	void prepare();
 	bool fillBuffer(int offset, size_t size);
 	void startThread();
+	DWORD status();
 };
 
 } /* namespace jukebox */
