@@ -13,6 +13,7 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include <cmath>
 #include <limits>
 #include <algorithm>
@@ -61,8 +62,9 @@ const std::string& BufferedSoundFileImpl::getFilename() const {
 
 int BufferedSoundFileImpl::read(char* buf, int pos, int len) {
 	int n = getDataSize();
-	int ret = pos + len > n? n - pos : len;
-	memcpy(buf, data.get() + pos, len);
+	int ret = ((pos + len) > n? n - pos : len);
+	memcpy(buf, data.get() + pos, ret);
+	std::cerr << n << " " << pos << " " << ret << std::endl;
 	return std::max(ret, 0);
 }
 

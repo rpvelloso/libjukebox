@@ -1,5 +1,4 @@
 /*
-    Copyright 2017 Roberto Panerai Velloso.
     This file is part of libjukebox.
     libjukebox is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -113,6 +112,7 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 	auto len = soundFile.read((char *)bufAddr, position, bufLen);
 	position += len;
 
+	std::cerr << "*** " << len << std::endl;
 	pDsb->Unlock(
 		bufAddr,	// Address of lock start.
 		bufLen,		// Size of lock.
@@ -130,10 +130,12 @@ void DirectSoundBuffer::startThread() {
 	if (FAILED(hr))
 		throw std::runtime_error("failed QueryInterface");
 
-	notifyPos[0].dwOffset = ((dsbdesc.dwBufferBytes / wfx.nBlockAlign) / 2) - 1;
+	notifyPos[0].dwOffset = (dsbdesc.dwBufferBytes / 2) - 1;
 	notifyPos[0].hEventNotify = CreateEvent(nullptr, false, false, nullptr);
-	notifyPos[1].dwOffset = (dsbdesc.dwBufferBytes / wfx.nBlockAlign) - 1;
+	notifyPos[1].dwOffset = dsbdesc.dwBufferBytes - 1;
 	notifyPos[1].hEventNotify = notifyPos[0].hEventNotify;
+	/*notifyPos[2].dwOffset = DSCBPN_OFFSET_STOP;
+	notifyPos[2].hEventNotify = notifyPos[0].hEventNotify;*/
 
 	std::cerr << notifyPos[0].dwOffset << " " << notifyPos[1].dwOffset
 			<< " " << wfx.nBlockAlign << " " << dsbdesc.dwBufferBytes << std::endl;
@@ -151,8 +153,16 @@ void DirectSoundBuffer::startThread() {
 				offset = !offset;
 				std::cerr << "buf pos: " << position << std::endl;
 				WaitForSingleObject(event, INFINITE);
+
+				/*DWORD status;
+				pDsb->GetStatus(&status);
+				if (status != DSBSTATUS_PLAYING)
+					break;*/
+
 			} while (fillBuffer(offsets[offset], dsbdesc.dwBufferBytes / 2));
 			CloseHandle(event);
+			// TODO: wait sound finish & test if user stopped from outside thread
+			stop();
 		},
 		notifyPos[0].hEventNotify);
 }
