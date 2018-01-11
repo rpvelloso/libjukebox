@@ -17,6 +17,7 @@
 #define LIBJUKEBOX_VORBISFILE_2017_12_23_H_
 
 #include <memory>
+#include <mutex>
 
 #include "SoundFileImpl.h"
 
@@ -43,6 +44,7 @@ private:
 	std::unique_ptr<stb_vorbis, decltype(&closeVorbis)> vorbisHandler;
 	std::unique_ptr<unsigned char []> file;
 	std::string filename;
+	std::mutex readMutex;
 
 	void load(std::istream &inp);
 };

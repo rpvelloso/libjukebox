@@ -20,6 +20,7 @@
 #include <istream>
 #include <fstream>
 #include <cstdint>
+#include <mutex>
 
 #include "SoundFileImpl.h"
 
@@ -62,6 +63,7 @@ private:
 	WaveHeader2 header2;
 	WaveHeader3 header3;
 	int headerSize = 0;
+	std::mutex readMutex;
 
 	void load();
 };

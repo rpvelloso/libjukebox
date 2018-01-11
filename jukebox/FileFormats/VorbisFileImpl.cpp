@@ -48,6 +48,8 @@ VorbisFileImpl::VorbisFileImpl(std::istream& inp) :
 }
 
 int VorbisFileImpl::read(char *buf, int pos, int len) {
+	std::lock_guard<std::mutex> lock(readMutex);
+
 	stb_vorbis_seek(vorbisHandler.get(), (pos / 2) / numChannels);
 	return stb_vorbis_get_samples_short_interleaved(
 		vorbisHandler.get(),
