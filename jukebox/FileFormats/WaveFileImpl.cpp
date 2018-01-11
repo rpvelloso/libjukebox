@@ -100,11 +100,11 @@ void WaveFileImpl::load() {
 
 namespace factory {
 	SoundFile loadWaveFile(const std::string &filename) {
-		return SoundFile(new BufferedSoundFileImpl(new WaveFileImpl(filename)));
+		return SoundFile(/*new BufferedSoundFileImpl*/(new WaveFileImpl(filename)));
 	}
 
 	SoundFile loadWaveStream(std::istream &inp) {
-		return SoundFile(new BufferedSoundFileImpl(new WaveFileImpl(inp)));
+		return SoundFile(/*new BufferedSoundFileImpl*/(new WaveFileImpl(inp)));
 	}
 }
 
