@@ -74,7 +74,7 @@ void DirectSoundBuffer::play() {
     pDsb->SetCurrentPosition(0);
     position = 0;
 
-    if (fillBuffer())
+    if (fillBuffer(0, dsbdesc.dwBufferBytes))
     	startThread();
 
     auto hr = pDsb->Play(
@@ -93,19 +93,19 @@ void DirectSoundBuffer::stop() {
 		throw std::runtime_error("failed Stop");
 }
 
-bool DirectSoundBuffer::fillBuffer() {
+bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 	// fill secondary buffer with wav/sound
 	LPVOID bufAddr;
 	DWORD bufLen;
 
 	auto hr = pDsb->Lock(
-	      0,		// Offset at which to start lock.
-	      0,		// Size of lock; ignored because of flag.
+	      offset,	// Offset at which to start lock.
+	      size,		// Size of lock.
 	      &bufAddr,	// Gets address of first part of lock.
 	      &bufLen,	// Gets size of first part of lock.
 	      NULL,		// Address of wraparound not needed.
 	      NULL,		// Size of wraparound not needed.
-	      DSBLOCK_ENTIREBUFFER); // Flag.
+	      0); // Flag.
 
 	if (FAILED(hr))
 		throw std::runtime_error("failed Lock");
@@ -124,31 +124,37 @@ bool DirectSoundBuffer::fillBuffer() {
 
 void DirectSoundBuffer::startThread() {
 	LPDIRECTSOUNDNOTIFY notifyIface;
-	DSBPOSITIONNOTIFY notifyPos;
+	DSBPOSITIONNOTIFY notifyPos[2];
 
 	auto hr = pDsb->QueryInterface(IID_IDirectSoundNotify, (LPVOID*)&notifyIface);
 	if (FAILED(hr))
 		throw std::runtime_error("failed QueryInterface");
 
-	auto event = CreateEvent(nullptr, false, false, nullptr);
+	notifyPos[0].dwOffset = ((dsbdesc.dwBufferBytes / wfx.nBlockAlign) / 2) - 1;
+	notifyPos[0].hEventNotify = CreateEvent(nullptr, false, false, nullptr);
+	notifyPos[1].dwOffset = (dsbdesc.dwBufferBytes / wfx.nBlockAlign) - 1;
+	notifyPos[1].hEventNotify = notifyPos[0].hEventNotify;
 
-	notifyPos.dwOffset = DSBPN_OFFSETSTOP;
-	notifyPos.hEventNotify = event;
+	std::cerr << notifyPos[0].dwOffset << " " << notifyPos[1].dwOffset
+			<< " " << wfx.nBlockAlign << " " << dsbdesc.dwBufferBytes << std::endl;
 
-	hr = notifyIface->SetNotificationPositions(1, &notifyPos);
+	hr = notifyIface->SetNotificationPositions(2, notifyPos);
 	notifyIface->Release();
 	if (FAILED(hr))
 		throw std::runtime_error("failed SetNotificationPositions");
 
 	loadBufferThread = std::thread(
 		[this](auto event){
+			size_t offsets[2] = {0, dsbdesc.dwBufferBytes / 2};
+			bool offset = true;
 			do {
+				offset = !offset;
 				std::cerr << "buf pos: " << position << std::endl;
 				WaitForSingleObject(event, INFINITE);
-			} while (fillBuffer());
+			} while (fillBuffer(offsets[offset], dsbdesc.dwBufferBytes / 2));
 			CloseHandle(event);
 		},
-		event);
+		notifyPos[0].hEventNotify);
 }
 
 void DirectSoundBuffer::prepare() {
@@ -178,7 +184,7 @@ void DirectSoundBuffer::prepare() {
 	 * DSBCAPS_CTRLVOLUME			The volume of the sound can be changed.
 	 */
 
-	dsbdesc.dwBufferBytes = wfx.nBlockAlign * 1024 * 32;
+	dsbdesc.dwBufferBytes = wfx.nBlockAlign * 1024 * 32 * 2;
 	dsbdesc.lpwfxFormat = &wfx;
 
 	LPDIRECTSOUNDBUFFER bufPtr;

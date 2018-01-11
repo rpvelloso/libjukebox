@@ -43,7 +43,7 @@ private:
 
 	int position = 0;
 	void prepare();
-	bool fillBuffer();
+	bool fillBuffer(int offset, size_t size);
 	void startThread();
 };
 
