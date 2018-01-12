@@ -64,6 +64,10 @@ DirectSoundBuffer::~DirectSoundBuffer() {
 		loadBufferThread.join();
 }
 
+void DirectSoundBuffer::loop(bool l) {
+	looping = l;
+}
+
 DWORD DirectSoundBuffer::status() {
 	  DWORD st;
 
@@ -72,12 +76,12 @@ DWORD DirectSoundBuffer::status() {
 }
 
 void DirectSoundBuffer::play() {
-  if (!(status() & DSBSTATUS_PLAYING)) {
+  if (!playing()) {
     // rewind the sound
     pDsb->SetCurrentPosition(0);
     position = 0;
 
-    DWORD playFlags = 0;
+    DWORD playFlags = looping?DSBPLAY_LOOPING:0;
 
     if (fillBuffer(0, dsbdesc.dwBufferBytes)) {
     	startThread();
@@ -100,6 +104,10 @@ void DirectSoundBuffer::stop() {
 		throw std::runtime_error("failed Stop");
 }
 
+bool DirectSoundBuffer::playing() {
+	return status() & DSBSTATUS_PLAYING;
+}
+
 bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 	// fill secondary buffer with wav/sound
 	LPVOID bufAddr;
@@ -119,8 +127,8 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 
 	size_t len = soundFile.read((char *)bufAddr, position, bufLen);
 	position += len;
-	if (len < size)
-		memset((char *)bufAddr+len, 0, size-len);
+	if (len < bufLen)
+		memset((char *)bufAddr+len, 0, bufLen-len);
 
 	pDsb->Unlock(
 		bufAddr,	// Address of lock start.
@@ -130,6 +138,14 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 
 	return position < soundFile.getDataSize();
 }
+
+class GuardHandle {
+public:
+	GuardHandle(HANDLE handle) : handle(handle) {};
+	~GuardHandle() {CloseHandle(handle);};
+private:
+	HANDLE handle;
+};
 
 void DirectSoundBuffer::startThread() {
 	LPDIRECTSOUNDNOTIFY notifyIface;
@@ -156,21 +172,30 @@ void DirectSoundBuffer::startThread() {
 
 	loadBufferThread = std::thread(
 		[this](auto event){
+			GuardHandle guardHandle(event);
+
 			size_t offsets[2] = {0, dsbdesc.dwBufferBytes / 2};
-			bool offset = true;
+
 			do {
-				offset = !offset;
-				WaitForSingleObject(event, INFINITE);
-			} while (
-				(status() & DSBSTATUS_PLAYING) &&
-				fillBuffer(offsets[offset], dsbdesc.dwBufferBytes / 2));
 
-			if (status() & DSBSTATUS_PLAYING) {
-				WaitForSingleObject(event, INFINITE);
+				bool offset = true;
+				do {
+					offset = !offset;
+					WaitForSingleObject(event, INFINITE);
+				} while (
+					playing() &&
+					fillBuffer(offsets[offset], dsbdesc.dwBufferBytes / 2));
+
+				if (playing()) {
+					WaitForSingleObject(event, INFINITE);
+					position = 0;
+					fillBuffer(0, dsbdesc.dwBufferBytes);
+				}
+
+			} while (looping && playing());
+
+			if (playing())
 				stop();
-			}
-
-			CloseHandle(event);
 		},
 		notifyPos[0].hEventNotify);
 }
@@ -202,7 +227,7 @@ void DirectSoundBuffer::prepare() {
 	 * DSBCAPS_CTRLVOLUME			The volume of the sound can be changed.
 	 */
 
-	dsbdesc.dwBufferBytes = wfx.nBlockAlign * 1024 * 32 * 2;
+	dsbdesc.dwBufferBytes = wfx.nBlockAlign * 1024 * 4 * 2;
 	dsbdesc.lpwfxFormat = &wfx;
 
 	LPDIRECTSOUNDBUFFER bufPtr;
@@ -241,5 +266,6 @@ Sound makeSound(SoundFile& file) {
 }
 
 }
+
 
 } /* namespace jukebox */

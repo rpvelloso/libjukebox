@@ -119,6 +119,7 @@ const std::string &WaveFileImpl::getFilename() const {
 int WaveFileImpl::read(char *buf, int pos, int len) {
 	std::lock_guard<std::mutex> lock(readMutex);
 
+	inputStream.clear();
 	if (pos < getDataSize() && pos >= 0 && len > 0 && buf != nullptr) {
 		inputStream.seekg(headerSize + pos, std::ios::beg);
 		inputStream.read(buf, len);

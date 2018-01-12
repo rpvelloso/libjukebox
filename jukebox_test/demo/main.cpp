@@ -72,27 +72,24 @@ int main(int argc, char **argv) {
 	printFileData(soundFile2);
 
 	auto sound1 = jukebox::factory::makeSound(soundFile1);
+	sound1.loop(true);
 	auto sound11 = jukebox::factory::makeSound(soundFile1); // shared soundFile
-	sound11.loop(true);
 	auto sound2 = jukebox::factory::makeSound(soundFile2);
 
 	jukebox::Mixer mixer;
 	mixer.setVolume(100);
 	std::cout << "vol: " << mixer.getVolume() << std::endl;
-	//sound.setVolume(100);
 	sound1.play();
-	//Sleep(2000);
-	//sound.play();
 
 	// TODO replace with a proper key reading
 	char n;
 	std::cin >> n;
 
-	sound11.play(); // play same soundFile simultaneously
+	//sound11.play(); // play same soundFile simultaneously
 	// TODO replace with a proper key reading
-	std::cin >> n;
+	//std::cin >> n;
 
-	sound1.stop();
+	//sound1.stop();
 	mixer.setVolume(40);
 	std::cout << "vol: " << mixer.getVolume() << std::endl;
 	//sound.setVolume(30);

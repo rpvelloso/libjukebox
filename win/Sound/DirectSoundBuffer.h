@@ -35,6 +35,7 @@ public:
 	void stop() override;
 	int getVolume() override;
 	void setVolume(int) override;
+	void loop(bool) override;
 private:
 	WAVEFORMATEX wfx;
 	DSBUFFERDESC dsbdesc;
@@ -42,10 +43,12 @@ private:
 	std::thread loadBufferThread;
 
 	int position = 0;
+	bool looping = false;
 	void prepare();
 	bool fillBuffer(int offset, size_t size);
 	void startThread();
 	DWORD status();
+	bool playing();
 };
 
 } /* namespace jukebox */
