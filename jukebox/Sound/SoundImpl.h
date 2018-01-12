@@ -28,6 +28,7 @@ public:
 	virtual void stop() = 0;
 	virtual int getVolume() = 0;
 	virtual void setVolume(int) = 0;
+	virtual void loop(bool) = 0;
 	SoundFile &getSoundFile();
 protected:
 	SoundFile &soundFile;

@@ -29,6 +29,7 @@ public:
 	void stop();
 	int getVolume();
 	void setVolume(int);
+	void loop(bool);
 private:
 	std::unique_ptr<SoundImpl> impl;
 };

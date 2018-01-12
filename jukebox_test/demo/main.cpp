@@ -73,6 +73,7 @@ int main(int argc, char **argv) {
 
 	auto sound1 = jukebox::factory::makeSound(soundFile1);
 	auto sound11 = jukebox::factory::makeSound(soundFile1); // shared soundFile
+	sound11.loop(true);
 	auto sound2 = jukebox::factory::makeSound(soundFile2);
 
 	jukebox::Mixer mixer;
@@ -92,7 +93,7 @@ int main(int argc, char **argv) {
 	std::cin >> n;
 
 	sound1.stop();
-	mixer.setVolume(10);
+	mixer.setVolume(40);
 	std::cout << "vol: " << mixer.getVolume() << std::endl;
 	//sound.setVolume(30);
 	sound1.play();

@@ -45,4 +45,8 @@ void Sound::setVolume(int vol) {
 	impl->setVolume(normalize(vol));
 }
 
+void Sound::loop(bool l) {
+	impl->loop(l);
+}
+
 } /* namespace jukebox */

@@ -13,6 +13,7 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include <algorithm>
 #include <cstdint>
 #include "AlsaHandle.h"
@@ -23,7 +24,7 @@
 #endif
 
 #ifndef ALSA_MIN_FRAMES
-#define ALSA_MIN_FRAMES 100
+#define ALSA_MIN_FRAMES (8*1024)
 #endif
 
 namespace {
@@ -79,26 +80,35 @@ void AlsaHandle::play() {
 		StatusGuard statusGuard(playing, true);
 
 		size_t frameSize = (soundFile.getBitsPerSample()/8) * soundFile.getNumChannels();
-		size_t numFrames = soundFile.getDataSize() / frameSize;
 		std::unique_ptr<char[]> volBuf(new char[minFrames*frameSize]);
-		position = 0;
 
-		while (numFrames > 0 && playing) {
-			auto frames = std::min(numFrames, minFrames);
-			auto bytes = soundFile.read(volBuf.get(), position, frames*frameSize);
+		do {
+			position = 0;
+			size_t numFrames = soundFile.getDataSize() / frameSize;
 
-			if (soundFile.getBitsPerSample() == 16)
-				applyVolume(reinterpret_cast<int16_t *>(volBuf.get()), bytes);
-			else
-				applyVolume(volBuf.get(), bytes);
+			while (numFrames > 0 && playing) {
+				auto frames = std::min(numFrames, minFrames);
+				auto bytes = soundFile.read(volBuf.get(), position, frames*frameSize);
 
-			auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), bytes / frameSize);
-			if (n > 0) {
-				numFrames -= n;
-				position += n * frameSize;
-			} else
-				throw std::runtime_error("snd_pcm_writei error.");
-		}
+				std::cerr << "*** " << numFrames << " " << bytes << " ";
+				if (bytes > 0) {
+					if (soundFile.getBitsPerSample() == 16)
+						applyVolume(reinterpret_cast<int16_t *>(volBuf.get()), bytes);
+					else
+						applyVolume(volBuf.get(), bytes);
+
+					auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), bytes / frameSize);
+					std::cerr << n << " " << std::endl;
+					if (n > 0) {
+						numFrames -= n;
+						position += n * frameSize;
+					} else {
+						throw std::runtime_error("snd_pcm_writei error." + std::string(snd_strerror(n)));
+					}
+				} else
+					break;
+			}
+		} while (looping && playing);
 	});
 }
 
@@ -135,6 +145,10 @@ void AlsaHandle::config() {
     500000);
   if (res != 0)
     throw std::runtime_error("snd_pcm_set_params error.");
+}
+
+void AlsaHandle::loop(bool l) {
+	looping = l;
 }
 
 void AlsaHandle::prepare() {
