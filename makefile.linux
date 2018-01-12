@@ -1,34 +1,31 @@
 CC = gcc
-CXXFLAGS = -Wall -O3 -ggdb -std=c++1y -fPIC -I./src/ -I./linux/
+CXXFLAGS = -DALSA_DEVICE=\"default\" -Wall -O3 -ggdb -std=c++1y -fPIC -I. -I./linux/
 CFLAGS = -Wall -O3 -ggdb
 LDFLAGS = -lasound -lpthread
-objects = ./src/Sound/Sound.o ./src/Sound/SoundImpl.o \
-./src/FileFormats/SoundFile.o ./src/FileFormats/SoundFileImpl.o ./src/FileFormats/WaveFile.o ./src/FileFormats/VorbisFile.o \
-./src/Mixer/Mixer.o ./src/Mixer/MixerImpl.o \
-./linux/Sound/AlsaHandle.o ./linux/Mixer/AlsaMixer.o \
-./src/stb_vorbis/stb_vorbis.o
+objects = ./jukebox/Sound/Sound.o ./jukebox/Sound/SoundImpl.o \
+./jukebox/FileFormats/SoundFile.o ./jukebox/FileFormats/WaveFileImpl.o ./jukebox/FileFormats/VorbisFileImpl.o \
+./jukebox/FileFormats/BufferedSoundFileImpl.o \
+./jukebox/Mixer/Mixer.o \
+./linux/Sound/AlsaHandle.o ./linux/Mixer/AlsaMixer.o
 
 all						:	./Library/libjukebox.so test
 ./Library/libjukebox.so	:	$(objects)
-	g++ -std=c++1y -ggdb -Wall $(objects) -shared $(LDFLAGS) -o ./Library/libjukebox.so
-test					:	./src/main.o
-	g++ -std=c++1y -ggdb -Wall ./src/main.o -L./Library -ljukebox -o ./test/test
-./src/main.o						:	genheader
-./src/Sound.o						:	./src/Sound/SoundImpl.h ./src/Sound/Sound.h
-./src/SoundImpl.o					:	./src/Sound/SoundImpl.h 
-./src/FileFormats/SoundFile.o		:	./src/FileFormats/SoundFileImpl.h ./src/FileFormats/SoundFile.h
-./src/FileFormats/SoundFileImpl.o	:	./src/FileFormats/SoundFileImpl.h
-./src/FileFormats/WaveFile.o		:	./src/FileFormats/SoundFileImpl.h ./src/FileFormats/SoundFile.h ./src/FileFormats/WaveFile.h
-./src/FileFormats/VorbisFile.o		:	./src/FileFormats/SoundFileImpl.h ./src/FileFormats/SoundFile.h ./src/FileFormats/VorbisFile.h
-./src/Mixer/Mixer.o					:	./src/Mixer/MixerImpl.h ./src/Mixer/Mixer.h
-./src/Mixer/MixerImpl.o				:	./src/Mixer/MixerImpl.h
-./linux/Sound/AlsaHandle.o			:	./src/Sound/Sound.h ./src/Sound/SoundImpl.h ./src/FileFormats/SoundFile.h ./linux/Sound/AlsaHandle.h
-./linux/Mixer/AlsaMixer.o			:	./linux/Mixer/AlsaMixer.h
-./src/stb_vorbis/stb_vorbis.o		:
+	g++ -std=c++1y -ggdb -Wall $(objects) -shared $(LDFLAGS) -o ./bin/libjukebox.so
+test					:	./jukebox_test/demo/main.o
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/main.cpp -I. -L./bin -ljukebox -o ./bin/test
+./jukebox_test/demo/main.o				:	genheader
+./jukebox/Sound/Sound.o							:	./jukebox/Sound/SoundImpl.h ./jukebox/Sound/Sound.h
+./jukebox/Sound/SoundImpl.o						:	./jukebox/Sound/SoundImpl.h 
+./jukebox/FileFormats/SoundFile.o				:	./jukebox/FileFormats/SoundFileImpl.h ./jukebox/FileFormats/SoundFile.h
+./jukebox/FileFormats/BufferedSoundFileImpl.o	:	./jukebox/FileFormats/SoundFileImpl.h
+./jukebox/FileFormats/WaveFileImpl.o			:	./jukebox/FileFormats/SoundFileImpl.h ./jukebox/FileFormats/SoundFile.h ./jukebox/FileFormats/WaveFileImpl.h
+./jukebox/FileFormats/VorbisFileImpl.o			:	./jukebox/FileFormats/SoundFileImpl.h ./jukebox/FileFormats/SoundFile.h ./jukebox/FileFormats/VorbisFileImpl.h
+./jukebox/Mixer/Mixer.o							:	./jukebox/Mixer/MixerImpl.h ./jukebox/Mixer/Mixer.h
+./linux/Sound/AlsaHandle.o						:	./jukebox/Sound/Sound.h ./jukebox/Sound/SoundImpl.h ./jukebox/FileFormats/SoundFile.h ./linux/Sound/AlsaHandle.h
+./linux/Mixer/AlsaMixer.o						:	./linux/Mixer/AlsaMixer.h
 
 .PHONY		:	clean	genheader
 genheader	:
 	./genheader.sh
-	mv libjukebox.h	./src/	
 clean		:
-	rm -rf $(objects) ./Library/libjukebox.so ./src/main.o ./test/test
+	rm -rf $(objects) ./bin/libjukebox.so ./jukebox_test/demo/main.o ./bin/test
