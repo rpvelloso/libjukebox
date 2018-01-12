@@ -64,6 +64,7 @@ public:
  virtual void stop() = 0;
  virtual int getVolume() = 0;
  virtual void setVolume(int) = 0;
+ virtual void loop(bool) = 0;
  SoundFile &getSoundFile();
 protected:
  SoundFile &soundFile;
@@ -79,6 +80,7 @@ public:
  void stop();
  int getVolume();
  void setVolume(int);
+ void loop(bool);
 private:
  std::unique_ptr<SoundImpl> impl;
 };
