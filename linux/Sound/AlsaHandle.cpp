@@ -80,22 +80,22 @@ void AlsaHandle::play() {
 
 		size_t frameSize = (soundFile.getBitsPerSample()/8) * soundFile.getNumChannels();
 		size_t numFrames = soundFile.getDataSize() / frameSize;
-		const char *buf = soundFile.getData();
 		std::unique_ptr<char[]> volBuf(new char[minFrames*frameSize]);
+		position = 0;
 
 		while (numFrames > 0 && playing) {
 			auto frames = std::min(numFrames, minFrames);
-			std::copy(buf, buf+(frames*frameSize), volBuf.get());
+			auto bytes = soundFile.read(volBuf.get(), position, frames*frameSize);
 
 			if (soundFile.getBitsPerSample() == 16)
-				applyVolume(reinterpret_cast<int16_t *>(volBuf.get()), frames*frameSize);
+				applyVolume(reinterpret_cast<int16_t *>(volBuf.get()), bytes);
 			else
-				applyVolume(volBuf.get(), frames*frameSize);
+				applyVolume(volBuf.get(), bytes);
 
-			auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), frames);
+			auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), bytes / frameSize);
 			if (n > 0) {
 				numFrames -= n;
-				buf += n * frameSize;
+				position += n * frameSize;
 			} else
 				throw std::runtime_error("snd_pcm_writei error.");
 		}

@@ -41,6 +41,7 @@ private:
 	std::thread playThread;
 	std::atomic<bool> playing;
 	int vol = 100;
+	int position = 0;
 
 	template <typename T>
 	void applyVolume(T *buf, size_t len);
