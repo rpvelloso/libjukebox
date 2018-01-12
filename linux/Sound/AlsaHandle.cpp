@@ -13,7 +13,6 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
 #include <algorithm>
 #include <cstdint>
 #include "AlsaHandle.h"
@@ -90,7 +89,6 @@ void AlsaHandle::play() {
 				auto frames = std::min(numFrames, minFrames);
 				auto bytes = soundFile.read(volBuf.get(), position, frames*frameSize);
 
-				std::cerr << "*** " << numFrames << " " << bytes << " ";
 				if (bytes > 0) {
 					if (soundFile.getBitsPerSample() == 16)
 						applyVolume(reinterpret_cast<int16_t *>(volBuf.get()), bytes);
@@ -98,7 +96,6 @@ void AlsaHandle::play() {
 						applyVolume(volBuf.get(), bytes);
 
 					auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), bytes / frameSize);
-					std::cerr << n << " " << std::endl;
 					if (n > 0) {
 						numFrames -= n;
 						position += n * frameSize;
