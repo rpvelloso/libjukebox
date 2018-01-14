@@ -49,6 +49,7 @@ private:
 	void startThread();
 	DWORD status();
 	bool playing();
+	void rewind();
 };
 
 } /* namespace jukebox */

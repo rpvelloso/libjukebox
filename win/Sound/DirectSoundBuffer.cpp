@@ -77,9 +77,7 @@ DWORD DirectSoundBuffer::status() {
 
 void DirectSoundBuffer::play() {
   if (!playing()) {
-    // rewind the sound
-    pDsb->SetCurrentPosition(0);
-    position = 0;
+	rewind();
 
     DWORD playFlags = looping?DSBPLAY_LOOPING:0;
 
@@ -164,8 +162,10 @@ void DirectSoundBuffer::startThread() {
 
 	hr = notifyIface->SetNotificationPositions(3, notifyPos);
 	notifyIface->Release();
-	if (FAILED(hr))
+	if (FAILED(hr)) {
+		CloseHandle(notifyPos[0].hEventNotify);
 		throw std::runtime_error("failed SetNotificationPositions");
+	}
 
 	if (loadBufferThread.joinable())
 		loadBufferThread.join();
@@ -188,7 +188,7 @@ void DirectSoundBuffer::startThread() {
 
 				if (playing()) {
 					WaitForSingleObject(event, INFINITE);
-					position = 0;
+					rewind();
 					fillBuffer(0, dsbdesc.dwBufferBytes);
 				}
 
@@ -259,6 +259,11 @@ void DirectSoundBuffer::setVolume(int vol) {
 	pDsb->SetVolume(db * 100);
 }
 
+void DirectSoundBuffer::rewind() {
+    pDsb->SetCurrentPosition(0);
+    position = 0;
+}
+
 namespace factory {
 
 Sound makeSound(SoundFile& file) {
@@ -266,6 +271,5 @@ Sound makeSound(SoundFile& file) {
 }
 
 }
-
 
 } /* namespace jukebox */
