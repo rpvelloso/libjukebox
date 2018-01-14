@@ -137,10 +137,10 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 	return position < soundFile.getDataSize();
 }
 
-class GuardHandle {
+class HandleGuard {
 public:
-	GuardHandle(HANDLE handle) : handle(handle) {};
-	~GuardHandle() {CloseHandle(handle);};
+	HandleGuard(HANDLE handle) : handle(handle) {};
+	~HandleGuard() {CloseHandle(handle);};
 private:
 	HANDLE handle;
 };
@@ -172,7 +172,7 @@ void DirectSoundBuffer::startThread() {
 
 	loadBufferThread = std::thread(
 		[this](auto event){
-			GuardHandle guardHandle(event);
+			HandleGuard handleGuard(event);
 
 			size_t offsets[2] = {0, dsbdesc.dwBufferBytes / 2};
 
