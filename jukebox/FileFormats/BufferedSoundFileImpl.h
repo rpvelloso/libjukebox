@@ -17,6 +17,7 @@
 #define JUKEBOX_FILEFORMATS_BUFFEREDSOUNDFILEIMPL_H_
 
 #include <memory>
+#include <vector>
 #include "SoundFileImpl.h"
 
 namespace jukebox {
@@ -40,9 +41,11 @@ public:
 private:
 	std::unique_ptr<SoundFileImpl> impl;
 	std::unique_ptr<char []> data;
+	size_t dataSize;
 
 	template<typename T>
-	void normalize();
+	std::vector<float> toFloat();
+	void toFixed(std::vector<float> &inp);
 };
 
 } /* namespace jukebox */

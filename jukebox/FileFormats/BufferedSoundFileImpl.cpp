@@ -13,6 +13,7 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include <cmath>
 #include <limits>
 #include <algorithm>
@@ -23,16 +24,30 @@
 
 namespace jukebox {
 
+void effect(std::vector<float> &seq) {
+	for (auto &v:seq)
+		v = sqrt(v)*(v>0?1:-1);
+}
+
 BufferedSoundFileImpl::BufferedSoundFileImpl(SoundFileImpl* impl) :
 	impl(impl),
-	data(new char[this->impl->getDataSize()]) {
+	data(new char[impl->getDataSize()]) {
 
-	this->impl->read(data.get(), 0, getDataSize());
+	dataSize = impl->getDataSize();
+	impl->read(data.get(), 0, getDataSize());
 
-	if (this->impl->getBitsPerSample() == 16)
-		normalize<int16_t>();
-	else
-		normalize<uint8_t>();
+	std::vector<float> fData;
+
+	if (this->impl->getBitsPerSample() == 16) {
+		fData = toFloat<int16_t>();
+	} else {
+		fData = toFloat<uint8_t>();
+		dataSize *= 2; // toFixed will convert audio to signed 16 bits
+		data.reset(new char[dataSize]);
+	}
+
+	effect(fData);
+	toFixed(fData);
 }
 
 short BufferedSoundFileImpl::getNumChannels() const {
@@ -44,7 +59,7 @@ int BufferedSoundFileImpl::getSampleRate() const {
 }
 
 short BufferedSoundFileImpl::getBitsPerSample() const {
-	return impl->getBitsPerSample();
+	return 16;
 }
 
 const char* BufferedSoundFileImpl::getData() const {
@@ -52,7 +67,7 @@ const char* BufferedSoundFileImpl::getData() const {
 }
 
 int BufferedSoundFileImpl::getDataSize() const {
-	return impl->getDataSize();
+	return dataSize;
 }
 
 const std::string& BufferedSoundFileImpl::getFilename() const {
@@ -67,24 +82,50 @@ int BufferedSoundFileImpl::read(char* buf, int pos, int len) {
 }
 
 template<typename T>
-void BufferedSoundFileImpl::normalize() {
-	auto maxValue = std::numeric_limits<T>::max();
-	auto maxPeak = std::numeric_limits<T>::min();
-	auto beginIt = (T *)data.get();
-	auto endIt = (T *)(data.get() + (impl->getDataSize()/sizeof(T)));
+std::vector<float> BufferedSoundFileImpl::toFloat() {
+	T *beginIt = reinterpret_cast<T *>(data.get());
+	T *endIt = beginIt + getDataSize()/sizeof(T);
+	float maxPeak = 0;
+	std::vector<float> result;
+
+	result.reserve(std::distance(beginIt, endIt));
 
 	std::for_each(beginIt, endIt,
 		[&maxPeak](T &sample){
-			if (sample > maxPeak)
-				maxPeak = sample;
+			if (std::abs(sample) > maxPeak)
+				maxPeak = std::abs(sample);
 	});
 
-	double ratio = static_cast<double>(maxValue)/static_cast<double>(maxPeak);
-	std::for_each(
-		beginIt,
-		endIt,
-		[ratio](T &sample){
-			sample = static_cast<T>(static_cast<double>(sample)*ratio);
+	int offset = 0;
+
+	if (sizeof(T) == 1)
+		offset = 128;
+
+	maxPeak -= offset;
+	std::for_each(beginIt, endIt,
+		[maxPeak, offset, &result](T &sample){
+			result.emplace_back(static_cast<float>(sample - offset) / maxPeak);
+	});
+
+	return result;
+}
+
+void BufferedSoundFileImpl::toFixed(std::vector<float> &inp) {
+	int16_t *beginIt = reinterpret_cast<int16_t *>(data.get());
+	int16_t *endIt = beginIt + getDataSize()/sizeof(int16_t);
+	auto inpIt = inp.begin();
+	float maxFloat = 0;
+	int16_t maxFixed = std::numeric_limits<int16_t>::max();
+
+	for (auto v: inp) {
+		if (std::abs(v) > maxFloat)
+			maxFloat = std::abs(v);
+	}
+
+	std::for_each(beginIt, endIt,
+		[&inpIt, maxFixed, maxFloat](int16_t &sample){
+			sample = static_cast<int16_t>((static_cast<float>(maxFixed) * (*inpIt)/maxFloat));
+			++inpIt;
 	});
 }
 

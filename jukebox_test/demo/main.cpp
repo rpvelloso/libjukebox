@@ -59,8 +59,8 @@ int main(int argc, char **argv) {
 	std::cout << "ready to load " << filename1 << " as a file" << std::endl;
 
 	auto soundFile1 = filename1.back() == 'g'? // ogg?
-			jukebox::factory::loadVorbisFile(filename1):
-			jukebox::factory::loadWaveFile(filename1);
+			jukebox::factory::loadBufferedVorbisFile(filename1):
+			jukebox::factory::loadBufferedWaveFile(filename1);
 
 	printFileData(soundFile1);
 
