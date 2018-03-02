@@ -35,7 +35,7 @@ void Sound::stop() {
 	impl->stop();
 }
 
-int Sound::getVolume() {
+int Sound::getVolume() const {
 	auto vol = impl->getVolume();
 	return normalize(vol);
 }

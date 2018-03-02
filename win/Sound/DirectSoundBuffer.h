@@ -31,7 +31,7 @@ public:
 	DirectSoundBuffer(SoundFile &file);
 	void play() override;
 	void stop() override;
-	int getVolume() override;
+	int getVolume() const override;
 	void setVolume(int) override;
 private:
 	WAVEFORMATEX wfx;

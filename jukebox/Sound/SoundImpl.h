@@ -26,7 +26,7 @@ public:
 	virtual ~SoundImpl() = default;
 	virtual void play() = 0;
 	virtual void stop() = 0;
-	virtual int getVolume() = 0;
+	virtual int getVolume() const = 0;
 	virtual void setVolume(int) = 0;
 	SoundFile &getSoundFile();
 protected:

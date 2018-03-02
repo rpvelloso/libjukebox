@@ -27,7 +27,7 @@ public:
 	Sound(SoundImpl *impl);
 	void play();
 	void stop();
-	int getVolume();
+	int getVolume() const;
 	void setVolume(int);
 private:
 	std::unique_ptr<SoundImpl> impl;
