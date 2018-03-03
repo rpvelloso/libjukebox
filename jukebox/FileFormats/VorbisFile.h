@@ -18,6 +18,7 @@
 
 #include <memory>
 
+#include "SoundFile.h"
 #include "SoundFileImpl.h"
 
 namespace jukebox {
@@ -43,6 +44,11 @@ private:
 
 	void load(std::istream &inp);
 };
+
+namespace factory {
+	extern SoundFile loadVorbisFile(const std::string &filename);
+	extern SoundFile loadVorbisStream(std::istream &inp);
+}
 
 } /* namespace jukebox */
 

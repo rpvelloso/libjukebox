@@ -23,17 +23,15 @@
 namespace jukebox {
 
 class WindowsMixer : public MixerImpl {
-	friend MixerImpl & factory::makeMixerImpl();
+//	friend MixerImpl & factory::makeMixerImpl();
 public:
+	WindowsMixer(DWORD device);
 	virtual ~WindowsMixer();
 	int getVolume();
 	void setVolume(int vol);
 private:
 	HMIXER hMixer;
 	DWORD controlId;
-
-	WindowsMixer() = delete;
-	WindowsMixer(DWORD device);
 };
 
 } /* namespace jukebox */

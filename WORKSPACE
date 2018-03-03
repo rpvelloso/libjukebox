@@ -2,7 +2,7 @@
 
 new_local_repository(
 	name = "win32_libs",
-	path = "/c/Program Files (x86)/Windows Kits/10/Lib/10.0.14393.0/um/x64",
+	path = "/c/Program Files (x86)/Windows Kits/10/Lib/10.0.16299.0/um/x64",
 	build_file_content = """
 cc_library(
 	name = "dsound",

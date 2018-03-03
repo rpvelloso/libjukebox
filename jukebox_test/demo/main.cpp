@@ -19,8 +19,10 @@
 #include <string>
 
 #include "jukebox/FileFormats/SoundFile.h"
+#include "jukebox/FileFormats/WaveFile.h"
 #include "jukebox/Mixer/Mixer.h"
 #include "jukebox/Sound/Sound.h"
+#include "jukebox/Sound/Factory.h"
 
 std::string formatDuration(double duration) {
 	std::cout << "*** " << duration << std::endl;

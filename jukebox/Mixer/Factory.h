@@ -1,5 +1,5 @@
 /*
-    Copyright 2017 Roberto Panerai Velloso.
+    Copyright 2017 José Diego Ferreira Martins.
     This file is part of libjukebox.
     libjukebox is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,17 +13,16 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBJUKEBOX_MIXERIMPL_2017_12_17_H_
-#define LIBJUKEBOX_MIXERIMPL_2017_12_17_H_
+#ifndef LIBJUKEBOX_MIXERFACTORY_2018_03_01_H_
+#define LIBJUKEBOX_MIXERFACTORY_2018_03_01_H_
+
+#include "MixerImpl.h"
 
 namespace jukebox {
 
-class MixerImpl {
-public:
-	virtual ~MixerImpl() = default;
-	virtual int getVolume() = 0;
-	virtual void setVolume(int vol) = 0;
-};
+namespace factory {
+	extern MixerImpl &makeMixerImpl();
+}
 
 } /* namespace jukebox */
 

@@ -33,10 +33,6 @@ private:
 	std::unique_ptr<SoundImpl> impl;
 };
 
-namespace factory {
-	extern Sound makeSound(SoundFile &file);
-}
-
 } /* namespace jukebox */
 
 #endif
