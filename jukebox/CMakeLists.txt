@@ -1,0 +1,19 @@
+add_library(libjukebox
+        FileFormats/stb_vorbis/stb_vorbis.c
+        FileFormats/stb_vorbis/stb_vorbis.h
+        FileFormats/SoundFile.cpp
+        FileFormats/SoundFile.h
+        FileFormats/SoundFileImpl.h
+        FileFormats/VorbisFile.cpp
+        FileFormats/VorbisFile.h
+        FileFormats/WaveFile.cpp
+        FileFormats/WaveFile.h
+        Mixer/Factory.h
+        Mixer/Mixer.cpp
+        Mixer/Mixer.h
+        Mixer/MixerImpl.h
+        Sound/Factory.h
+        Sound/Sound.cpp
+        Sound/Sound.h
+        Sound/SoundImpl.cpp
+        Sound/SoundImpl.h)

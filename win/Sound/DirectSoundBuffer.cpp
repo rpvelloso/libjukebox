@@ -48,7 +48,6 @@ void ReleaseBuffer(LPDIRECTSOUNDBUFFER pDsb) {
 DirectSoundBuffer::DirectSoundBuffer(SoundFile &file) :
 	SoundImpl(file),
 	pDsb(nullptr, ReleaseBuffer) {
-
 	prepare();
 }
 

@@ -14,8 +14,8 @@
  */
 
 #include <windows.h>
-#include <exception>
 #include <string>
+#include <stdexcept>
 
 #include "WindowsMixer.h"
 
