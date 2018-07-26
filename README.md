@@ -2,7 +2,6 @@
 Plataform independent (windows/linux) C++ audio playback library (uses DirectSound under Windows and Alsa under Linux)
 
 # Example
-## socks::ClientSocket & socks::ServerSocket
 ```cpp
 #include <string>
 #include <iostream>
