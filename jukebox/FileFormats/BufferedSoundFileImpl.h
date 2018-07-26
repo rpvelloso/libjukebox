@@ -31,6 +31,7 @@ namespace jukebox {
 class BufferedSoundFileImpl: public SoundFileImpl {
 public:
 	BufferedSoundFileImpl(SoundFileImpl *impl);
+	virtual ~BufferedSoundFileImpl() = default;
 	short getNumChannels() const;
 	int getSampleRate() const;
 	short getBitsPerSample() const;

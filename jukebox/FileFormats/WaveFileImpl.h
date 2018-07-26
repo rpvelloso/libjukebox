@@ -49,6 +49,7 @@ class WaveFileImpl : public SoundFileImpl {
 public:
 	WaveFileImpl(const std::string &filename);
 	WaveFileImpl(std::istream &inp, const std::string &filename = ":stream:");
+	virtual ~WaveFileImpl() = default;
 	short getNumChannels() const override;
 	int getSampleRate() const override;
 	short getBitsPerSample() const override;

@@ -38,7 +38,7 @@ BufferedSoundFileImpl::BufferedSoundFileImpl(SoundFileImpl* impl) :
 
 	std::vector<float> fData;
 
-	if (this->impl->getBitsPerSample() == 16) {
+	if (impl->getBitsPerSample() == 16) {
 		fData = toFloat<int16_t>();
 	} else {
 		fData = toFloat<uint8_t>();
@@ -46,7 +46,7 @@ BufferedSoundFileImpl::BufferedSoundFileImpl(SoundFileImpl* impl) :
 		data.reset(new char[dataSize]);
 	}
 
-	effect(fData);
+	//effect(fData);
 	toFixed(fData);
 }
 
@@ -59,7 +59,7 @@ int BufferedSoundFileImpl::getSampleRate() const {
 }
 
 short BufferedSoundFileImpl::getBitsPerSample() const {
-	return 16;
+	return 16;//impl->getBitsPerSample();//16;
 }
 
 const char* BufferedSoundFileImpl::getData() const {
@@ -77,14 +77,15 @@ const std::string& BufferedSoundFileImpl::getFilename() const {
 int BufferedSoundFileImpl::read(char* buf, int pos, int len) {
 	int n = getDataSize();
 	int ret = ((pos + len) > n? n - pos : len);
-	memcpy(buf, data.get() + pos, ret);
+	if (ret > 0)
+		memcpy(buf, data.get() + pos, ret);
 	return std::max(ret, 0);
 }
 
 template<typename T>
 std::vector<float> BufferedSoundFileImpl::toFloat() {
 	T *beginIt = reinterpret_cast<T *>(data.get());
-	T *endIt = beginIt + getDataSize()/sizeof(T);
+	T *endIt = beginIt + (getDataSize()/sizeof(T));
 	float maxPeak = 0;
 	std::vector<float> result;
 
@@ -112,10 +113,10 @@ std::vector<float> BufferedSoundFileImpl::toFloat() {
 
 void BufferedSoundFileImpl::toFixed(std::vector<float> &inp) {
 	int16_t *beginIt = reinterpret_cast<int16_t *>(data.get());
-	int16_t *endIt = beginIt + getDataSize()/sizeof(int16_t);
+	int16_t *endIt = beginIt + (getDataSize()/sizeof(int16_t));
 	auto inpIt = inp.begin();
 	float maxFloat = 0;
-	int16_t maxFixed = std::numeric_limits<int16_t>::max();
+	float maxFixed = std::numeric_limits<int16_t>::max();
 
 	for (auto v: inp) {
 		if (std::abs(v) > maxFloat)
@@ -124,7 +125,7 @@ void BufferedSoundFileImpl::toFixed(std::vector<float> &inp) {
 
 	std::for_each(beginIt, endIt,
 		[&inpIt, maxFixed, maxFloat](int16_t &sample){
-			sample = static_cast<int16_t>((static_cast<float>(maxFixed) * (*inpIt)/maxFloat));
+			sample = static_cast<int16_t>((maxFixed * (*inpIt))/maxFloat);
 			++inpIt;
 	});
 }
