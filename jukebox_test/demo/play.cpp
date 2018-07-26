@@ -27,8 +27,8 @@ int main(int argc, char **argv) {
 	std::string filename(argv[1]);
 
 	auto soundFile = filename.back() == 'g'? // ogg?
-			jukebox::factory::loadVorbisFile(filename):
-			jukebox::factory::loadWaveFile(filename);
+			jukebox::factory::loadFadedVorbisFile(filename, 10, 10):
+			jukebox::factory::loadFadedWaveFile(filename, 10, 10);
 
 	printFileData(soundFile);
 
@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
 	sound.loop(true);
 
 	jukebox::Mixer mixer;
-	mixer.setVolume(80);
+	mixer.setVolume(100);
 	sound.play();
 
 	std::cout << "hit enter to exit..." << std::endl;

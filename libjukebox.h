@@ -51,6 +51,10 @@ namespace factory {
  extern SoundFile loadBufferedWaveStream(std::istream &inp);
  extern SoundFile loadBufferedVorbisFile(const std::string &filename);
  extern SoundFile loadBufferedVorbisStream(std::istream &inp);
+ extern SoundFile loadFadedWaveFile(const std::string &filename, int fadeInSecs, int fadeOutSecs);
+ extern SoundFile loadFadedWaveStream(std::istream &inp, int fadeInSecs, int fadeOutSecs);
+ extern SoundFile loadFadedVorbisFile(const std::string &filename, int fadeInSecs, int fadeOutSecs);
+ extern SoundFile loadFadedVorbisStream(std::istream &inp, int fadeInSecs, int fadeOutSecs);
 }
 
 }
