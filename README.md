@@ -1,6 +1,13 @@
 # libjukebox
 Plataform independent (windows/linux) C++ audio playback library (uses DirectSound under Windows and Alsa under Linux)
 
+# Supported file formats:
+- RAW Wave;
+- Ogg Vorbis.
+
+# Effects
+- Fade in/out.
+
 # Example
 ```cpp
 #include <string>
