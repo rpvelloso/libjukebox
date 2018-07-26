@@ -8,12 +8,15 @@ objects = ./jukebox/Sound/Sound.o ./jukebox/Sound/SoundImpl.o \
 ./jukebox/Mixer/Mixer.o \
 ./linux/Sound/AlsaHandle.o ./linux/Mixer/AlsaMixer.o
 
-all						:	./Library/libjukebox.so test
+all						:	./Library/libjukebox.so test play
 ./Library/libjukebox.so	:	$(objects)
 	g++ -std=c++1y -ggdb -Wall $(objects) -shared $(LDFLAGS) -o ./bin/libjukebox.so
 test					:	./jukebox_test/demo/main.o
 	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/main.cpp -I. -L./bin -ljukebox -o ./bin/test
+play					:	./jukebox_test/demo/play.o
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/play.cpp -I. -L./bin -ljukebox -o ./bin/play
 ./jukebox_test/demo/main.o				:	genheader
+./jukebox_test/demo/play.o				:	genheader
 ./jukebox/Sound/Sound.o							:	./jukebox/Sound/SoundImpl.h ./jukebox/Sound/Sound.h
 ./jukebox/Sound/SoundImpl.o						:	./jukebox/Sound/SoundImpl.h 
 ./jukebox/FileFormats/SoundFile.o				:	./jukebox/FileFormats/SoundFileImpl.h ./jukebox/FileFormats/SoundFile.h
