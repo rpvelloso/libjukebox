@@ -8,12 +8,14 @@ objects = ./jukebox/Sound/Sound.o ./jukebox/Sound/SoundImpl.o \
 ./jukebox/Mixer/Mixer.o \
 ./win/Sound/DirectSoundBuffer.o ./win/Mixer/WindowsMixer.o
 
-all						:	./bin/libjukebox.dll test
+all						:	./bin/libjukebox.dll test play
 ./bin/libjukebox.dll	:	$(objects)
 	g++ -std=c++1y -ggdb -Wall $(objects) -shared $(LDFLAGS) -o ./bin/libjukebox.dll
 test					:	./jukebox_test/demo/main.o
-	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/main.cpp -I. -o ./bin/test.exe -L./bin -ljukebox
+play					:	./jukebox_test/demo/play.o
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/play.cpp -I. -o ./bin/play.exe -L./bin -ljukebox
 ./jukebox_test/main.o							:	genheader
+./jukebox_test/play.o							:	genheader
 ./jukebox/Sound/Sound.o							:	./jukebox/Sound/SoundImpl.h ./jukebox/Sound/Sound.h
 ./jukebox/Sound/SoundImpl.o						:	./jukebox/Sound/SoundImpl.h 
 ./jukebox/FileFormats/SoundFile.o				:	./jukebox/FileFormats/SoundFileImpl.h ./jukebox/FileFormats/SoundFile.h
