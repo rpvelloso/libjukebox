@@ -5,6 +5,7 @@
  *      Author: rvelloso
  */
 
+#include <iostream>
 #include <algorithm>
 #include "FadedSoundFileImpl.h"
 
@@ -18,18 +19,18 @@ FadedSoundFileImpl::FadedSoundFileImpl(
 				fadeInEndPos(0),
 				fadeOutStartPos(impl->getDataSize()) {
 	if (fadeInSecs > 0)
-		fadeInEndPos =
+		fadeInEndPos = std::min(
 				impl->getSampleRate()*
 				impl->getNumChannels()*
 				(impl->getBitsPerSample() == 8?1:2)*
-				fadeInSecs;
+				fadeInSecs, impl->getDataSize());
 
 	if (fadeOutSecs > 0)
-		fadeOutStartPos -=
+		fadeOutStartPos -= std::min(
 				impl->getSampleRate()*
 				impl->getNumChannels()*
 				(impl->getBitsPerSample() == 8?1:2)*
-				fadeOutSecs;
+				fadeOutSecs, impl->getDataSize());
 }
 
 short FadedSoundFileImpl::getNumChannels() const {
@@ -75,6 +76,11 @@ void FadedSoundFileImpl::fadeIn(char* buf, int pos, int len) {
 	T *beginIt = reinterpret_cast<T *>(buf);
 	T *endIt = beginIt + (len/sizeof(T));
 
+	/*std::cout <<
+			(float)pos/(float)fadeInEndPos << " - " <<
+			(float)(pos + len)/(float)fadeInEndPos <<
+			std::endl;*/
+
 	std::for_each(beginIt, endIt, [this, &pos](T &sample){
 		sample = (T)(((float)sample * (float)pos)/(float)fadeInEndPos);
 		++pos;
@@ -88,6 +94,11 @@ void FadedSoundFileImpl::fadeOut(char* buf, int pos, int len) {
 
 	auto n = impl->getDataSize();
 	auto fadeLen = n - fadeOutStartPos;
+
+	/*std::cout <<
+			(float)(n - pos)/(float)fadeLen << " - " <<
+			(float)(n - pos + len)/(float)fadeLen <<
+			std::endl;*/
 
 	std::for_each(beginIt, endIt, [this, n, fadeLen, &pos](T &sample){
 		sample = (T)(((float)sample * (float)(n - pos))/(float)(fadeLen));
