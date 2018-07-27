@@ -30,7 +30,10 @@ public:
 	virtual void setVolume(int) = 0;
 	virtual void loop(bool) = 0;
 	SoundFile &getSoundFile();
+	int getPosition() const;
+
 protected:
+	int position = 0;
 	SoundFile &soundFile;
 };
 

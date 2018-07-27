@@ -42,7 +42,6 @@ private:
 	std::thread playThread;
 	std::atomic<bool> playing;
 	int vol = 100;
-	int position = 0;
 	bool looping = false;
 
 	template <typename T>

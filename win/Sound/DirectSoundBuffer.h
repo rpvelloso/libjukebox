@@ -42,7 +42,6 @@ private:
 	std::unique_ptr<struct IDirectSoundBuffer, decltype(&ReleaseBuffer)> pDsb;
 	std::thread loadBufferThread;
 
-	int position = 0;
 	bool looping = false;
 	void prepare();
 	bool fillBuffer(int offset, size_t size);

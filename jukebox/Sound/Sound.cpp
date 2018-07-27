@@ -49,4 +49,8 @@ void Sound::loop(bool l) {
 	impl->loop(l);
 }
 
+int Sound::getPosition() const {
+	return impl->getPosition();
+}
+
 } /* namespace jukebox */

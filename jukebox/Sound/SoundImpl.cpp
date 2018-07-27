@@ -24,4 +24,9 @@ SoundFile& SoundImpl::getSoundFile() {
 	return soundFile;
 }
 
+int SoundImpl::getPosition() const {
+	return position;
+}
+
 } /* namespace jukebox */
+

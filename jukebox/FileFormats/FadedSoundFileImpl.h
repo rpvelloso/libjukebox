@@ -15,7 +15,7 @@ namespace jukebox {
 
 class FadedSoundFileImpl: public SoundFileImpl {
 public:
-	FadedSoundFileImpl(SoundFileImpl *impl, int fadeInSecs, int fadeOutSecs);
+	FadedSoundFileImpl(SoundFileImpl *impl, int fadeInSecs = -1, int fadeOutSecs = -1);
 	virtual ~FadedSoundFileImpl() = default;
 	short getNumChannels() const override;
 	int getSampleRate() const override;
@@ -23,6 +23,8 @@ public:
 	int getDataSize() const override;
 	const std::string &getFilename() const override;
 	int read(char *buf, int pos, int len) override;
+	void setFadeOutStartPos(int fadeOutStartPos);
+
 private:
 	template<typename T>
 	void fadeIn(char* buf, int pos, int len);
@@ -33,6 +35,7 @@ private:
 	std::unique_ptr<SoundFileImpl> impl;
 	int fadeInSecs, fadeOutSecs;
 	int fadeInEndPos, fadeOutStartPos;
+	int dataSize;
 };
 
 } /* namespace jukebox */

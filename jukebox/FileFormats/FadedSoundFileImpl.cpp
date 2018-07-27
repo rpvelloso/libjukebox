@@ -17,7 +17,9 @@ FadedSoundFileImpl::FadedSoundFileImpl(
 				fadeInSecs(fadeInSecs),
 				fadeOutSecs(fadeOutSecs),
 				fadeInEndPos(0),
-				fadeOutStartPos(impl->getDataSize()) {
+				fadeOutStartPos(impl->getDataSize()),
+				dataSize(impl->getDataSize()) {
+
 	if (fadeInSecs > 0)
 		fadeInEndPos = std::min(
 				impl->getSampleRate()*
@@ -46,7 +48,7 @@ short FadedSoundFileImpl::getBitsPerSample() const {
 }
 
 int FadedSoundFileImpl::getDataSize() const {
-	return impl->getDataSize();
+	return dataSize;
 }
 
 const std::string& FadedSoundFileImpl::getFilename() const {
@@ -54,6 +56,11 @@ const std::string& FadedSoundFileImpl::getFilename() const {
 }
 
 int FadedSoundFileImpl::read(char* buf, int pos, int len) {
+	if (pos >= dataSize)
+		return 0;
+	if (pos + len > dataSize)
+		len = (dataSize - pos);
+
 	auto ret = impl->read(buf, pos, len);
 	if (pos < fadeInEndPos) {
 		if (impl->getBitsPerSample() == 16)
@@ -81,8 +88,12 @@ void FadedSoundFileImpl::fadeIn(char* buf, int pos, int len) {
 			(float)(pos + len)/(float)fadeInEndPos <<
 			std::endl;*/
 
-	std::for_each(beginIt, endIt, [this, &pos](T &sample){
-		sample = (T)(((float)sample * (float)pos)/(float)fadeInEndPos);
+	int offset = 0;
+	if (sizeof(T) == 1)
+		offset = 128;
+
+	std::for_each(beginIt, endIt, [this, offset, &pos](T &sample){
+		sample = (T)((((float)(sample - offset) * (float)pos)/(float)fadeInEndPos) + offset);
 		++pos;
 	});
 }
@@ -100,10 +111,21 @@ void FadedSoundFileImpl::fadeOut(char* buf, int pos, int len) {
 			(float)(n - pos + len)/(float)fadeLen <<
 			std::endl;*/
 
-	std::for_each(beginIt, endIt, [this, n, fadeLen, &pos](T &sample){
-		sample = (T)(((float)sample * (float)(n - pos))/(float)(fadeLen));
+	int offset = 0;
+	if (sizeof(T) == 1)
+		offset = 128;
+
+	std::for_each(beginIt, endIt, [this, n, fadeLen, offset, &pos](T &sample){
+		sample = (T)((((float)(sample - offset) * (float)(n - pos))/(float)(fadeLen)) + offset);
 		++pos;
 	});
+}
+
+void FadedSoundFileImpl::setFadeOutStartPos(int fadeOutStartPos) {
+	if (fadeOutStartPos > fadeInEndPos && fadeOutStartPos < this->fadeOutStartPos) {
+		dataSize = fadeOutStartPos + (dataSize - this->fadeOutStartPos);
+		this->fadeOutStartPos = fadeOutStartPos;
+	}
 }
 
 } /* namespace jukebox */
