@@ -111,8 +111,12 @@ void AlsaHandle::play() {
 
 template<typename T>
 void AlsaHandle::applyVolume(T *buf, size_t len) {
-	std::for_each(buf, buf+(len/sizeof(T)), [this](T &c){
-		c = static_cast<T>(static_cast<double>(vol)/100.0*static_cast<double>(c));
+	int offset = 0;
+	if (sizeof(T) == 1)
+		offset = 128;
+
+	std::for_each(buf, buf+(len/sizeof(T)), [this, offset](T &c){
+		c = static_cast<T>((static_cast<double>(vol)/100.0*static_cast<double>(c - offset)) + offset);
 	});
 }
 
