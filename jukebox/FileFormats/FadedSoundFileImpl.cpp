@@ -64,22 +64,22 @@ int FadedSoundFileImpl::read(char* buf, int pos, int len) {
 	auto ret = impl->read(buf, pos, len);
 	if (pos < fadeInEndPos) {
 		if (impl->getBitsPerSample() == 16)
-			fadeIn<int16_t>(buf, pos, ret);
+			fadeIn((int16_t *)buf, pos, ret);
 		else
-			fadeIn<uint8_t>(buf, pos, ret);
+			fadeIn((uint8_t *)buf, pos, ret);
 	}
 
 	if (pos >= fadeOutStartPos) {
 		if (impl->getBitsPerSample() == 16)
-			fadeOut<int16_t>(buf, pos, ret);
+			fadeOut((int16_t *)buf, pos, ret);
 		else
-			fadeOut<uint8_t>(buf, pos, ret);
+			fadeOut((uint8_t *)buf, pos, ret);
 	}
 	return ret;
 }
 
 template<typename T>
-void FadedSoundFileImpl::fadeIn(char* buf, int pos, int len) {
+void FadedSoundFileImpl::fadeIn(T* buf, int pos, int len) {
 	T *beginIt = reinterpret_cast<T *>(buf);
 	T *endIt = beginIt + (len/sizeof(T));
 
@@ -99,7 +99,7 @@ void FadedSoundFileImpl::fadeIn(char* buf, int pos, int len) {
 }
 
 template<typename T>
-void FadedSoundFileImpl::fadeOut(char* buf, int pos, int len) {
+void FadedSoundFileImpl::fadeOut(T* buf, int pos, int len) {
 	T *beginIt = reinterpret_cast<T *>(buf);
 	T *endIt = beginIt + (len/sizeof(T));
 

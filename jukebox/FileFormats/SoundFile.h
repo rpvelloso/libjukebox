@@ -32,9 +32,10 @@ public:
 	const std::string &getFilename() const;
 	double getDuration() const;
 	int read(char* buf, int pos, int len);
+	void truncAt(int pos);
 private:
 	std::unique_ptr<SoundFileImpl> impl;
-	int blockSize;
+	int blockSize, dataSize;
 };
 
 // TODO this is very confusing: a wave file factory in SoundFile.h - perhaps move this factory to there and create a wave file impl, instead?

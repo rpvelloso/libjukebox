@@ -14,6 +14,8 @@
  */
 
 #include <algorithm>
+#include <iostream>
+#include "SoundTransformation.h"
 #include "Sound.h"
 
 namespace {
@@ -24,6 +26,57 @@ int normalize(int vol) { return std::max(0,std::min(vol,100)); }
 
 namespace jukebox {
 
+class FadeOutOnStop : public SoundTransformation {
+public:
+	FadeOutOnStop(SoundFile &sf, int fadeOutSecs, int fadeOutStartPos) :
+		SoundTransformation(sf),
+		fadeOutSecs(fadeOutSecs),
+		fadeOutStartPos(fadeOutStartPos) {
+
+		int stopPos =
+			fadeOutStartPos + (
+			soundFile.getSampleRate()*
+			soundFile.getNumChannels()*
+			(soundFile.getBitsPerSample() == 8?1:2)*
+			fadeOutSecs);
+
+		if (stopPos < soundFile.getDataSize()) {
+			fade = true;
+			soundFile.truncAt(stopPos);
+		}
+	};
+
+	void operator()(uint8_t *buf, int pos, int len) override {
+		fadeOut(buf, pos, len);
+	};
+	void operator()(int16_t *buf, int pos, int len) override {
+		fadeOut(buf, pos, len);
+	};
+private:
+	int fadeOutSecs, fadeOutStartPos;
+	bool fade = false;
+	template<typename T>
+	void fadeOut(T *buf, int pos, int len) {
+		if (!fade)
+			return;
+
+		T *beginIt = reinterpret_cast<T *>(buf);
+		T *endIt = beginIt + (len/sizeof(T));
+
+		auto n = soundFile.getDataSize();
+		auto fadeLen = n - fadeOutStartPos;
+
+		int offset = 0;
+		if (sizeof(T) == 1)
+			offset = 128;
+
+		std::for_each(beginIt, endIt, [this, n, fadeLen, offset, &pos](T &sample){
+			sample = (T)((((float)(sample - offset) * (float)(n - pos))/(float)(fadeLen)) + offset);
+			++pos;
+		});
+	};
+};
+
 Sound::Sound(SoundImpl *impl) : impl(impl) {
 }
 
@@ -33,7 +86,9 @@ void Sound::play() {
 }
 
 void Sound::stop() {
-	impl->stop();
+	std::cout << "installing callback: " << getPosition() << std::endl;
+	impl->setTransformation(new FadeOutOnStop(impl->getSoundFile(), 10, getPosition()));
+	//impl->stop();
 }
 
 int Sound::getVolume() {

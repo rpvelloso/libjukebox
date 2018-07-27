@@ -28,5 +28,9 @@ int SoundImpl::getPosition() const {
 	return position;
 }
 
+void SoundImpl::setTransformation(SoundTransformation *tr) {
+	transformation.reset(tr);
+}
+
 } /* namespace jukebox */
 

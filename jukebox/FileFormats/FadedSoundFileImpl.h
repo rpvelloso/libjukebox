@@ -27,10 +27,10 @@ public:
 
 private:
 	template<typename T>
-	void fadeIn(char* buf, int pos, int len);
+	void fadeIn(T* buf, int pos, int len);
 
 	template<typename T>
-	void fadeOut(char* buf, int pos, int len);
+	void fadeOut(T* buf, int pos, int len);
 
 	std::unique_ptr<SoundFileImpl> impl;
 	int fadeInSecs, fadeOutSecs;
