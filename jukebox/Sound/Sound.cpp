@@ -14,8 +14,6 @@
  */
 
 #include <algorithm>
-#include <iostream>
-#include "SoundTransformation.h"
 #include "Sound.h"
 
 namespace {

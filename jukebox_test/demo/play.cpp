@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
 
 	printFileData(soundFile);
 
-	auto sound = jukebox::factory::makeSound(soundFile);
+	auto sound = jukebox::factory::makeFadeOnStopSound(soundFile, 5);
 	sound.loop(true);
 
 	jukebox::Mixer mixer;

@@ -15,12 +15,12 @@ namespace jukebox {
 class FadeOnStopSoundImpl: public SoundImpl {
 public:
 	FadeOnStopSoundImpl(SoundImpl *, int);
+	virtual ~FadeOnStopSoundImpl() = default;
 	void play() override;
 	void stop() override;
 	int getVolume() override;
 	void setVolume(int) override;
 	void loop(bool) override;
-	virtual ~FadeOnStopSoundImpl() = default;
 private:
 	std::unique_ptr<SoundImpl> impl;
 	int fadeOutSecs;

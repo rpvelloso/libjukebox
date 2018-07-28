@@ -36,9 +36,10 @@ public:
  const std::string &getFilename() const;
  double getDuration() const;
  int read(char* buf, int pos, int len);
+ void truncAt(int pos);
 private:
  std::unique_ptr<SoundFileImpl> impl;
- int blockSize;
+ int blockSize, dataSize;
 };
 
 
@@ -60,6 +61,18 @@ namespace factory {
 }
 namespace jukebox {
 
+class SoundTransformation {
+public:
+ SoundTransformation(SoundFile &soundFile) : soundFile(soundFile) {};
+ virtual ~SoundTransformation() = default;
+ virtual void operator()(void *, int, int) = 0;
+protected:
+ SoundFile &soundFile;
+};
+
+}
+namespace jukebox {
+
 class SoundImpl {
 public:
  SoundImpl(SoundFile &file);
@@ -70,8 +83,29 @@ public:
  virtual void setVolume(int) = 0;
  virtual void loop(bool) = 0;
  SoundFile &getSoundFile();
+ int getPosition() const;
+ void setTransformation(SoundTransformation *);
 protected:
+ int position = 0;
  SoundFile &soundFile;
+ std::unique_ptr<SoundTransformation> transformation;
+};
+
+}
+namespace jukebox {
+
+class FadeOnStopSoundImpl: public SoundImpl {
+public:
+ FadeOnStopSoundImpl(SoundImpl *, int);
+ virtual ~FadeOnStopSoundImpl() = default;
+ void play() override;
+ void stop() override;
+ int getVolume() override;
+ void setVolume(int) override;
+ void loop(bool) override;
+private:
+ std::unique_ptr<SoundImpl> impl;
+ int fadeOutSecs;
 };
 
 }
@@ -85,12 +119,14 @@ public:
  int getVolume();
  void setVolume(int);
  void loop(bool);
+ int getPosition() const;
 private:
  std::unique_ptr<SoundImpl> impl;
 };
 
 namespace factory {
  extern Sound makeSound(SoundFile &file);
+ extern Sound makeFadeOnStopSound(SoundFile &file, int);
 }
 
 }

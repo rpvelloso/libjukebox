@@ -16,8 +16,7 @@ class SoundTransformation {
 public:
 	SoundTransformation(SoundFile &soundFile) : soundFile(soundFile) {};
 	virtual ~SoundTransformation() = default;
-	virtual void operator()(uint8_t *, int, int) = 0;
-	virtual void operator()(int16_t *, int, int) = 0;
+	virtual void operator()(void *, int, int) = 0;
 protected:
 	SoundFile &soundFile;
 };

@@ -17,6 +17,7 @@
 #include <cmath>
 
 #include "DirectSoundBuffer.h"
+#include "jukebox/Sound/FadeOnStopSoundImpl.h"
 #include "jukebox/Sound/Sound.h"
 
 namespace jukebox {
@@ -275,6 +276,10 @@ namespace factory {
 
 Sound makeSound(SoundFile& file) {
 	return Sound(new DirectSoundBuffer(file));
+}
+
+Sound makeFadeOnStopSound(SoundFile& file, int fadeOutSecs) {
+	return Sound(new FadeOnStopSoundImpl(new DirectSoundBuffer(file), fadeOutSecs));
 }
 
 }

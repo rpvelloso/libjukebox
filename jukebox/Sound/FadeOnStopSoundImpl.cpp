@@ -5,6 +5,8 @@
  *      Author: rvelloso
  */
 
+#include <iostream>
+#include <algorithm>
 #include "FadeOnStopSoundImpl.h"
 
 namespace jukebox {
@@ -29,11 +31,11 @@ public:
 		}
 	};
 
-	void operator()(uint8_t *buf, int pos, int len) override {
-		fadeOut(buf, pos, len);
-	};
-	void operator()(int16_t *buf, int pos, int len) override {
-		fadeOut(buf, pos, len);
+	void operator()(void *buf, int pos, int len) override {
+		if (soundFile.getBitsPerSample() == 8)
+			fadeOut((uint8_t *)buf, pos, len);
+		else
+			fadeOut((int16_t *)buf, pos, len);
 	};
 private:
 	int fadeOutSecs, fadeOutStartPos;
@@ -71,8 +73,8 @@ void FadeOnStopSoundImpl::play() {
 }
 
 void FadeOnStopSoundImpl::stop() {
-	std::cout << "installing callback: " << getPosition() << std::endl;
-	impl->setTransformation(new FadeOutOnStop(impl->getSoundFile(), fadeOutSecs, impl->getPosition()));
+	if (impl->getPosition() > 0 && fadeOutSecs > 0)
+		impl->setTransformation(new FadeOutOnStop(impl->getSoundFile(), fadeOutSecs, impl->getPosition()));
 }
 
 int FadeOnStopSoundImpl::getVolume() {
