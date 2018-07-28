@@ -6,7 +6,9 @@ Plataform independent (windows/linux) C++ audio playback library (uses DirectSou
 - Ogg Vorbis.
 
 # Effects
-- Fade in/out.
+- Fade in/out;
+- Fade on stop;
+- Interface to implement/extend custom effects.
 
 # Example
 ```cpp
