@@ -32,10 +32,12 @@ public:
 	};
 
 	void operator()(void *buf, int pos, int len) override {
-		if (soundFile.getBitsPerSample() == 8)
-			fadeOut((uint8_t *)buf, pos, len);
-		else
-			fadeOut((int16_t *)buf, pos, len);
+		if (pos >= fadeOutStartPos) {
+			if (soundFile.getBitsPerSample() == 8)
+				fadeOut((uint8_t *)buf, pos, len);
+			else
+				fadeOut((int16_t *)buf, pos, len);
+		}
 	};
 private:
 	int fadeOutSecs, fadeOutStartPos;
