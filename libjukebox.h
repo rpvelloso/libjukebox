@@ -44,6 +44,7 @@ private:
 
 
 namespace factory {
+ extern SoundFile loadMP3File(const std::string &filename);
  extern SoundFile loadWaveFile(const std::string &filename);
  extern SoundFile loadWaveStream(std::istream &inp);
  extern SoundFile loadVorbisFile(const std::string &filename);
@@ -65,7 +66,12 @@ class SoundTransformation {
 public:
  SoundTransformation(SoundFile &soundFile) : soundFile(soundFile) {};
  virtual ~SoundTransformation() = default;
+<<<<<<< HEAD
  virtual void operator()(void *, int, int) = 0;
+=======
+ virtual void operator()(uint8_t *, int, int) = 0;
+ virtual void operator()(int16_t *, int, int) = 0;
+>>>>>>> branch 'master' of https://github.com/rpvelloso/libjukebox.git
 protected:
  SoundFile &soundFile;
 };
@@ -89,6 +95,7 @@ protected:
  int position = 0;
  SoundFile &soundFile;
  std::unique_ptr<SoundTransformation> transformation;
+<<<<<<< HEAD
 };
 
 }
@@ -106,6 +113,8 @@ public:
 private:
  std::unique_ptr<SoundImpl> impl;
  int fadeOutSecs;
+=======
+>>>>>>> branch 'master' of https://github.com/rpvelloso/libjukebox.git
 };
 
 }

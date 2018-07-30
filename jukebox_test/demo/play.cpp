@@ -28,11 +28,13 @@ int main(int argc, char **argv) {
 
 	auto soundFile = filename.back() == 'g'? // ogg?
 			jukebox::factory::loadVorbisFile(filename)://, 10, 10):
+			filename.back() == '3'? // mp3?
+			jukebox::factory::loadMP3File(filename):
 			jukebox::factory::loadWaveFile(filename);//, 10, 10);
 
 	printFileData(soundFile);
 
-	auto sound = jukebox::factory::makeFadeOnStopSound(soundFile, 5);
+	auto sound = jukebox::factory::makeSound(soundFile);
 	sound.loop(true);
 
 	jukebox::Mixer mixer;
