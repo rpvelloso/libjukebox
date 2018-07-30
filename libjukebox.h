@@ -36,13 +36,15 @@ public:
  const std::string &getFilename() const;
  double getDuration() const;
  int read(char* buf, int pos, int len);
+ void truncAt(int pos);
 private:
  std::unique_ptr<SoundFileImpl> impl;
- int blockSize;
+ int blockSize, dataSize;
 };
 
 
 namespace factory {
+ extern SoundFile loadMP3File(const std::string &filename);
  extern SoundFile loadWaveFile(const std::string &filename);
  extern SoundFile loadWaveStream(std::istream &inp);
  extern SoundFile loadVorbisFile(const std::string &filename);
@@ -60,6 +62,19 @@ namespace factory {
 }
 namespace jukebox {
 
+class SoundTransformation {
+public:
+ SoundTransformation(SoundFile &soundFile) : soundFile(soundFile) {};
+ virtual ~SoundTransformation() = default;
+ virtual void operator()(uint8_t *, int, int) = 0;
+ virtual void operator()(int16_t *, int, int) = 0;
+protected:
+ SoundFile &soundFile;
+};
+
+}
+namespace jukebox {
+
 class SoundImpl {
 public:
  SoundImpl(SoundFile &file);
@@ -70,8 +85,12 @@ public:
  virtual void setVolume(int) = 0;
  virtual void loop(bool) = 0;
  SoundFile &getSoundFile();
+ int getPosition() const;
+ void setTransformation(SoundTransformation *);
 protected:
+ int position = 0;
  SoundFile &soundFile;
+ std::unique_ptr<SoundTransformation> transformation;
 };
 
 }
@@ -85,6 +104,7 @@ public:
  int getVolume();
  void setVolume(int);
  void loop(bool);
+ int getPosition() const;
 private:
  std::unique_ptr<SoundImpl> impl;
 };

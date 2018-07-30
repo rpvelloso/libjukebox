@@ -2,6 +2,7 @@
 headers=(
 	'jukebox/FileFormats/SoundFileImpl.h'
 	'jukebox/FileFormats/SoundFile.h'
+	'jukebox/Sound/SoundTransformation.h'
 	'jukebox/Sound/SoundImpl.h'
 	'jukebox/Sound/Sound.h'
 	'jukebox/Mixer/MixerImpl.h'

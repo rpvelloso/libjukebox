@@ -40,6 +40,7 @@ private:
 
 // TODO this is very confusing: a wave file factory in SoundFile.h - perhaps move this factory to there and create a wave file impl, instead?
 namespace factory {
+	extern SoundFile loadMP3File(const std::string &filename);
 	extern SoundFile loadWaveFile(const std::string &filename);
 	extern SoundFile loadWaveStream(std::istream &inp);
 	extern SoundFile loadVorbisFile(const std::string &filename);
