@@ -13,43 +13,42 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBJUKEBOX_VORBISFILE_2017_12_23_H_
-#define LIBJUKEBOX_VORBISFILE_2017_12_23_H_
+#ifndef JUKEBOX_FILEFORMATS_BUFFEREDSOUNDFILEIMPL_H_
+#define JUKEBOX_FILEFORMATS_BUFFEREDSOUNDFILEIMPL_H_
 
 #include <memory>
-
-#include "SoundFile.h"
+#include <vector>
 #include "SoundFileImpl.h"
 
 namespace jukebox {
 
-extern void freeVorbis(char *ptr);
+/*
+ * this is a decorator class that loads the
+ * entire file from disk to RAM memory and normalizes it
+ *
+ * */
 
-class VorbisFile : public SoundFileImpl {
+class BufferedSoundFileImpl: public SoundFileImpl {
 public:
-	VorbisFile(const std::string &filename);
-	VorbisFile(std::istream &inp);
-	short getNumChannels() const override;
-	int getSampleRate() const override;
-	short getBitsPerSample() const override;
-	const char *getData() const override;
-	int getDataSize() const override;
+	BufferedSoundFileImpl(SoundFileImpl *impl);
+	virtual ~BufferedSoundFileImpl() = default;
+	short getNumChannels() const;
+	int getSampleRate() const;
+	short getBitsPerSample() const;
+	const char *getData() const;
+	int getDataSize() const;
 	const std::string &getFilename() const;
+	int read(char *buf, int pos, int len);
 private:
-	short numChannels = 0;
-	int sampleRate = 0;
-	int dataSize = 0;
-	std::unique_ptr<char, decltype(&freeVorbis)> data;
-	std::string filename;
+	std::unique_ptr<SoundFileImpl> impl;
+	std::unique_ptr<char []> data;
+	size_t dataSize;
 
-	void load(std::istream &inp);
+	template<typename T>
+	std::vector<float> toFloat();
+	void toFixed(std::vector<float> &inp);
 };
-
-namespace factory {
-	extern SoundFile loadVorbisFile(const std::string &filename);
-	extern SoundFile loadVorbisStream(std::istream &inp);
-}
 
 } /* namespace jukebox */
 
-#endif
+#endif /* JUKEBOX_FILEFORMATS_BUFFEREDSOUNDFILEIMPL_H_ */

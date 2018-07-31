@@ -23,7 +23,7 @@
 #endif
 
 #ifndef ALSA_MIN_FRAMES
-#define ALSA_MIN_FRAMES 100
+#define ALSA_MIN_FRAMES (8*1024)
 #endif
 
 namespace {
@@ -79,33 +79,44 @@ void AlsaHandle::play() {
 		StatusGuard statusGuard(playing, true);
 
 		size_t frameSize = (soundFile.getBitsPerSample()/8) * soundFile.getNumChannels();
-		size_t numFrames = soundFile.getDataSize() / frameSize;
-		const char *buf = soundFile.getData();
 		std::unique_ptr<char[]> volBuf(new char[minFrames*frameSize]);
 
-		while (numFrames > 0 && playing) {
-			auto frames = std::min(numFrames, minFrames);
-			std::copy(buf, buf+(frames*frameSize), volBuf.get());
+		do {
+			position = 0;
+			size_t numFrames = soundFile.getDataSize() / frameSize;
 
-			if (soundFile.getBitsPerSample() == 16)
-				applyVolume(reinterpret_cast<int16_t *>(volBuf.get()), frames*frameSize);
-			else
-				applyVolume(volBuf.get(), frames*frameSize);
+			while (numFrames > 0 && playing) {
+				auto frames = std::min(numFrames, minFrames);
+				auto bytes = soundFile.read(volBuf.get(), position, frames*frameSize);
 
-			auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), frames);
-			if (n > 0) {
-				numFrames -= n;
-				buf += n * frameSize;
-			} else
-				throw std::runtime_error("snd_pcm_writei error.");
-		}
+				if (bytes > 0) {
+					if (soundFile.getBitsPerSample() == 16)
+						applyVolume(reinterpret_cast<int16_t *>(volBuf.get()), bytes);
+					else
+						applyVolume(volBuf.get(), bytes);
+
+					auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), bytes / frameSize);
+					if (n > 0) {
+						numFrames -= n;
+						position += n * frameSize;
+					} else {
+						throw std::runtime_error("snd_pcm_writei error." + std::string(snd_strerror(n)));
+					}
+				} else
+					break;
+			}
+		} while (looping && playing);
 	});
 }
 
 template<typename T>
 void AlsaHandle::applyVolume(T *buf, size_t len) {
-	std::for_each(buf, buf+(len/sizeof(T)), [this](T &c){
-		c = static_cast<T>(static_cast<double>(vol)/100.0*static_cast<double>(c));
+	int offset = 0;
+	if (sizeof(T) == 1)
+		offset = 128;
+
+	std::for_each(buf, buf+(len/sizeof(T)), [this, offset](T &c){
+		c = static_cast<T>((static_cast<double>(vol)/100.0*static_cast<double>(c - offset)) + offset);
 	});
 }
 
@@ -135,6 +146,10 @@ void AlsaHandle::config() {
     500000);
   if (res != 0)
     throw std::runtime_error("snd_pcm_set_params error.");
+}
+
+void AlsaHandle::loop(bool l) {
+	looping = l;
 }
 
 void AlsaHandle::prepare() {

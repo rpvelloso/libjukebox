@@ -17,23 +17,22 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-
 #include "jukebox/FileFormats/SoundFile.h"
-#include "jukebox/FileFormats/WaveFile.h"
+#include "jukebox/FileFormats/VorbisFileImpl.h"
+#include "jukebox/FileFormats/WaveFileImpl.h"
 #include "jukebox/Mixer/Mixer.h"
 #include "jukebox/Sound/Sound.h"
 #include "jukebox/Sound/Factory.h"
 
 std::string formatDuration(double duration) {
 	std::cout << "*** " << duration << std::endl;
-	size_t hr = duration/3600;
+	int hr = duration/3600;
 	duration -= hr*3600;
-	size_t min = duration/60;
+	int min = duration/60;
 	duration -= min*60;
-	size_t secs = duration;
+	int secs = duration;
 
-	return
-		std::to_string(hr) + ":" +
+	return std::to_string(hr) + ":" +
 		(min<10?"0":"") + std::to_string(min) + ":" +
 		(secs<10?"0":"") + std::to_string(secs);
 }
@@ -51,37 +50,51 @@ void printFileData(const jukebox::SoundFile &file) {
 
 int main(int argc, char **argv) {
 	if( argc < 3 ) {
-		std::cout << "you need to supply two wave files as arguments" << std::endl;
+		std::cout << "you need to supply two audio (wav/ogg) files as arguments" << std::endl;
 		return 1;
 	}
 
-	std::cout << "ready to load " << argv[1] << " as a file" << std::endl;
-	auto wav = jukebox::factory::loadWaveFile(argv[1]);
-	printFileData(wav);
+	std::string filename1(argv[1]);
+	std::string filename2(argv[2]);
 
-	std::cout << "ready to load " << argv[2] << " as a stream" << std::endl;
-	std::fstream file(argv[2], std::ios::binary|std::ios::in);
-	auto wav2 = jukebox::factory::loadWaveStream(file);
-	printFileData(wav2);
+	std::cout << "ready to load " << filename1 << " as a file" << std::endl;
 
-	auto sound = jukebox::factory::makeSound(wav);
-	auto sound2 = jukebox::factory::makeSound(wav2);
+	auto soundFile1 = filename1.back() == 'g'? // ogg?
+		jukebox::factory::loadBufferedVorbisFile(filename1):
+		jukebox::factory::loadBufferedWaveFile(filename1);
+
+	printFileData(soundFile1);
+
+	std::cout << "ready to load " << filename2 << " as a stream" << std::endl;
+	std::fstream file(filename2, std::ios::binary|std::ios::in);
+	auto soundFile2 = filename2.back() == 'g'?
+		jukebox::factory::loadVorbisStream(file):
+		jukebox::factory::loadWaveStream(file);
+	printFileData(soundFile2);
+
+	auto sound1 = jukebox::factory::makeSound(soundFile1);
+	sound1.loop(true);
+	auto sound11 = jukebox::factory::makeSound(soundFile1); // shared soundFile
+	auto sound2 = jukebox::factory::makeSound(soundFile2);
 
 	jukebox::Mixer mixer;
 	mixer.setVolume(100);
 	std::cout << "vol: " << mixer.getVolume() << std::endl;
-	//sound.setVolume(100);
-	sound.play();
+	sound1.play();
 
 	// TODO replace with a proper key reading
 	char n;
 	std::cin >> n;
 
-	sound.stop();
-	mixer.setVolume(10);
+	//sound11.play(); // play same soundFile simultaneously
+	// TODO replace with a proper key reading
+	//std::cin >> n;
+
+	//sound1.stop();
+	mixer.setVolume(40);
 	std::cout << "vol: " << mixer.getVolume() << std::endl;
 	//sound.setVolume(30);
-	sound.play();
+	sound1.play();
 
 	// TODO replace with a proper key reading
 	std::cin >> n;

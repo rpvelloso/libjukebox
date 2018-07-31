@@ -35,12 +35,14 @@ public:
 	void stop() override;
 	int getVolume() const override;
 	void setVolume(int) override;
+	void loop(bool) override;
 	~AlsaHandle();
 private:
 	std::unique_ptr<snd_pcm_t, decltype(&closeAlsaHandle)> handlePtr;
 	std::thread playThread;
 	std::atomic<bool> playing;
 	int vol = 100;
+	bool looping = false;
 
 	template <typename T>
 	void applyVolume(T *buf, size_t len);

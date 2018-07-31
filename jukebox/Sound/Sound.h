@@ -29,6 +29,8 @@ public:
 	void stop();
 	int getVolume() const;
 	void setVolume(int);
+	void loop(bool);
+	int getPosition() const;
 private:
 	std::unique_ptr<SoundImpl> impl;
 };

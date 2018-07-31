@@ -17,7 +17,6 @@
 #define LIBJUKEBOX_SOUNDFILE_2017_12_17_H_
 
 #include <memory>
-
 #include "SoundFileImpl.h"
 
 namespace jukebox {
@@ -28,15 +27,14 @@ public:
 	short getNumChannels() const;
 	int getSampleRate() const;
 	short getBitsPerSample() const;
-	const char *getData() const;
 	int getDataSize() const;
 	const std::string &getFilename() const;
 	double getDuration() const;
+	int read(char* buf, int pos, int len);
+	void truncAt(int pos);
 private:
 	std::unique_ptr<SoundFileImpl> impl;
-
-	template<typename T>
-	void normalize();
+	int blockSize, dataSize;
 };
 
 } /* namespace jukebox */

@@ -24,7 +24,8 @@
 namespace jukebox {
 
 namespace factory {
-	extern Sound makeSound(SoundFile &file);
+	Sound makeSound(SoundFile &file);
+	Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs);
 }
 
 }
