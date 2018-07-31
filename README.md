@@ -54,6 +54,6 @@ int main(int argc, char **argv) {
 ```
 # Credits
 
-MP3 decoder: (https://github.com/lieff/minimp3)
-Ogg Vorbis decoder: (https://github.com/nothings/stb)
+- MP3 decoder: https://github.com/lieff/minimp3
+- Ogg Vorbis decoder: https://github.com/nothings/stb
 
