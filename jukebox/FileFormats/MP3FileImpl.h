@@ -36,8 +36,10 @@ private:
 	int fileSize = 0;
 	int offset = 0;
 	int dataSize = 0;
+	int tmp = 0;
 
 	void load(std::istream& inp);
+	void reset();
 };
 
 } /* namespace jukebox */
