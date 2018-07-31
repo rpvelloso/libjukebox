@@ -79,7 +79,7 @@ void AlsaHandle::play() {
 		StatusGuard statusGuard(playing, true);
 
 		size_t frameSize = (soundFile.getBitsPerSample()/8) * soundFile.getNumChannels();
-		std::unique_ptr<char[]> volBuf(new char[minFrames*frameSize]);
+		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[minFrames*frameSize]);
 
 		do {
 			position = 0;
@@ -87,7 +87,7 @@ void AlsaHandle::play() {
 
 			while (numFrames > 0 && playing) {
 				auto frames = std::min(numFrames, minFrames);
-				auto bytes = soundFile.read(volBuf.get(), position, frames*frameSize);
+				auto bytes = soundFile.read(reinterpret_cast<char *>(volBuf.get()), position, frames*frameSize);
 
 				if (bytes > 0) {
 					if (soundFile.getBitsPerSample() == 16)
@@ -110,7 +110,7 @@ void AlsaHandle::play() {
 }
 
 template<typename T>
-void AlsaHandle::applyVolume(T *buf, int position, size_t len) {
+void AlsaHandle::applyVolume(T *buf, int position, int len) {
 	int offset = 0;
 	if (sizeof(T) == 1)
 		offset = 128;
@@ -120,7 +120,7 @@ void AlsaHandle::applyVolume(T *buf, int position, size_t len) {
 	});
 
 	if (transformation)
-		(*transformation)(buf, position, (int)len);
+		(*transformation)(buf, position, len);
 }
 
 void AlsaHandle::stop() {

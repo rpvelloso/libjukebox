@@ -45,7 +45,7 @@ private:
 	bool looping = false;
 
 	template <typename T>
-	void applyVolume(T *buf, size_t len);
+	void applyVolume(T *buf, int position, int len);
 
 	void config();
 	void prepare();
