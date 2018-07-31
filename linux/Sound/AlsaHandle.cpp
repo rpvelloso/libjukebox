@@ -88,18 +88,12 @@ void AlsaHandle::play() {
 			while (numFrames > 0 && playing) {
 				auto frames = std::min(numFrames, minFrames);
 				auto bytes = soundFile.read(volBuf.get(), position, frames*frameSize);
-				if (transformation) {
-					if (soundFile.getBitsPerSample() == 8)
-						(*transformation)((uint8_t *)volBuf.get(), position, (int)frames*frameSize);
-					else
-						(*transformation)((int16_t *)volBuf.get(), position, (int)frames*frameSize);
-				}
 
 				if (bytes > 0) {
 					if (soundFile.getBitsPerSample() == 16)
-						applyVolume(reinterpret_cast<int16_t *>(volBuf.get()), bytes);
+						applyVolume(reinterpret_cast<int16_t *>(volBuf.get()), position, bytes);
 					else
-						applyVolume(volBuf.get(), bytes);
+						applyVolume(volBuf.get(), position, bytes);
 
 					auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), bytes / frameSize);
 					if (n > 0) {
@@ -116,7 +110,7 @@ void AlsaHandle::play() {
 }
 
 template<typename T>
-void AlsaHandle::applyVolume(T *buf, size_t len) {
+void AlsaHandle::applyVolume(T *buf, int position, size_t len) {
 	int offset = 0;
 	if (sizeof(T) == 1)
 		offset = 128;
@@ -124,6 +118,9 @@ void AlsaHandle::applyVolume(T *buf, size_t len) {
 	std::for_each(buf, buf+(len/sizeof(T)), [this, offset](T &c){
 		c = static_cast<T>((static_cast<double>(vol)/100.0*static_cast<double>(c - offset)) + offset);
 	});
+
+	if (transformation)
+		(*transformation)(buf, position, (int)len);
 }
 
 void AlsaHandle::stop() {
