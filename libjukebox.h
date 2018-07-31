@@ -66,12 +66,7 @@ class SoundTransformation {
 public:
  SoundTransformation(SoundFile &soundFile) : soundFile(soundFile) {};
  virtual ~SoundTransformation() = default;
-<<<<<<< HEAD
  virtual void operator()(void *, int, int) = 0;
-=======
- virtual void operator()(uint8_t *, int, int) = 0;
- virtual void operator()(int16_t *, int, int) = 0;
->>>>>>> branch 'master' of https://github.com/rpvelloso/libjukebox.git
 protected:
  SoundFile &soundFile;
 };
@@ -95,26 +90,6 @@ protected:
  int position = 0;
  SoundFile &soundFile;
  std::unique_ptr<SoundTransformation> transformation;
-<<<<<<< HEAD
-};
-
-}
-namespace jukebox {
-
-class FadeOnStopSoundImpl: public SoundImpl {
-public:
- FadeOnStopSoundImpl(SoundImpl *, int);
- virtual ~FadeOnStopSoundImpl() = default;
- void play() override;
- void stop() override;
- int getVolume() override;
- void setVolume(int) override;
- void loop(bool) override;
-private:
- std::unique_ptr<SoundImpl> impl;
- int fadeOutSecs;
-=======
->>>>>>> branch 'master' of https://github.com/rpvelloso/libjukebox.git
 };
 
 }
