@@ -76,8 +76,6 @@ int MP3FileImpl::read(char* buf, int pos, int len) { // 'pos' is unused, not sup
 		}
 	}
 
-	tmp += bytesRead;
-	std::cout << "read: " << bytesRead << " " << tmp << std::endl;
 	return bytesRead;
 }
 
@@ -108,7 +106,6 @@ void MP3FileImpl::load(std::istream& inp) {
 		    info.layer = 4 - HDR_GET_LAYER(buff);
 		    info.bitrate_kbps = hdr_bitrate_kbps(buff);
 
-		    //std::cout << (unsigned long long)buff << ": " << info.bitrate_kbps << " " << info.hz << " " << info.channels << " " << hdr_frame_samples(buff) << std::endl;
 		    dataSize += hdr_frame_samples(buff);
 		    buff += frame_size;
 		}
@@ -117,7 +114,7 @@ void MP3FileImpl::load(std::istream& inp) {
 }
 
 void MP3FileImpl::reset() {
-	pcmPos = 0; tmp = 0;
+	pcmPos = 0;
 	mp3dec_init(&mp3d);
 	samples = mp3dec_decode_frame(&mp3d, mp3.get(), fileSize, pcm, &info)*info.channels;
 	offset = info.frame_bytes;
