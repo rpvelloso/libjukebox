@@ -37,6 +37,8 @@ private:
 	int offset = 0;
 	int dataSize = 0;
 
+	std::vector<std::pair<long, long>> frameIndex; // <endPos, FramePos>
+	void positionMP3Stream(int pos);
 	void load(std::istream& inp);
 	void reset();
 };
