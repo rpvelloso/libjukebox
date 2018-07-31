@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include "Sound.h"
+#include "Decorators/FadeOnStopSoundImpl.h"
 
 namespace {
 
@@ -53,4 +54,14 @@ int Sound::getPosition() const {
 	return impl->getPosition();
 }
 
+namespace factory {
+
+extern SoundImpl *makeSoundImpl(SoundFile &);
+
+Sound makeFadeOnStopSound(SoundFile& file, int fadeOutSecs) {
+	return Sound(new FadeOnStopSoundImpl(makeSoundImpl(file), fadeOutSecs));
+}
+
+
+}
 } /* namespace jukebox */

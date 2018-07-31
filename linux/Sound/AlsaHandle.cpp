@@ -88,6 +88,12 @@ void AlsaHandle::play() {
 			while (numFrames > 0 && playing) {
 				auto frames = std::min(numFrames, minFrames);
 				auto bytes = soundFile.read(volBuf.get(), position, frames*frameSize);
+				if (transformation) {
+					if (soundFile.getBitsPerSample() == 8)
+						(*transformation)((uint8_t *)volBuf.get(), position, (int)frames*frameSize);
+					else
+						(*transformation)((int16_t *)volBuf.get(), position, (int)frames*frameSize);
+				}
 
 				if (bytes > 0) {
 					if (soundFile.getBitsPerSample() == 16)
@@ -169,6 +175,10 @@ void AlsaHandle::setVolume(int vol) {
 }
 
 namespace factory {
+
+SoundImpl *makeSoundImpl(SoundFile &file) {
+	return new AlsaHandle(file);
+}
 
 Sound makeSound(SoundFile& file) {
 	return Sound(new AlsaHandle(file));

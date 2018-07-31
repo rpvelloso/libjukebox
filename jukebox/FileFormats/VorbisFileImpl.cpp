@@ -18,8 +18,8 @@
 #include <exception>
 #include <stdlib.h>
 
-#include "BufferedSoundFileImpl.h"
-#include "FadedSoundFileImpl.h"
+#include "Decorators/BufferedSoundFileImpl.h"
+#include "Decorators/FadedSoundFileImpl.h"
 #include "SoundFile.h"
 #include "VorbisFileImpl.h"
 #include "jukebox/FileFormats/stb_vorbis/stb_vorbis.c"

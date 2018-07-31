@@ -9,7 +9,7 @@
 #define JUKEBOX_FILEFORMATS_FADEDSOUNDFILEIMPL_H_
 
 #include <memory>
-#include "SoundFileImpl.h"
+#include "../SoundFileImpl.h"
 
 namespace jukebox {
 

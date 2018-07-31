@@ -8,7 +8,7 @@
 #ifndef JUKEBOX_SOUND_FADEONSTOPSOUNDIMPL_H_
 #define JUKEBOX_SOUND_FADEONSTOPSOUNDIMPL_H_
 
-#include "SoundImpl.h"
+#include "../SoundImpl.h"
 
 namespace jukebox {
 

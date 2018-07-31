@@ -9,11 +9,11 @@
 #include <fstream>
 #include <string.h>
 
+#include "SoundFile.h"
+#include "Decorators/BufferedSoundFileImpl.h"
+#include "Decorators/FadedSoundFileImpl.h"
 #define MINIMP3_IMPLEMENTATION
 #include "MP3FileImpl.h"
-#include "SoundFile.h"
-#include "BufferedSoundFileImpl.h"
-#include "FadedSoundFileImpl.h"
 
 namespace jukebox {
 

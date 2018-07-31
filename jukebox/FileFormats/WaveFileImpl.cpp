@@ -16,8 +16,8 @@
 #include <algorithm>
 #include <exception>
 
-#include "FadedSoundFileImpl.h"
-#include "BufferedSoundFileImpl.h"
+#include "Decorators/FadedSoundFileImpl.h"
+#include "Decorators/BufferedSoundFileImpl.h"
 #include "SoundFile.h"
 #include "WaveFileImpl.h"
 
