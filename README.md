@@ -3,6 +3,7 @@ Plataform independent (windows/linux) C++ audio playback library (uses DirectSou
 
 # Supported file formats:
 - RAW Wave;
+- MP3;
 - Ogg Vorbis;
 - Extensible architecture allows implementation of other formats, transparently.
 
@@ -51,4 +52,8 @@ int main(int argc, char **argv) {
 	std::cin.get();
 }
 ```
+# Credits
+
+MP3 decoder: (https://github.com/lieff/minimp3)
+Ogg Vorbis decoder: (https://github.com/nothings/stb)
 
