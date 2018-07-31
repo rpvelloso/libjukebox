@@ -17,55 +17,66 @@
 #define LIBJUKEBOX_WAVEFILE_2017_12_17_H_
 
 #include <memory>
+#include <istream>
+#include <fstream>
+#include <cstdint>
+#include <mutex>
 
 #include "SoundFile.h"
 #include "SoundFileImpl.h"
 
 namespace jukebox {
 
-// TODO rename to WaveFileImpl?
-class WaveFile : public SoundFileImpl {
-	// TODO use fixed int types
+class WaveFileImpl : public SoundFileImpl {
 	struct WaveHeader1 {
 		char ChunkID[4];
-		int ChunkSize;
+		uint32_t ChunkSize;
 		char Format[4];
 		char Subchunk1ID[4];
-		int Subchunk1Size;
+		uint32_t Subchunk1Size;
 	};
 	struct WaveHeader2 {
-		short AudioFormat;
-		short NumChannels;
-		int SampleRate;
-		int ByteRate;
-		short BlockAlign;
-		short BitsPerSample;
+		uint16_t AudioFormat;
+		uint16_t NumChannels;
+		uint32_t SampleRate;
+		uint32_t ByteRate;
+		uint16_t BlockAlign;
+		uint16_t BitsPerSample;
 	};
 	struct WaveHeader3 {
 		char Subchunk2ID[4];
-		int Subchunk2Size;
+		uint32_t Subchunk2Size;
 	};
 public:
-	WaveFile(const std::string &filename);
-	WaveFile(std::istream &inp, const std::string &filename = ":stream:");
-	WaveFile(std::istream &&inp, const std::string &filename = ":stream:");
+	WaveFileImpl(const std::string &filename);
+	WaveFileImpl(std::istream &inp, const std::string &filename = ":stream:");
+	virtual ~WaveFileImpl() = default;
 	short getNumChannels() const override;
 	int getSampleRate() const override;
 	short getBitsPerSample() const override;
-	const char *getData() const override;
 	int getDataSize() const override;
 	const std::string &getFilename() const override;
+	int read(char *buf, int pos, int len) override;
 private:
+	std::fstream fileStream;
+	std::istream inputStream;
 	std::string filename;
 	WaveHeader1 header1;
 	WaveHeader2 header2;
 	WaveHeader3 header3;
-	std::unique_ptr<char []> data;
+	int headerSize = 0;
+	std::mutex readMutex;
+
+	void load();
 };
 
 namespace factory {
 	SoundFile loadWaveFile(const std::string &filename);
 	SoundFile loadWaveStream(std::istream &inp);
+	SoundFile loadBufferedWaveFile(const std::string &filename);
+	SoundFile loadBufferedWaveStream(std::istream &inp);
+	SoundFile loadFadedWaveFile(const std::string &filename, int fadeInSecs, int fadeOutSecs);
+	SoundFile loadFadedWaveStream(std::istream &inp, int fadeInSecs, int fadeOutSecs);
 }
 
 }

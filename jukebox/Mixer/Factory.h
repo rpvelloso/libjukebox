@@ -1,5 +1,5 @@
 /*
-    Copyright 2017 José Diego Ferreira Martins.
+    Copyright 2018 Jose Diego Ferreira Martins.
     This file is part of libjukebox.
     libjukebox is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

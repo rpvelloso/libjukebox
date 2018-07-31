@@ -1,19 +1,25 @@
 add_library(libjukebox
         FileFormats/stb_vorbis/stb_vorbis.c
-        FileFormats/stb_vorbis/stb_vorbis.h
+        FileFormats/BufferedSoundFileImpl.cpp
+        FileFormats/BufferedSoundFileImpl.h
+        FileFormats/FadedSoundFileImpl.cpp
+        FileFormats/FadedSoundFileImpl.h
         FileFormats/SoundFile.cpp
         FileFormats/SoundFile.h
         FileFormats/SoundFileImpl.h
-        FileFormats/VorbisFile.cpp
-        FileFormats/VorbisFile.h
-        FileFormats/WaveFile.cpp
-        FileFormats/WaveFile.h
+        FileFormats/VorbisFileImpl.cpp
+        FileFormats/VorbisFileImpl.h
+        FileFormats/WaveFileImpl.cpp
+        FileFormats/WaveFileImpl.h
         Mixer/Factory.h
         Mixer/Mixer.cpp
         Mixer/Mixer.h
         Mixer/MixerImpl.h
         Sound/Factory.h
+        Sound/FadeOnStopSoundImpl.cpp
+        Sound/FadeOnStopSoundImpl.h
         Sound/Sound.cpp
         Sound/Sound.h
         Sound/SoundImpl.cpp
-        Sound/SoundImpl.h)
+        Sound/SoundImpl.h
+        Sound/SoundTransformation.h)

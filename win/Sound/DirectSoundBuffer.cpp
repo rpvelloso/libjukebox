@@ -1,16 +1,23 @@
 /*
- * DirectSoundBuffer.cpp
- *
- *  Created on: 13 de dez de 2017
- *      Author: rvelloso
+    This file is part of libjukebox.
+    libjukebox is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    libjukebox is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <windows.h>
-// TODO use <cstring>
-#include <string.h>
+#include <cstring>
 #include <cmath>
 
 #include "DirectSoundBuffer.h"
+#include "jukebox/Sound/FadeOnStopSoundImpl.h"
 #include "jukebox/Sound/Sound.h"
 
 namespace jukebox {
@@ -51,19 +58,38 @@ DirectSoundBuffer::DirectSoundBuffer(SoundFile &file) :
 	prepare();
 }
 
+DirectSoundBuffer::~DirectSoundBuffer() {
+	stop();
+	if (loadBufferThread.joinable())
+		loadBufferThread.join();
+}
+
+void DirectSoundBuffer::loop(bool l) {
+	looping = l;
+}
+
+DWORD DirectSoundBuffer::status() {
+	  DWORD st;
+
+	  pDsb->GetStatus(&st);
+	  return st;
+}
+
 void DirectSoundBuffer::play() {
-  DWORD status;
+  if (!playing()) {
+	rewind();
 
-  pDsb->GetStatus(&status);
+    DWORD playFlags = looping?DSBPLAY_LOOPING:0;
 
-  if (status != DSBSTATUS_PLAYING) {
-    // rewind the sound
-    pDsb->SetCurrentPosition(0);
+    if (fillBuffer(0, dsbdesc.dwBufferBytes)) {
+    	startThread();
+    	playFlags = DSBPLAY_LOOPING;
+    }
 
     auto hr = pDsb->Play(
         0,	// Unused.
         0,	// Priority for voice management.
-        0);	// Flags.
+		playFlags);	// Flags.
 
     if (FAILED(hr))
       throw std::runtime_error("failed Play");
@@ -74,6 +100,111 @@ void DirectSoundBuffer::stop() {
 	auto hr = pDsb->Stop();
 	if (FAILED(hr))
 		throw std::runtime_error("failed Stop");
+}
+
+bool DirectSoundBuffer::playing() {
+	return status() & DSBSTATUS_PLAYING;
+}
+
+bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
+	// fill secondary buffer with wav/sound
+	LPVOID bufAddr;
+	DWORD bufLen;
+
+	auto hr = pDsb->Lock(
+	      offset,	// Offset at which to start lock.
+	      size,		// Size of lock.
+	      &bufAddr,	// Gets address of first part of lock.
+	      &bufLen,	// Gets size of first part of lock.
+	      NULL,		// Address of wraparound not needed.
+	      NULL,		// Size of wraparound not needed.
+	      0); // Flag.
+
+	if (FAILED(hr))
+		throw std::runtime_error("failed Lock");
+
+	size_t len = soundFile.read((char *)bufAddr, position, bufLen);
+	if (transformation) {
+		if (soundFile.getBitsPerSample() == 8)
+			(*transformation)((uint8_t *)bufAddr, position, (int)bufLen);
+		else
+			(*transformation)((int16_t *)bufAddr, position, (int)bufLen);
+	}
+
+	position += len;
+	if (len < bufLen)
+		memset((char *)bufAddr+len, 0, bufLen-len);
+
+	pDsb->Unlock(
+		bufAddr,	// Address of lock start.
+		bufLen,		// Size of lock.
+		NULL,		// No wraparound portion.
+		0);			// No wraparound size.
+
+	return position < soundFile.getDataSize();
+}
+
+class HandleGuard {
+public:
+	HandleGuard(HANDLE handle) : handle(handle) {};
+	~HandleGuard() {CloseHandle(handle);};
+private:
+	HANDLE handle;
+};
+
+void DirectSoundBuffer::startThread() {
+	LPDIRECTSOUNDNOTIFY notifyIface;
+	DSBPOSITIONNOTIFY notifyPos[3];
+
+	auto hr = pDsb->QueryInterface(IID_IDirectSoundNotify, (LPVOID*)&notifyIface);
+	if (FAILED(hr))
+		throw std::runtime_error("failed QueryInterface");
+
+	notifyPos[0].dwOffset = (dsbdesc.dwBufferBytes / 2) - 1;
+	notifyPos[0].hEventNotify = CreateEvent(nullptr, false, false, nullptr);
+	notifyPos[1].dwOffset = dsbdesc.dwBufferBytes - 1;
+	notifyPos[1].hEventNotify = notifyPos[0].hEventNotify;
+	notifyPos[2].dwOffset = DSCBPN_OFFSET_STOP;
+	notifyPos[2].hEventNotify = notifyPos[0].hEventNotify;
+
+	hr = notifyIface->SetNotificationPositions(3, notifyPos);
+	notifyIface->Release();
+	if (FAILED(hr)) {
+		CloseHandle(notifyPos[0].hEventNotify);
+		throw std::runtime_error("failed SetNotificationPositions");
+	}
+
+	if (loadBufferThread.joinable())
+		loadBufferThread.join();
+
+	loadBufferThread = std::thread(
+		[this](auto event){
+			HandleGuard handleGuard(event);
+
+			size_t offsets[2] = {0, dsbdesc.dwBufferBytes / 2};
+
+			do {
+
+				bool offset = true;
+				do {
+					offset = !offset;
+					WaitForSingleObject(event, INFINITE);
+				} while (
+					playing() &&
+					fillBuffer(offsets[offset], dsbdesc.dwBufferBytes / 2));
+
+				if (playing()) {
+					WaitForSingleObject(event, INFINITE);
+					rewind();
+					fillBuffer(0, dsbdesc.dwBufferBytes);
+				}
+
+			} while (looping && playing());
+
+			if (playing())
+				stop();
+		},
+		notifyPos[0].hEventNotify);
 }
 
 void DirectSoundBuffer::prepare() {
@@ -92,6 +223,7 @@ void DirectSoundBuffer::prepare() {
 			DSBCAPS_CTRLPAN |
 			DSBCAPS_CTRLVOLUME |
 			DSBCAPS_CTRLFREQUENCY |
+			DSBCAPS_CTRLPOSITIONNOTIFY |
 			DSBCAPS_GLOBALFOCUS;
 	/*
 	 * DSBCAPS_CTRL3D				The sound source can be moved in 3D space.
@@ -102,7 +234,7 @@ void DirectSoundBuffer::prepare() {
 	 * DSBCAPS_CTRLVOLUME			The volume of the sound can be changed.
 	 */
 
-	dsbdesc.dwBufferBytes = soundFile.getDataSize();
+	dsbdesc.dwBufferBytes = wfx.nBlockAlign * 1024 * 4 * 2;
 	dsbdesc.lpwfxFormat = &wfx;
 
 	LPDIRECTSOUNDBUFFER bufPtr;
@@ -112,29 +244,6 @@ void DirectSoundBuffer::prepare() {
 		throw std::runtime_error("failed CreateSoundBuffer");
 
 	pDsb.reset(bufPtr);
-
-	// fill secondary buffer with wav/sound
-	LPVOID bufAddr;
-	DWORD bufLen;
-
-	hr = pDsb->Lock(
-	      0,		// Offset at which to start lock.
-	      0,		// Size of lock; ignored because of flag.
-	      &bufAddr,	// Gets address of first part of lock.
-	      &bufLen,	// Gets size of first part of lock.
-	      NULL,		// Address of wraparound not needed.
-	      NULL,		// Size of wraparound not needed.
-	      DSBLOCK_ENTIREBUFFER); // Flag.
-
-	if (FAILED(hr))
-		throw std::runtime_error("failed Lock");
-
-	memcpy((void *)bufAddr, soundFile.getData(), (size_t)bufLen);
-	pDsb->Unlock(
-		bufAddr,	// Address of lock start.
-		bufLen,		// Size of lock.
-		NULL,		// No wraparound portion.
-		0);			// No wraparound size.
 }
 
 /*
@@ -157,10 +266,19 @@ void DirectSoundBuffer::setVolume(int vol) {
 	pDsb->SetVolume(db * 100);
 }
 
+void DirectSoundBuffer::rewind() {
+    pDsb->SetCurrentPosition(0);
+    position = 0;
+}
+
 namespace factory {
 
 Sound makeSound(SoundFile& file) {
 	return Sound(new DirectSoundBuffer(file));
+}
+
+Sound makeFadeOnStopSound(SoundFile& file, int fadeOutSecs) {
+	return Sound(new FadeOnStopSoundImpl(new DirectSoundBuffer(file), fadeOutSecs));
 }
 
 }

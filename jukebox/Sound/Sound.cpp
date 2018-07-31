@@ -28,6 +28,7 @@ Sound::Sound(SoundImpl *impl) : impl(impl) {
 }
 
 void Sound::play() {
+	impl->stop();
 	impl->play();
 }
 
@@ -42,6 +43,14 @@ int Sound::getVolume() const {
 
 void Sound::setVolume(int vol) {
 	impl->setVolume(normalize(vol));
+}
+
+void Sound::loop(bool l) {
+	impl->loop(l);
+}
+
+int Sound::getPosition() const {
+	return impl->getPosition();
 }
 
 } /* namespace jukebox */

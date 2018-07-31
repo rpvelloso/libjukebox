@@ -14,8 +14,8 @@
  */
 
 #include <windows.h>
-#include <string>
 #include <stdexcept>
+#include <string>
 
 #include "WindowsMixer.h"
 
@@ -91,7 +91,7 @@ void WindowsMixer::setVolume(int vol) {
 
 namespace factory {
 	MixerImpl &makeMixerImpl() {
-		static WindowsMixer mixerImpl(MIXERLINE_COMPONENTTYPE_DST_SPEAKERS);
+		static WindowsMixer mixerImpl(MIXERLINE_COMPONENTTYPE_SRC_WAVEOUT);
 		return mixerImpl;
 	}
 }
