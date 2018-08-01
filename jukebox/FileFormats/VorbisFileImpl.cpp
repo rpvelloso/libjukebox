@@ -116,23 +116,6 @@ namespace factory {
 	SoundFile loadVorbisStream(std::istream &inp) {
 		return SoundFile(new VorbisFileImpl(inp));
 	}
-
-	SoundFile loadBufferedVorbisFile(const std::string &filename) {
-		return SoundFile(new BufferedSoundFileImpl(new VorbisFileImpl(filename)));
-	}
-
-	SoundFile loadBufferedVorbisStream(std::istream &inp) {
-		return SoundFile(new BufferedSoundFileImpl(new VorbisFileImpl(inp)));
-	}
-
-	SoundFile loadFadedVorbisFile(const std::string &filename, int fadeInSecs, int fadeOutSecs) {
-		return SoundFile(new FadedSoundFileImpl(new VorbisFileImpl(filename), fadeInSecs, fadeOutSecs));
-	}
-
-	SoundFile loadFadedVorbisStream(std::istream &inp, int fadeInSecs, int fadeOutSecs) {
-		return SoundFile(new FadedSoundFileImpl(new VorbisFileImpl(inp), fadeInSecs, fadeOutSecs));
-	}
-
 }
 
 } /* namespace jukebox */

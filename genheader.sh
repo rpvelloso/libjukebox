@@ -28,6 +28,7 @@ echo '#ifndef _LIBJUKEBOX_H
 #include <string>
 #include <memory>
 #include <istream>
+#include <functional>
 
 ' > libjukebox.h
 

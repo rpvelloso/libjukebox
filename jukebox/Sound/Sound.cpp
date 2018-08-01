@@ -16,6 +16,7 @@
 #include <algorithm>
 #include "Sound.h"
 #include "Decorators/FadeOnStopSoundImpl.h"
+#include "Decorators/FadedSoundImpl.h"
 
 namespace {
 
@@ -60,6 +61,10 @@ extern SoundImpl *makeSoundImpl(SoundFile &);
 
 Sound makeFadeOnStopSound(SoundFile& file, int fadeOutSecs) {
 	return Sound(new FadeOnStopSoundImpl(makeSoundImpl(file), fadeOutSecs));
+}
+
+Sound makeFadedSound(SoundFile& file, int fadeInSecs, int fadeOutSecs) {
+	return Sound(new FadedSoundImpl(makeSoundImpl(file), fadeInSecs, fadeOutSecs));
 }
 
 

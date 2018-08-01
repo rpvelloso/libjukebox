@@ -5,8 +5,7 @@ LDFLAGS = -lasound -lpthread
 objects = ./jukebox/Sound/Sound.o ./jukebox/Sound/SoundImpl.o \
 ./jukebox/FileFormats/SoundFile.o ./jukebox/FileFormats/WaveFileImpl.o ./jukebox/FileFormats/VorbisFileImpl.o \
 ./jukebox/FileFormats/MP3FileImpl.o \
-./jukebox/FileFormats/Decorators/BufferedSoundFileImpl.o ./jukebox/FileFormats/Decorators/FadedSoundFileImpl.o \
-./jukebox/Mixer/Mixer.o ./jukebox/Sound/Decorators/FadeOnStopSoundImpl.o \
+./jukebox/Mixer/Mixer.o ./jukebox/Sound/Decorators/FadeOnStopSoundImpl.o ./jukebox/Sound/Decorators/FadedSoundImpl.o \
 ./jukebox/Decoders/Decoder.o ./jukebox/Decoders/WaveDecoderImpl.o ./jukebox/Decoders/VorbisDecoderImpl.o ./jukebox/Decoders/MP3DecoderImpl.o \
 ./linux/Sound/AlsaHandle.o ./linux/Mixer/AlsaMixer.o
 
@@ -20,10 +19,10 @@ play					:	./jukebox_test/demo/play.o
 ./jukebox_test/demo/main.o									:	genheader
 ./jukebox_test/demo/play.o									:	genheader
 ./jukebox/Sound/Sound.o										:	./jukebox/Sound/SoundImpl.h ./jukebox/Sound/Sound.h
+./jukebox/Sound/Decorators/FadeOnStopSoundImpl.o			:	./jukebox/Sound/SoundImpl.h ./jukebox/Sound/Sound.h
+./jukebox/Sound/Decorators/FadedSoundImpl.o					:	./jukebox/Sound/SoundImpl.h ./jukebox/Sound/Sound.h
 ./jukebox/Sound/SoundImpl.o									:	./jukebox/Sound/SoundImpl.h 
 ./jukebox/FileFormats/SoundFile.o							:	./jukebox/FileFormats/SoundFileImpl.h ./jukebox/FileFormats/SoundFile.h
-./jukebox/FileFormats/Decorators/BufferedSoundFileImpl.o	:	./jukebox/FileFormats/SoundFileImpl.h ./jukebox/FileFormats/Decorators/BufferedSoundFileImpl.h
-./jukebox/FileFormats/Decorators/FadedSoundFileImpl.o		:	./jukebox/FileFormats/SoundFileImpl.h ./jukebox/FileFormats/Decorators/FadedSoundFileImpl.h
 ./jukebox/FileFormats/WaveFileImpl.o						:	./jukebox/FileFormats/SoundFileImpl.h ./jukebox/FileFormats/SoundFile.h ./jukebox/FileFormats/WaveFileImpl.h ./jukebox/FileFormats/Decorators/BufferedSoundFileImpl.h ./jukebox/FileFormats/Decorators/FadedSoundFileImpl.h
 ./jukebox/FileFormats/VorbisFileImpl.o						:	./jukebox/FileFormats/SoundFileImpl.h ./jukebox/FileFormats/SoundFile.h ./jukebox/FileFormats/VorbisFileImpl.h ./jukebox/FileFormats/Decorators/BufferedSoundFileImpl.h ./jukebox/FileFormats/Decorators/FadedSoundFileImpl.h
 ./jukebox/FileFormats/MP3FileImpl.o							:	./jukebox/FileFormats/SoundFileImpl.h ./jukebox/FileFormats/SoundFile.h ./jukebox/FileFormats/MP3FileImpl.h ./jukebox/FileFormats/Decorators/BufferedSoundFileImpl.h ./jukebox/FileFormats/Decorators/FadedSoundFileImpl.h

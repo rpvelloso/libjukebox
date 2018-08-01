@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include <istream>
+#include <functional>
 
 
 namespace jukebox {
@@ -72,20 +73,8 @@ namespace factory {
  extern SoundFile loadWaveStream(std::istream &inp);
  extern SoundFile loadVorbisFile(const std::string &filename);
  extern SoundFile loadVorbisStream(std::istream &inp);
- extern SoundFile loadBufferedWaveFile(const std::string &filename);
- extern SoundFile loadBufferedWaveStream(std::istream &inp);
- extern SoundFile loadBufferedVorbisFile(const std::string &filename);
- extern SoundFile loadBufferedVorbisStream(std::istream &inp);
- extern SoundFile loadFadedWaveFile(const std::string &filename, int fadeInSecs, int fadeOutSecs);
- extern SoundFile loadFadedWaveStream(std::istream &inp, int fadeInSecs, int fadeOutSecs);
- extern SoundFile loadFadedVorbisFile(const std::string &filename, int fadeInSecs, int fadeOutSecs);
- extern SoundFile loadFadedVorbisStream(std::istream &inp, int fadeInSecs, int fadeOutSecs);
  extern SoundFile loadMP3File(const std::string &filename);
  extern SoundFile loadMP3Stream(std::istream &inp);
- extern SoundFile loadBufferedMP3File(const std::string &filename);
- extern SoundFile loadBufferedMP3Stream(std::istream &inp);
- extern SoundFile loadFadedMP3File(const std::string &filename, int fadeInSecs, int fadeOutSecs);
- extern SoundFile loadFadedMP3Stream(std::istream &inp, int fadeInSecs, int fadeOutSecs);
 }
 
 }
@@ -114,11 +103,11 @@ public:
  virtual void loop(bool) = 0;
  SoundFile &getSoundFile();
  int getPosition() const;
- void setTransformation(SoundTransformation *);
+ void setTransformation(std::function<void (void *, int, int)>);
 protected:
  int position = 0;
  SoundFile &soundFile;
- std::unique_ptr<SoundTransformation> transformation;
+ std::function<void (void *, int, int)> transformation;
 };
 
 }
@@ -140,6 +129,7 @@ private:
 namespace factory {
  extern Sound makeSound(SoundFile &file);
  extern Sound makeFadeOnStopSound(SoundFile &file, int);
+ extern Sound makeFadedSound(SoundFile &file, int, int);
 }
 
 }

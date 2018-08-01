@@ -130,23 +130,6 @@ SoundFile loadMP3File(const std::string &filename) {
 SoundFile loadMP3Stream(std::istream &inp) {
 	return SoundFile(new MP3FileImpl(inp));
 }
-
-SoundFile loadBufferedMP3File(const std::string &filename) {
-	return SoundFile(new BufferedSoundFileImpl(new MP3FileImpl(filename)));
-}
-
-SoundFile loadBufferedMP3Stream(std::istream &inp) {
-	return SoundFile(new BufferedSoundFileImpl(new MP3FileImpl(inp)));
-}
-
-SoundFile loadFadedMP3File(const std::string &filename, int fadeInSecs, int fadeOutSecs) {
-	return SoundFile(new FadedSoundFileImpl(new MP3FileImpl(filename), fadeInSecs, fadeOutSecs));
-}
-
-SoundFile loadFadedMP3Stream(std::istream &inp, int fadeInSecs, int fadeOutSecs) {
-	return SoundFile(new FadedSoundFileImpl(new MP3FileImpl(inp), fadeInSecs, fadeOutSecs));
-}
-
 };
 
 } /* namespace jukebox */

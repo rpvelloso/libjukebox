@@ -38,6 +38,7 @@ private:
 namespace factory {
 	extern Sound makeSound(SoundFile &file);
 	extern Sound makeFadeOnStopSound(SoundFile &file, int);
+	extern Sound makeFadedSound(SoundFile &file, int, int);
 }
 
 } /* namespace jukebox */

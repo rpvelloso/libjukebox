@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
 
 	printFileData(soundFile);
 
-	auto sound = jukebox::factory::makeFadeOnStopSound(soundFile, 3);
+	auto sound = jukebox::factory::makeFadedSound(soundFile, 3, 3);
 	auto sound2 = jukebox::factory::makeSound(soundFile);
 	sound.loop(true);
 

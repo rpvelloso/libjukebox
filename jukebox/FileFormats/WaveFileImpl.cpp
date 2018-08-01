@@ -109,23 +109,6 @@ namespace factory {
 	SoundFile loadWaveStream(std::istream &inp) {
 		return SoundFile(new WaveFileImpl(inp));
 	}
-
-	SoundFile loadBufferedWaveFile(const std::string &filename) {
-		return SoundFile(new BufferedSoundFileImpl(new WaveFileImpl(filename)));
-	}
-
-	SoundFile loadBufferedWaveStream(std::istream &inp) {
-		return SoundFile(new BufferedSoundFileImpl(new WaveFileImpl(inp)));
-	}
-
-	SoundFile loadFadedWaveFile(const std::string &filename, int fadeInSecs, int fadeOutSecs) {
-		return SoundFile(new FadedSoundFileImpl(new WaveFileImpl(filename), fadeInSecs, fadeOutSecs));
-	}
-
-	SoundFile loadFadedWaveStream(std::istream &inp, int fadeInSecs, int fadeOutSecs) {
-		return SoundFile(new FadedSoundFileImpl(new WaveFileImpl(inp), fadeInSecs, fadeOutSecs));
-	}
-
 }
 
 const std::string &WaveFileImpl::getFilename() const {
