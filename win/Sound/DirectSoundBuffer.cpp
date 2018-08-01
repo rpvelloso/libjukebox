@@ -53,7 +53,8 @@ void ReleaseBuffer(LPDIRECTSOUNDBUFFER pDsb) {
 
 DirectSoundBuffer::DirectSoundBuffer(SoundFile &file) :
 	SoundImpl(file),
-	pDsb(nullptr, ReleaseBuffer) {
+	pDsb(nullptr, ReleaseBuffer),
+	decoder(file.makeDecoder()) {
 
 	prepare();
 }
@@ -123,7 +124,7 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 	if (FAILED(hr))
 		throw std::runtime_error("failed Lock");
 
-	size_t len = soundFile.read((char *)bufAddr, position, bufLen);
+	size_t len = decoder->getSamples((char *)bufAddr, position, bufLen);
 	if (transformation) {
 		if (soundFile.getBitsPerSample() == 8)
 			(*transformation)((uint8_t *)bufAddr, position, (int)bufLen);

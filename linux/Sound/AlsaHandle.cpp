@@ -62,7 +62,8 @@ void closeAlsaHandle(snd_pcm_t *handle) {
 
 AlsaHandle::AlsaHandle(SoundFile &file) :
 	SoundImpl(file),
-	handlePtr(nullptr, closeAlsaHandle) {
+	handlePtr(nullptr, closeAlsaHandle),
+	decoder(file.makeDecoder()) {
 
 	snd_pcm_t *handle;
 	auto res = snd_pcm_open(&handle, ALSA_DEVICE, SND_PCM_STREAM_PLAYBACK, 0);
@@ -87,7 +88,7 @@ void AlsaHandle::play() {
 
 			while (numFrames > 0 && playing) {
 				auto frames = std::min(numFrames, minFrames);
-				auto bytes = soundFile.read(reinterpret_cast<char *>(volBuf.get()), position, frames*frameSize);
+				auto bytes = decoder->getSamples(reinterpret_cast<char *>(volBuf.get()), position, frames*frameSize);
 
 				if (bytes > 0) {
 					if (soundFile.getBitsPerSample() == 16)

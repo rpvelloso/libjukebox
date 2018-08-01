@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <exception>
 
+#include "jukebox/Decoders/WaveDecoderImpl.h"
 #include "Decorators/FadedSoundFileImpl.h"
 #include "Decorators/BufferedSoundFileImpl.h"
 #include "SoundFile.h"
@@ -54,6 +55,10 @@ short WaveFileImpl::getBitsPerSample() const {
 
 int WaveFileImpl::getDataSize() const {
 	return header3.Subchunk2Size;
+}
+
+std::unique_ptr<Decoder> WaveFileImpl::makeDecoder() {
+	return std::make_unique<Decoder>(new WaveDecoderImpl(*this));
 }
 
 void WaveFileImpl::load() {

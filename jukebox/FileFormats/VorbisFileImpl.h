@@ -19,6 +19,7 @@
 #include <memory>
 #include <mutex>
 
+#include "jukebox/Decoders/Decoder.h"
 #include "SoundFileImpl.h"
 
 typedef struct stb_vorbis stb_vorbis;
@@ -37,14 +38,18 @@ public:
 	int getDataSize() const override;
 	const std::string &getFilename() const override;
 	int read(char *buf, int pos, int len) override;
+	std::unique_ptr<Decoder> makeDecoder() override;
+	uint8_t *getFileBuffer();
+	int getFileSize() const;
 private:
 	short numChannels = 0;
 	int sampleRate = 0;
 	int dataSize = 0;
-	std::unique_ptr<stb_vorbis, decltype(&closeVorbis)> vorbisHandler;
-	std::unique_ptr<unsigned char []> file;
+	int fileSize = 0;
+	//std::unique_ptr<stb_vorbis, decltype(&closeVorbis)> vorbisHandler;
+	std::unique_ptr<uint8_t []> fileBuffer;
 	std::string filename;
-	std::mutex readMutex;
+	//std::mutex readMutex;
 
 	void load(std::istream &inp);
 };

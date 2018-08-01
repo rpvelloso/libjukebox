@@ -23,6 +23,7 @@
 #include <mutex>
 
 #include "SoundFileImpl.h"
+#include "jukebox/Decoders/Decoder.h"
 
 namespace jukebox {
 
@@ -56,6 +57,7 @@ public:
 	int getDataSize() const override;
 	const std::string &getFilename() const override;
 	int read(char *buf, int pos, int len) override;
+	std::unique_ptr<Decoder> makeDecoder();
 private:
 	std::fstream fileStream;
 	std::istream inputStream;

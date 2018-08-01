@@ -35,6 +35,7 @@ int main(int argc, char **argv) {
 	printFileData(soundFile);
 
 	auto sound = jukebox::factory::makeFadeOnStopSound(soundFile, 3);
+	auto sound2 = jukebox::factory::makeSound(soundFile);
 	sound.loop(true);
 
 	jukebox::Mixer mixer;
@@ -43,6 +44,7 @@ int main(int argc, char **argv) {
 
 	std::cout << "hit enter to fade out..." << std::endl;
 	std::cin.get();
+	sound2.play();
 
 	sound.stop();
 

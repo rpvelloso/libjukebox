@@ -73,4 +73,8 @@ void jukebox::SoundFile::truncAt(int pos) {
 	dataSize = std::min(pos, dataSize);
 }
 
+std::unique_ptr<Decoder> SoundFile::makeDecoder() {
+	return impl->makeDecoder();
+}
+
 } /* namespace jukebox */

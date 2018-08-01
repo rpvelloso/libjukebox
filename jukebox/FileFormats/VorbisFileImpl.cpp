@@ -18,11 +18,13 @@
 #include <exception>
 #include <stdlib.h>
 
+#define STB_VORBIS_HEADER_ONLY
+#include "jukebox/FileFormats/stb_vorbis/stb_vorbis.c"
+#include "jukebox/Decoders/VorbisDecoderImpl.h"
 #include "Decorators/BufferedSoundFileImpl.h"
 #include "Decorators/FadedSoundFileImpl.h"
 #include "SoundFile.h"
 #include "VorbisFileImpl.h"
-#include "jukebox/FileFormats/stb_vorbis/stb_vorbis.c"
 
 namespace jukebox {
 
@@ -33,7 +35,7 @@ void closeVorbis(stb_vorbis *v) {
 
 VorbisFileImpl::VorbisFileImpl(const std::string& filename) :
 	SoundFileImpl(),
-	vorbisHandler(nullptr, closeVorbis),
+	//vorbisHandler(nullptr, closeVorbis),
 	filename(filename) {
 
 	auto inp = std::fstream(this->filename, std::ios::binary|std::ios::in);
@@ -42,13 +44,17 @@ VorbisFileImpl::VorbisFileImpl(const std::string& filename) :
 
 VorbisFileImpl::VorbisFileImpl(std::istream& inp) :
 	SoundFileImpl(),
-	vorbisHandler(nullptr, closeVorbis),
+	//vorbisHandler(nullptr, closeVorbis),
 	filename(":stream:") {
 
 	load(inp);
 }
 
 int VorbisFileImpl::read(char *buf, int pos, int len) {
+	throw std::runtime_error("invalid call to VorbisFileImpl::read");
+	return 0; // unused;
+}
+/*int VorbisFileImpl::read(char *buf, int pos, int len) {
 	std::lock_guard<std::mutex> lock(readMutex);
 
 	stb_vorbis_seek(vorbisHandler.get(), (pos / 2) / numChannels);
@@ -57,20 +63,21 @@ int VorbisFileImpl::read(char *buf, int pos, int len) {
 		numChannels,
 		(short *)buf,
 		len/2) * numChannels * 2;
-}
+}*/
 
 void VorbisFileImpl::load(std::istream& inp) {
 	auto fileStart = inp.tellg();
 	inp.seekg(0, std::ios::end);
-	int fileSize = inp.tellg() - fileStart;
+	fileSize = inp.tellg() - fileStart;
 	inp.seekg(fileStart, std::ios::beg);
 
-	file.reset(new unsigned char[fileSize]);
-	inp.read((char *)file.get(), fileSize);
+	fileBuffer.reset(new unsigned char[fileSize]);
+	inp.read((char *)fileBuffer.get(), fileSize);
 
 	int err;
 
-	vorbisHandler.reset(stb_vorbis_open_memory(file.get(), fileSize, &err, nullptr));
+	std::unique_ptr<stb_vorbis, decltype(&closeVorbis)> vorbisHandler(
+			stb_vorbis_open_memory(fileBuffer.get(), fileSize, &err, nullptr), closeVorbis);
 
 	if (vorbisHandler.get() == nullptr)
 		throw std::runtime_error("stb_vorbis_open_memory error: " + std::to_string(err));
@@ -79,6 +86,10 @@ void VorbisFileImpl::load(std::istream& inp) {
 	numChannels = vorbisInfo.channels;
 	sampleRate = vorbisInfo.sample_rate;
 	dataSize = stb_vorbis_stream_length_in_samples(vorbisHandler.get()) * numChannels * 2;
+}
+
+std::unique_ptr<Decoder> VorbisFileImpl::makeDecoder() {
+	return std::make_unique<Decoder>(new VorbisDecoderImpl(*this));
 }
 
 short VorbisFileImpl::getNumChannels() const {
@@ -99,6 +110,14 @@ int VorbisFileImpl::getDataSize() const {
 
 const std::string& VorbisFileImpl::getFilename() const {
 	return filename;
+}
+
+uint8_t* VorbisFileImpl::getFileBuffer() {
+	return fileBuffer.get();
+}
+
+int VorbisFileImpl::getFileSize() const {
+	return fileSize;
 }
 
 namespace factory {
@@ -129,4 +148,3 @@ namespace factory {
 }
 
 } /* namespace jukebox */
-

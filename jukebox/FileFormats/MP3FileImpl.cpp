@@ -11,11 +11,14 @@
 #include <algorithm>
 #include <string.h>
 
+#include "jukebox/Decoders/MP3DecoderImpl.h"
 #include "SoundFile.h"
 #include "Decorators/BufferedSoundFileImpl.h"
 #include "Decorators/FadedSoundFileImpl.h"
-#define MINIMP3_IMPLEMENTATION
 #include "MP3FileImpl.h"
+
+#define MINIMP3_IMPLEMENTATION
+#include "minimp3/minimp3.h"
 
 namespace jukebox {
 
@@ -38,11 +41,11 @@ MP3FileImpl::~MP3FileImpl() {
 }
 
 short MP3FileImpl::getNumChannels() const {
-	return info.channels;
+	return numChannels;
 }
 
 int MP3FileImpl::getSampleRate() const {
-	return info.hz;
+	return sampleRate;
 }
 
 short MP3FileImpl::getBitsPerSample() const {
@@ -57,31 +60,9 @@ const std::string& MP3FileImpl::getFilename() const {
 	return filename;
 }
 
-int MP3FileImpl::read(char* buf, int pos, int len) { // 'pos' is unused, not supported for this file format
-	int bytesRead = 0;
-
-	if (pos == 0)
-		reset();
-	else
-		positionMP3Stream(pos);
-
-	while ((len > bytesRead) && (samples > 0)) {
-		if (pcmPos < samples) {
-			int siz = std::min(samples - pcmPos, (len - bytesRead) / 2);
-			memcpy(&buf[bytesRead], &pcm[pcmPos], siz * 2);
-			pcmPos += siz;
-			bytesRead += (siz * 2);
-		}
-
-		if (pcmPos >= samples) {
-			pcmPos = 0;
-			std::cout << offset << std::endl;
-			samples = mp3dec_decode_frame(&mp3d, mp3.get() + offset, fileSize - offset, pcm, &info)*info.channels;
-			offset += info.frame_bytes;
-		}
-	}
-
-	return bytesRead;
+int MP3FileImpl::read(char* buf, int pos, int len) { // unused
+	throw std::runtime_error("invalid call to MP3FileImpl::read");
+	return 0;
 }
 
 void MP3FileImpl::load(std::istream& inp) {
@@ -90,12 +71,14 @@ void MP3FileImpl::load(std::istream& inp) {
 	fileSize = inp.tellg() - fileStart;
 	inp.seekg(fileStart, std::ios::beg);
 
-	mp3.reset(new unsigned char[fileSize]);
-	inp.read((char *)mp3.get(), fileSize);
+	fileBuffer.reset(new unsigned char[fileSize]);
+	inp.read((char *)fileBuffer.get(), fileSize);
 
+	mp3dec_t mp3d;
 	mp3dec_init(&mp3d);
+
 	int mp3_bytes = fileSize;
-	uint8_t * buff = mp3.get();
+	uint8_t * buff = fileBuffer.get();
 	int frameStart = 0;
 	while (true) {
 		int frame_size;
@@ -105,65 +88,39 @@ void MP3FileImpl::load(std::istream& inp) {
 		else {
 			mp3_bytes -= (i + frame_size);
 			buff += i;
-			int frameSamples = hdr_frame_samples(buff) * info.channels*2;
-
-		    info.frame_bytes = i + frame_size;
-		    info.channels = HDR_IS_MONO(buff) ? 1 : 2;
-		    info.hz = hdr_sample_rate_hz(buff);
-		    info.layer = 4 - HDR_GET_LAYER(buff);
-		    info.bitrate_kbps = hdr_bitrate_kbps(buff);
+		    numChannels = HDR_IS_MONO(buff) ? 1 : 2;
+		    sampleRate = hdr_sample_rate_hz(buff);
+			int frameSamples = hdr_frame_samples(buff) * numChannels*2;
 
 		    if (frameSamples > 0) { // build frame index, used to seek
-				std::cout << (uint64_t)(buff - mp3.get()) << ": " << frameStart << ", " << (frameStart + frameSamples - 1) << std::endl;
-				frameIndex.push_back(std::make_pair((frameStart + frameSamples - 1), buff - mp3.get()));
+				//std::cout << (uint64_t)(buff - mp3.get()) << ": " << frameStart << ", " << (frameStart + frameSamples - 1) << std::endl;
+				frameIndex.push_back(std::make_pair((frameStart + frameSamples - 1), buff - fileBuffer.get()));
 				frameStart += frameSamples;
 
 			    dataSize += frameSamples;
-		    } else
-		    	std::cout << (uint64_t)(buff - mp3.get()) << std::endl;
+		    }
 
 		    buff += frame_size;
 
 		}
 	}
-
-	/*reset();
-	positionMP3Stream(13);
-	positionMP3Stream(4608);
-	positionMP3Stream(4609);
-	positionMP3Stream(105983);
-	positionMP3Stream(4819968 + 10);
-	positionMP3Stream(4889087 - 2000);
-	reset();*/
 }
 
-void MP3FileImpl::positionMP3Stream(int pos) {
-	class comp {
-	public:
-		bool operator()(const std::pair<int,int> &a, const std::pair<int,int> &b) const { return a.first < b.first;};
-	};
-	auto frameIt = std::lower_bound(frameIndex.begin(), frameIndex.end(), std::make_pair(pos, 0), comp());
-
-	if (frameIt != frameIndex.end()) {
-		auto frameEndPos = frameIt->first;
-		auto frameOffset = frameIt->second;
-
-		if (frameOffset != offset) {
-			offset = frameOffset;
-			samples = mp3dec_decode_frame(&mp3d, mp3.get() + frameOffset, fileSize - frameOffset, pcm, &info)*info.channels;
-		}
-		pcmPos = (pos - (frameEndPos - ((samples*2)-1))) / 2;
-		std::cout << pos << " " << frameOffset << " " << pcmPos << " " <<  samples << std::endl;
-	}
+std::unique_ptr<Decoder> MP3FileImpl::makeDecoder() {
+	return std::make_unique<Decoder>(new MP3DecoderImpl(*this));
 }
 
-void MP3FileImpl::reset() {
-	pcmPos = 0;
-	mp3dec_init(&mp3d);
-	samples = mp3dec_decode_frame(&mp3d, mp3.get(), fileSize, pcm, &info)*info.channels;
-	offset = info.frame_bytes;
+uint8_t* MP3FileImpl::getFileBuffer() {
+	return fileBuffer.get();
 }
 
+int MP3FileImpl::getFileSize() const {
+	return fileSize;
+}
+
+std::vector<std::pair<long, long>> &MP3FileImpl::getIndex() {
+	return frameIndex;
+}
 
 namespace factory {
 SoundFile loadMP3File(const std::string &filename) {

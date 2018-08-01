@@ -17,6 +17,7 @@
 #define LIBJUKEBOX_SOUNDFILEIMPL_2017_12_17_H_
 
 #include <string>
+#include "jukebox/Decoders/Decoder.h"
 
 namespace jukebox {
 
@@ -33,6 +34,7 @@ public:
 	 * the size of the buffer should be block aligned (i.e., multiples of num_channels * sample_size)
 	 */
 	virtual int read(char *buf, int pos, int len) = 0;
+	virtual std::unique_ptr<Decoder> makeDecoder() = 0;
 };
 
 } /* namespace jukebox */

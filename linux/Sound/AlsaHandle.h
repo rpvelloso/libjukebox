@@ -23,6 +23,7 @@
 
 #include "jukebox/FileFormats/SoundFile.h"
 #include "jukebox/Sound/SoundImpl.h"
+#include "jukebox/Decoders/Decoder.h"
 
 namespace jukebox {
 
@@ -43,6 +44,7 @@ private:
 	std::atomic<bool> playing;
 	int vol = 100;
 	bool looping = false;
+	std::unique_ptr<Decoder> decoder;
 
 	template <typename T>
 	void applyVolume(T *buf, int position, int len);

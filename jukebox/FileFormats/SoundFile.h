@@ -19,6 +19,7 @@
 #include <memory>
 
 #include "SoundFileImpl.h"
+#include "jukebox/Decoders/Decoder.h"
 
 namespace jukebox {
 
@@ -33,6 +34,8 @@ public:
 	double getDuration() const;
 	int read(char* buf, int pos, int len);
 	void truncAt(int pos);
+	std::unique_ptr<Decoder> makeDecoder();
+
 private:
 	std::unique_ptr<SoundFileImpl> impl;
 	int blockSize, dataSize;

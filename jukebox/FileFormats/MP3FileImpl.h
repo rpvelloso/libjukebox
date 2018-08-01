@@ -10,8 +10,10 @@
 
 #include <string>
 #include <memory>
+#include <mutex>
+#include <vector>
 #include "SoundFileImpl.h"
-#include "minimp3/minimp3.h"
+#include "jukebox/Decoders/Decoder.h"
 
 namespace jukebox {
 
@@ -26,21 +28,20 @@ public:
 	int getDataSize() const override;
 	const std::string &getFilename() const override;
 	int read(char *buf, int pos, int len) override;
+	std::unique_ptr<Decoder> makeDecoder() override;
+	uint8_t *getFileBuffer();
+	int getFileSize() const;
+	std::vector<std::pair<long, long>> &getIndex();
 private:
 	std::string filename;
-	mp3dec_t mp3d;
-	mp3dec_frame_info_t info;
-	short pcm[MINIMP3_MAX_SAMPLES_PER_FRAME];
-	int pcmPos = 0, samples = 0;
-	std::unique_ptr<uint8_t> mp3;
+	int sampleRate;
+	short numChannels;
+	std::unique_ptr<uint8_t> fileBuffer;
 	int fileSize = 0;
-	int offset = 0;
 	int dataSize = 0;
 
-	std::vector<std::pair<long, long>> frameIndex; // <endPos, FramePos>
-	void positionMP3Stream(int pos);
+	std::vector<std::pair<long, long> > frameIndex; // <endPos, FramePos>
 	void load(std::istream& inp);
-	void reset();
 };
 
 } /* namespace jukebox */

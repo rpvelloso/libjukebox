@@ -62,10 +62,6 @@ short BufferedSoundFileImpl::getBitsPerSample() const {
 	return 16;//impl->getBitsPerSample();//16;
 }
 
-const char* BufferedSoundFileImpl::getData() const {
-	return data.get();
-}
-
 int BufferedSoundFileImpl::getDataSize() const {
 	return dataSize;
 }
@@ -128,6 +124,10 @@ void BufferedSoundFileImpl::toFixed(std::vector<float> &inp) {
 			sample = static_cast<int16_t>((maxFixed * (*inpIt))/maxFloat);
 			++inpIt;
 	});
+}
+
+std::unique_ptr<Decoder> BufferedSoundFileImpl::makeDecoder() {
+	return impl->makeDecoder();
 }
 
 } /* namespace jukebox */

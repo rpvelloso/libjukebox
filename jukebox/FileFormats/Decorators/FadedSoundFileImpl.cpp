@@ -128,4 +128,8 @@ void FadedSoundFileImpl::setFadeOutStartPos(int fadeOutStartPos) {
 	}
 }
 
+std::unique_ptr<Decoder> FadedSoundFileImpl::makeDecoder() {
+	return impl->makeDecoder();
+}
+
 } /* namespace jukebox */

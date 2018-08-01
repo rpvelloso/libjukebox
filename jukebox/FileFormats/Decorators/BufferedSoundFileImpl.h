@@ -32,13 +32,13 @@ class BufferedSoundFileImpl: public SoundFileImpl {
 public:
 	BufferedSoundFileImpl(SoundFileImpl *impl);
 	virtual ~BufferedSoundFileImpl() = default;
-	short getNumChannels() const;
-	int getSampleRate() const;
-	short getBitsPerSample() const;
-	const char *getData() const;
-	int getDataSize() const;
-	const std::string &getFilename() const;
-	int read(char *buf, int pos, int len);
+	short getNumChannels() const override;
+	int getSampleRate() const override;
+	short getBitsPerSample() const override;
+	int getDataSize() const override;
+	const std::string &getFilename() const override;
+	int read(char *buf, int pos, int len) override;
+	std::unique_ptr<Decoder> makeDecoder() override;
 private:
 	std::unique_ptr<SoundFileImpl> impl;
 	std::unique_ptr<char []> data;
