@@ -6,7 +6,7 @@
  */
 
 #include "VorbisDecoderImpl.h"
-#include "jukebox/FileFormats/stb_vorbis/stb_vorbis.c"
+#include "jukebox/Decoders/stb_vorbis/stb_vorbis.c"
 
 namespace jukebox {
 

@@ -46,10 +46,8 @@ private:
 	int sampleRate = 0;
 	int dataSize = 0;
 	int fileSize = 0;
-	//std::unique_ptr<stb_vorbis, decltype(&closeVorbis)> vorbisHandler;
 	std::unique_ptr<uint8_t []> fileBuffer;
 	std::string filename;
-	//std::mutex readMutex;
 
 	void load(std::istream &inp);
 };

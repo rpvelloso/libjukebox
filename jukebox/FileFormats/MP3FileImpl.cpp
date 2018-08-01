@@ -18,7 +18,7 @@
 #include "MP3FileImpl.h"
 
 #define MINIMP3_IMPLEMENTATION
-#include "minimp3/minimp3.h"
+#include "jukebox/Decoders/minimp3/minimp3.h"
 
 namespace jukebox {
 

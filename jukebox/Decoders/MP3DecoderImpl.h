@@ -10,7 +10,7 @@
 
 #include "DecoderImpl.h"
 #include "jukebox/FileFormats/MP3FileImpl.h"
-#include "jukebox/FileFormats/minimp3/minimp3.h"
+#include "jukebox/Decoders/minimp3/minimp3.h"
 
 namespace jukebox {
 
