@@ -17,8 +17,6 @@
 #include <exception>
 
 #include "jukebox/Decoders/WaveDecoderImpl.h"
-#include "Decorators/FadedSoundFileImpl.h"
-#include "Decorators/BufferedSoundFileImpl.h"
 #include "SoundFile.h"
 #include "WaveFileImpl.h"
 

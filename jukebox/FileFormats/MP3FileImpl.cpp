@@ -13,8 +13,6 @@
 
 #include "jukebox/Decoders/MP3DecoderImpl.h"
 #include "SoundFile.h"
-#include "Decorators/BufferedSoundFileImpl.h"
-#include "Decorators/FadedSoundFileImpl.h"
 #include "MP3FileImpl.h"
 
 #define MINIMP3_IMPLEMENTATION

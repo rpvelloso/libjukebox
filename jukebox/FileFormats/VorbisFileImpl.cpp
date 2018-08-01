@@ -21,8 +21,6 @@
 #define STB_VORBIS_HEADER_ONLY
 #include "jukebox/Decoders/stb_vorbis/stb_vorbis.c"
 #include "jukebox/Decoders/VorbisDecoderImpl.h"
-#include "Decorators/BufferedSoundFileImpl.h"
-#include "Decorators/FadedSoundFileImpl.h"
 #include "SoundFile.h"
 #include "VorbisFileImpl.h"
 
