@@ -41,6 +41,11 @@ int main(int argc, char **argv) {
 
 	printFileData(soundFile);
 
+	/* 
+	* the same 'soundFile' may be shared among several 'sounds',
+	* each 'sound' holds its own playback context, independently 
+	* from 'soundFile'.
+	*/
 	auto sound = jukebox::factory::makeSound(soundFile);
 	sound.loop(true);
 
