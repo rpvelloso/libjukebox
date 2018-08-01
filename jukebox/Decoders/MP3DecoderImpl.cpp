@@ -5,6 +5,7 @@
  *      Author: Benutzer
  */
 
+#include <string.h>
 #include <algorithm>
 #include "MP3DecoderImpl.h"
 

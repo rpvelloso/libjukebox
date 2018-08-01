@@ -1,5 +1,7 @@
 #!/bin/bash
 headers=(
+	'jukebox/Decoders/DecoderImpl.h'
+	'jukebox/Decoders/Decoder.h'
 	'jukebox/FileFormats/SoundFileImpl.h'
 	'jukebox/FileFormats/SoundFile.h'
 	'jukebox/Sound/SoundTransformation.h'
