@@ -125,12 +125,7 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 		throw std::runtime_error("failed Lock");
 
 	size_t len = decoder->getSamples((char *)bufAddr, position, bufLen);
-	if (transformation) {
-		if (soundFile.getBitsPerSample() == 8)
-			(*transformation)((uint8_t *)bufAddr, position, (int)bufLen);
-		else
-			(*transformation)((int16_t *)bufAddr, position, (int)bufLen);
-	}
+	transformation((uint8_t *)bufAddr, position, (int)bufLen);
 
 	position += len;
 	if (len < bufLen)

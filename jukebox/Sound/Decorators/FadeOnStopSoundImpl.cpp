@@ -76,7 +76,7 @@ void FadeOnStopSoundImpl::play() {
 
 void FadeOnStopSoundImpl::stop() {
 	if (impl->getPosition() > 0 && fadeOutSecs > 0)
-		impl->setTransformation(new FadeOutOnStop(impl->getSoundFile(), fadeOutSecs, impl->getPosition()));
+		impl->setTransformation(FadeOutOnStop(impl->getSoundFile(), fadeOutSecs, impl->getPosition()));
 }
 
 int FadeOnStopSoundImpl::getVolume() {
