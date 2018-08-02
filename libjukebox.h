@@ -9,11 +9,17 @@
 
 namespace jukebox {
 
+class SoundFileImpl;
+
 class DecoderImpl {
 public:
- DecoderImpl() = default;
+ DecoderImpl(SoundFileImpl &fileImpl);
  virtual ~DecoderImpl() = default;
  virtual int getSamples(char *buf, int pos, int len) = 0;
+ int getBlockSize() const;
+
+private:
+ int blockSize;
 };
 
 }
@@ -38,11 +44,6 @@ public:
  virtual short getBitsPerSample() const = 0;
  virtual int getDataSize() const = 0;
  virtual const std::string &getFilename() const = 0;
-
-
-
-
- virtual int read(char *buf, int pos, int len) = 0;
  virtual std::unique_ptr<Decoder> makeDecoder() = 0;
 };
 
@@ -58,7 +59,6 @@ public:
  int getDataSize() const;
  const std::string &getFilename() const;
  double getDuration() const;
- int read(char* buf, int pos, int len);
  void truncAt(int pos);
  std::unique_ptr<Decoder> makeDecoder();
 
