@@ -55,20 +55,6 @@ const std::string& SoundFile::getFilename() const {
 	return impl->getFilename();
 }
 
-int SoundFile::read(char* buf, int pos, int len) {
-	if (pos > dataSize)
-		return 0;
-	if (pos + len > dataSize)
-		len = dataSize - pos;
-
-	if (len % blockSize != 0)
-		throw std::runtime_error("invalid buffer size, should be block aligned.");
-	if (pos % blockSize != 0)
-		throw std::runtime_error("invalid stream position, should be block aligned.");
-
-	return impl->read(buf, pos, len);
-}
-
 void jukebox::SoundFile::truncAt(int pos) {
 	dataSize = std::min(pos, dataSize);
 }

@@ -46,8 +46,9 @@ int main(int argc, char **argv) {
 	std::cin.get();
 	sound2.play();
 
-	sound.stop();
-
 	std::cout << "hit enter to exit..." << std::endl;
 	std::cin.get();
+
+	sound.stop();
+	sound2.stop();
 }

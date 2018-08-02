@@ -27,7 +27,6 @@ public:
 	short getBitsPerSample() const override;
 	int getDataSize() const override;
 	const std::string &getFilename() const override;
-	int read(char *buf, int pos, int len) override;
 	std::unique_ptr<Decoder> makeDecoder() override;
 	uint8_t *getFileBuffer();
 	int getFileSize() const;

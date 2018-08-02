@@ -11,7 +11,7 @@
 namespace jukebox {
 
 VorbisDecoderImpl::VorbisDecoderImpl(VorbisFileImpl& fileImpl) :
-	DecoderImpl(),
+	DecoderImpl(fileImpl),
 	fileImpl(fileImpl),
 	numChannels(fileImpl.getNumChannels()),
 	vorbisHandler(nullptr, closeVorbis) {

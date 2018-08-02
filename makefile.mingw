@@ -6,7 +6,7 @@ objects = ./jukebox/Sound/Sound.o ./jukebox/Sound/SoundImpl.o \
 ./jukebox/FileFormats/SoundFile.o ./jukebox/FileFormats/WaveFileImpl.o ./jukebox/FileFormats/VorbisFileImpl.o \
 ./jukebox/FileFormats/MP3FileImpl.o \
 ./jukebox/Mixer/Mixer.o ./jukebox/Sound/Decorators/FadeOnStopSoundImpl.o ./jukebox/Sound/Decorators/FadedSoundImpl.o \
-./jukebox/Decoders/Decoder.o ./jukebox/Decoders/WaveDecoderImpl.o ./jukebox/Decoders/VorbisDecoderImpl.o ./jukebox/Decoders/MP3DecoderImpl.o \
+./jukebox/Decoders/Decoder.o ./jukebox/Decoders/DecoderImpl.o ./jukebox/Decoders/WaveDecoderImpl.o ./jukebox/Decoders/VorbisDecoderImpl.o ./jukebox/Decoders/MP3DecoderImpl.o \
 ./win/Sound/DirectSoundBuffer.o ./win/Mixer/WindowsMixer.o
 
 all						:	./bin/libjukebox.dll test play
@@ -26,7 +26,8 @@ play					:	./jukebox_test/demo/play.o
 ./jukebox/FileFormats/VorbisFileImpl.o						:	./jukebox/FileFormats/SoundFileImpl.h ./jukebox/FileFormats/SoundFile.h ./jukebox/FileFormats/VorbisFileImpl.h
 ./jukebox/FileFormats/MP3FileImpl.o							:	./jukebox/FileFormats/SoundFileImpl.h ./jukebox/FileFormats/SoundFile.h ./jukebox/FileFormats/MP3FileImpl.h
 ./jukebox/Mixer/Mixer.o										:	./jukebox/Mixer/MixerImpl.h ./jukebox/Mixer/Mixer.h
-/jukebox/Decoders/Decoder.o									:	./jukebox/Decoders/Decoder.h
+./jukebox/Decoders/DecoderImpl.o							:	./jukebox/Decoders/DecoderImpl.h
+./jukebox/Decoders/Decoder.o								:	./jukebox/Decoders/Decoder.h
 ./jukebox/Decoders/WaveDecoderImpl.o						:	./jukebox/Decoders/Decoder.h ./jukebox/Decoders/DecoderImpl.h ./jukebox/Decoders/WaveDecoderImpl.o  ./jukebox/FileFormats/WaveFileImpl.h
 ./jukebox/Decoders/VorbisDecoderImpl.o						:	./jukebox/Decoders/Decoder.h ./jukebox/Decoders/DecoderImpl.h ./jukebox/Decoders/VorbisDecoderImpl.o  ./jukebox/FileFormats/VorbisFileImpl.h
 ./jukebox/Decoders/MP3DecoderImpl.o							:	./jukebox/Decoders/Decoder.h ./jukebox/Decoders/DecoderImpl.h ./jukebox/Decoders/MP3DecoderImpl.o  ./jukebox/FileFormats/MP3FileImpl.h

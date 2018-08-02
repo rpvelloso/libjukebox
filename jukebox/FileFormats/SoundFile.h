@@ -32,7 +32,6 @@ public:
 	int getDataSize() const;
 	const std::string &getFilename() const;
 	double getDuration() const;
-	int read(char* buf, int pos, int len);
 	void truncAt(int pos);
 	std::unique_ptr<Decoder> makeDecoder();
 

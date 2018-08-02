@@ -12,7 +12,7 @@
 namespace jukebox {
 
 jukebox::MP3DecoderImpl::MP3DecoderImpl(MP3FileImpl& fileImpl) :
-	DecoderImpl(),
+	DecoderImpl(fileImpl),
 	fileImpl(fileImpl),
 	fileBuffer(fileImpl.getFileBuffer()),
 	fileSize(fileImpl.getFileSize()) {

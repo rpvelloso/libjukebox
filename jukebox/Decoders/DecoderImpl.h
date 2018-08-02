@@ -10,11 +10,17 @@
 
 namespace jukebox {
 
+class SoundFileImpl;
+
 class DecoderImpl {
 public:
-	DecoderImpl() = default;
+	DecoderImpl(SoundFileImpl &fileImpl);
 	virtual ~DecoderImpl() = default;
 	virtual int getSamples(char *buf, int pos, int len) = 0;
+	int getBlockSize() const;
+
+private:
+	int blockSize;
 };
 
 } /* namespace socks */

@@ -10,7 +10,8 @@
 namespace jukebox {
 
 WaveDecoderImpl::WaveDecoderImpl(WaveFileImpl& fileImpl) :
-		DecoderImpl(), fileImpl(fileImpl) {
+		DecoderImpl(fileImpl),
+		fileImpl(fileImpl) {
 }
 
 int WaveDecoderImpl::getSamples(char* buf, int pos, int len) {

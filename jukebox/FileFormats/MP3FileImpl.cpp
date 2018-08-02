@@ -58,11 +58,6 @@ const std::string& MP3FileImpl::getFilename() const {
 	return filename;
 }
 
-int MP3FileImpl::read(char* buf, int pos, int len) { // unused
-	throw std::runtime_error("invalid call to MP3FileImpl::read");
-	return 0;
-}
-
 void MP3FileImpl::load(std::istream& inp) {
 	auto fileStart = inp.tellg();
 	inp.seekg(0, std::ios::end);

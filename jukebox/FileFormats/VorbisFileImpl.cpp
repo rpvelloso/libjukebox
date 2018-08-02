@@ -46,11 +46,6 @@ VorbisFileImpl::VorbisFileImpl(std::istream& inp) :
 	load(inp);
 }
 
-int VorbisFileImpl::read(char *buf, int pos, int len) {
-	throw std::runtime_error("invalid call to VorbisFileImpl::read");
-	return 0; // unused;
-}
-
 void VorbisFileImpl::load(std::istream& inp) {
 	auto fileStart = inp.tellg();
 	inp.seekg(0, std::ios::end);
