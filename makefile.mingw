@@ -15,21 +15,21 @@ SRCS = ./jukebox/Sound/Sound.cpp ./jukebox/Sound/SoundImpl.cpp \
 ./jukebox/Mixer/Mixer.cpp ./jukebox/Sound/Decorators/FadeOnStopSoundImpl.cpp ./jukebox/Sound/Decorators/FadedSoundImpl.cpp \
 ./jukebox/Decoders/Decoder.cpp ./jukebox/Decoders/DecoderImpl.cpp ./jukebox/Decoders/WaveDecoderImpl.cpp ./jukebox/Decoders/VorbisDecoderImpl.cpp ./jukebox/Decoders/MP3DecoderImpl.cpp \
 ./win/Sound/DirectSoundBuffer.cpp ./win/Mixer/WindowsMixer.cpp \
-./jukebox_test/demo/main.cpp ./jukebox_test/demo/play.cpp
+./jukebox_test/demo/test.cpp ./jukebox_test/demo/play.cpp
 
-all						:	./bin/libjukebox.dll test play
-./bin/libjukebox.dll	:	$(objects)
+all							:	./bin/libjukebox.dll ./bin/test.exe ./bin/play.exe
+./bin/libjukebox.dll		:	$(objects)
 	g++ -std=c++1y -ggdb -Wall $(objects) -shared $(LDFLAGS) -o ./bin/libjukebox.dll
-test					:	./jukebox_test/demo/main.o
-play					:	./jukebox_test/demo/play.o
-./jukebox_test/main.o										:	genheader
-./jukebox_test/play.o										:	genheader
+./bin/test.exe				:	genheader ./jukebox_test/demo/main.o ./bin/libjukebox.dll
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/main.o -Lbin -ljukebox -o ./bin/test.exe
+./bin/play.exe				:	genheader ./jukebox_test/demo/play.o ./bin/libjukebox.dll
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/play.o -Lbin -ljukebox -o ./bin/play.exe
 
 .PHONY		:	clean	genheader
 genheader	:
 	./genheader.sh
 clean		:
-	rm -rf $(objects) $(DEPDIR) ./bin/libjukebox.dll ./jukebox_test/demo/main.o ./bin/test.exe ./bin/play.exe
+	rm -rf $(DEPDIR) $(objects) ./jukebox_test/demo/*.o  ./bin/libjukebox.dll ./bin/test.exe ./bin/play.exe
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
