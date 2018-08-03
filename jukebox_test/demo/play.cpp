@@ -38,11 +38,13 @@ int main(int argc, char **argv) {
 			jukebox::factory::loadVorbisFile(filename)://, 10, 10):
 			filename.back() == '3'? // mp3?
 			jukebox::factory::loadMP3File(filename):
+			filename.back() == 'd'? // mid?
+			jukebox::factory::loadMIDIFile(filename):
 			jukebox::factory::loadWaveFile(filename);//, 10, 10);
 
 	printFileData(soundFile);
 
-	auto sound = jukebox::factory::makeFadedSound(soundFile, 3, 3);
+	auto sound = jukebox::factory::makeFadeOnStopSound(soundFile, 3);
 	auto sound2 = jukebox::factory::makeSound(soundFile);
 	sound.loop(true);
 

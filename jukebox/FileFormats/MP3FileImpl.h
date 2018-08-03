@@ -18,7 +18,6 @@
 
 #include <string>
 #include <memory>
-#include <mutex>
 #include <vector>
 #include "SoundFileImpl.h"
 #include "jukebox/Decoders/Decoder.h"

@@ -90,6 +90,8 @@ namespace factory {
  extern SoundFile loadVorbisStream(std::istream &inp);
  extern SoundFile loadMP3File(const std::string &filename);
  extern SoundFile loadMP3Stream(std::istream &inp);
+
+ extern SoundFile loadMIDIFile(const std::string &filename);
 }
 
 }
