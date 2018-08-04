@@ -10,7 +10,7 @@
 
 namespace jukebox {
 
-const std::string soundFont = "C:\\mingw-w64\\home\\rvelloso\\FluidR3_GM.sf2";
+const std::string soundFont = "FluidR3_GM.sf2";
 
 void freeFluidSynthSettings(fluid_settings_t *settings) {
 	if (settings)
@@ -55,7 +55,9 @@ int MIDIDecoderImpl::getSamples(char* buf, int pos, int len) {
 }
 
 void MIDIDecoderImpl::reset() {
-	fluid_player_join(player.get());
+	if (fluid_player_status() == FLUID_PLAYER_PLAYING)
+		fluid_player_join(player.get());
+	fluid_player_stop(player.get());
     fluid_player_play(player.get());
 }
 
