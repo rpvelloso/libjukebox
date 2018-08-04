@@ -10,7 +10,7 @@
 
 namespace jukebox {
 
-const std::string soundFont = "FluidR3_GM.sf2";
+const std::string soundFont = "GeneralUser GS v1.471.sf2"; //"FluidR3_GM.sf2";
 
 void freeFluidSynthSettings(fluid_settings_t *settings) {
 	if (settings)

@@ -30,6 +30,7 @@ public:
 private:
 	std::string filename;
 	int fileSize = 0;
+	int dataSize = 0;
 	std::unique_ptr<uint8_t> fileBuffer;
 
 	void load(std::istream& inp);
