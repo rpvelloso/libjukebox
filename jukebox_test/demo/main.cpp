@@ -47,9 +47,20 @@ void printFileData(const jukebox::SoundFile &file) {
 	std::cout << formatDuration(file.getDuration()) << std::endl << std::endl;
 }
 
+jukebox::SoundFile loadSoundFile(const std::string &filename) {
+return
+		filename.back() == 'g'? // ogg?
+		jukebox::factory::loadVorbisFile(filename):
+		filename.back() == '3'?
+		jukebox::factory::loadMP3File(filename):
+		filename.back() == 'd'?
+		jukebox::factory::loadMIDIFile(filename):
+		jukebox::factory::loadWaveFile(filename);
+}
+
 int main(int argc, char **argv) {
 	if( argc < 3 ) {
-		std::cout << "you need to supply two audio (wav/ogg) files as arguments" << std::endl;
+		std::cout << "you need to supply two audio (wav/ogg/mp3/mid) files as arguments" << std::endl;
 		return 1;
 	}
 
@@ -58,17 +69,12 @@ int main(int argc, char **argv) {
 
 	std::cout << "ready to load " << filename1 << " as a file" << std::endl;
 
-	auto soundFile1 = filename1.back() == 'g'? // ogg?
-			jukebox::factory::loadVorbisFile(filename1):
-			jukebox::factory::loadWaveFile(filename1);
-
+	auto soundFile1 = loadSoundFile(filename1);
 	printFileData(soundFile1);
 
 	std::cout << "ready to load " << filename2 << " as a stream" << std::endl;
 	std::fstream file(filename2, std::ios::binary|std::ios::in);
-	auto soundFile2 = filename2.back() == 'g'?
-			jukebox::factory::loadVorbisStream(file):
-			jukebox::factory::loadWaveStream(file);
+	auto soundFile2 = loadSoundFile(filename2);
 	printFileData(soundFile2);
 
 	auto sound1 = jukebox::factory::makeSound(soundFile1);

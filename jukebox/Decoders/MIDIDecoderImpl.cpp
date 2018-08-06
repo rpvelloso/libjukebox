@@ -8,18 +8,6 @@
 #include "jukebox/FileFormats/MIDIFileImpl.h"
 #include "MIDIDecoderImpl.h"
 
-/*TODO: set once an empty log function using fluid_set_log_function()
- * to disable console messages printed by default log function
- */
-
-//TODO: find smaller sound fonts
-
-/*TODO: see if there is a way to load single sound font and share
- * it among several synth objects or try to share a synth object with
- * several players to avoid loading a sound font for each sound
- * being played
- */
-
 namespace jukebox {
 
 const std::string soundFont = "GeneralUser GS v1.471.sf2"; //"FluidR3_GM.sf2";

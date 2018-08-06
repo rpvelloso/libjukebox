@@ -14,6 +14,18 @@
 
 namespace jukebox {
 
+// empty log function to remove warning messages from console
+void dummy_fluid_log_function(int level, char *	message,void * data){}
+
+class FluidSynthInitialization {
+friend class MIDIFileImpl;
+public:
+private:
+	FluidSynthInitialization() {
+		fluid_set_log_function(FLUID_WARN, dummy_fluid_log_function, nullptr);
+	};
+};
+
 MIDIFileImpl::MIDIFileImpl(const std::string &filename) :
 	SoundFileImpl(),
 	filename(filename) {
@@ -87,6 +99,8 @@ struct __fluid_player_t
 
 
 void MIDIFileImpl::load(std::istream& inp) {
+	static FluidSynthInitialization fluidInit;
+
 	auto fileStart = inp.tellg();
 	inp.seekg(0, std::ios::end);
 	fileSize = inp.tellg() - fileStart;

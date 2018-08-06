@@ -50,6 +50,7 @@ namespace factory {
 	extern SoundFile loadMP3Stream(std::istream &inp);
 
 	extern SoundFile loadMIDIFile(const std::string &filename);
+	extern SoundFile loadMIDIStream(std::istream &inp);
 }
 
 } /* namespace jukebox */
