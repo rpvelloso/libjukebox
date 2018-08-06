@@ -5,6 +5,7 @@
  *      Author: rvelloso
  */
 
+#include <cstring>
 #include "jukebox/FileFormats/MIDIFileImpl.h"
 #include "MIDIDecoderImpl.h"
 
@@ -27,12 +28,27 @@ void freeFluidSynthPlayer(fluid_player_t *player) {
 		delete_fluid_player(player);
 }
 
+// empty log function to remove warning messages from console
+void dummy_fluid_log_function(int level, char *	message,void * data){}
+
+class FluidSynthInitialization {
+friend class MIDIDecoderImpl;
+public:
+private:
+	FluidSynthInitialization() {
+		fluid_set_log_function(FLUID_WARN, dummy_fluid_log_function, nullptr);
+	};
+};
+
+
 MIDIDecoderImpl::MIDIDecoderImpl(MIDIFileImpl& fileImpl) :
 		DecoderImpl(fileImpl),
 		fileImpl(fileImpl),
 		settings(new_fluid_settings(), freeFluidSynthSettings),
 		synth(new_fluid_synth(settings.get()), freeFluidSynthSynth),
 		player(new_fluid_player(synth.get()), freeFluidSynthPlayer) {
+
+	static FluidSynthInitialization libfluidInit;
 
 	if (fluid_synth_get_sfont(synth.get(), 0) == nullptr) {
 		if (fluid_is_soundfont(soundFont.c_str()))
@@ -48,6 +64,9 @@ int MIDIDecoderImpl::getSamples(char* buf, int pos, int len) {
 
 	if (pos >= fileImpl.getDataSize())
 		return 0;
+
+	memset(buf, 0, len);
+
 	if (pos + len > fileImpl.getDataSize())
 		len = fileImpl.getDataSize() - pos;
 
@@ -60,8 +79,6 @@ int MIDIDecoderImpl::getSamples(char* buf, int pos, int len) {
 }
 
 void MIDIDecoderImpl::reset() {
-	/*if (fluid_player_get_status(player.get()) == FLUID_PLAYER_PLAYING)
-		fluid_player_join(player.get());*/
 	fluid_player_stop(player.get());
 	player.reset(new_fluid_player(synth.get()));
 	fluid_player_add_mem(player.get(), fileImpl.getFileBuffer(), fileImpl.getFileSize());

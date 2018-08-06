@@ -5,7 +5,7 @@ Plataform independent (windows/linux) C++ audio playback library (uses DirectSou
 - RAW Wave;
 - MP3;
 - Ogg Vorbis;
-- MIDI (using libfluidsynth);
+- MIDI (using libfluidsynth + midifile);
 - Extensible architecture allows implementation of other formats, transparently.
 
 # Effects
@@ -64,3 +64,4 @@ int main(int argc, char **argv) {
 - Ogg Vorbis decoder: https://github.com/nothings/stb
 - FluidSynth MIDI synthesizer: https://github.com/FluidSynth/fluidsynth
 - Soundfont: http://schristiancollins.com/generaluser.php
+- MIDI file parser: https://github.com/craigsapp/midifile
