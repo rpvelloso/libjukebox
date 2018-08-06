@@ -60,6 +60,7 @@ void MIDIFileImpl::load(std::istream& inp) {
 
 	inp.seekg(0, std::ios::beg);
 	smf::MidiFile midiFile(inp);
+	midiFile.sortTracks();
 
 	dataSize = midiFile.getFileDurationInSeconds()*
 			getSampleRate()*getNumChannels()*(getBitsPerSample()/8);
