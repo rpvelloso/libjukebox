@@ -11,8 +11,6 @@
 
 namespace jukebox {
 
-const std::string soundFont = "GeneralUser GS v1.471.sf2"; //"FluidR3_GM.sf2";
-
 void freeFluidSynthSettings(fluid_settings_t *settings) {
 	if (settings)
 		delete_fluid_settings(settings);
@@ -34,6 +32,10 @@ void dummy_fluid_log_function(int level, char *	message,void * data){}
 class FluidSynthInitialization {
 friend class MIDIDecoderImpl;
 public:
+	const std::string &getSoundFontFilename() {
+		static std::string soundFont = "GeneralUser GS v1.471.sf2"; //"FluidR3_GM.sf2";
+		return soundFont;
+	}
 private:
 	FluidSynthInitialization() {
 		fluid_set_log_function(FLUID_WARN, dummy_fluid_log_function, nullptr);
@@ -51,6 +53,7 @@ MIDIDecoderImpl::MIDIDecoderImpl(MIDIFileImpl& fileImpl) :
 	static FluidSynthInitialization libfluidInit;
 
 	if (fluid_synth_get_sfont(synth.get(), 0) == nullptr) {
+		auto soundFont = libfluidInit.getSoundFontFilename();
 		if (fluid_is_soundfont(soundFont.c_str()))
 			fluid_synth_sfload(synth.get(), soundFont.c_str(), 1);
 		else
