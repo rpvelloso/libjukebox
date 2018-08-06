@@ -32,7 +32,7 @@ void dummy_fluid_log_function(int level, char *	message,void * data){}
 class FluidSynthInitialization {
 friend class MIDIDecoderImpl;
 public:
-	const std::string &getSoundFontFilename() {
+	static const std::string &getSoundFontFilename() {
 		static std::string soundFont = "GeneralUser GS v1.471.sf2"; //"FluidR3_GM.sf2";
 		return soundFont;
 	}
