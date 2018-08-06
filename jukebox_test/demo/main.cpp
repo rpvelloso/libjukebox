@@ -37,7 +37,7 @@ std::string formatDuration(double duration) {
 
 std::array<std::string, 2> channels = {"Mono", "Stereo"};
 
-void printFileData(const jukebox::SoundFile &file) {
+void printFileInfo(const jukebox::SoundFile &file) {
 	std::cout << file.getFilename() << " attributes: " << std::endl;
 	std::cout << file.getBitsPerSample() << " bits" << std::endl;
 	std::cout << channels[file.getNumChannels() - 1] << std::endl;
@@ -69,12 +69,12 @@ int main(int argc, char **argv) {
 	std::cout << "ready to load " << filename1 << " as a file" << std::endl;
 
 	auto soundFile1 = loadSoundFile(filename1);
-	printFileData(soundFile1);
+	printFileInfo(soundFile1);
 
 	std::cout << "ready to load " << filename2 << " as a stream" << std::endl;
 	std::fstream file(filename2, std::ios::binary|std::ios::in);
 	auto soundFile2 = loadSoundFile(filename2);
-	printFileData(soundFile2);
+	printFileInfo(soundFile2);
 
 	auto sound1 = jukebox::factory::makeSound(soundFile1);
 	sound1.loop(true);

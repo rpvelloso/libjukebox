@@ -18,6 +18,47 @@
 #include <exception>
 #include "libjukebox.h"
 
+// forward declarations
+void printFileInfo(const jukebox::SoundFile &file);
+jukebox::SoundFile loadSoundFile(const std::string &filename);
+
+int main(int argc, char **argv) {
+	if( argc < 2 ) {
+		std::cout << "usage: " << argv[0] << " filename.[wav|ogg|mp3|mid]" << std::endl;
+		return 1;
+	}
+
+	std::string filename(argv[1]);
+
+	try {
+		// load a sound file
+		auto soundFile = loadSoundFile(filename);
+
+		// print file info
+		printFileInfo(soundFile);
+
+		/* create a sound (decorated with fade-on-stop functionality)
+		 *  using previously loaded sound file */
+		auto sound = jukebox::factory::makeFadeOnStopSound(soundFile, 3); // 3 seconds of fade out
+		sound.loop(true); // set looping
+
+		jukebox::Mixer mixer;
+		mixer.setVolume(100); // max global volume
+		sound.setVolume(100); // max sound volume
+		sound.play(); // start playing
+
+		std::cout << "hit enter to fade out..." << std::endl;
+		std::cin.get();
+		sound.stop(); // fade out the sound before stopping it
+
+		std::cout << "hit enter to exit..." << std::endl;
+		std::cin.get();
+	} catch (std::exception &e) {
+		std::cerr << "error loading " << filename << ": " << e.what() << std::endl;
+	}
+	return 0;
+}
+
 std::string formatDuration(double duration) {
 	int hr = duration/3600;
 	duration -= hr*3600;
@@ -29,11 +70,11 @@ std::string formatDuration(double duration) {
 		std::to_string(hr) + ":" +
 		(min<10?"0":"") + std::to_string(min) + ":" +
 		(secs<10?"0":"") + std::to_string(secs);
-}
+};
 
-std::array<std::string, 2> channels = {"Mono", "Stereo"};
+void printFileInfo(const jukebox::SoundFile &file) {
+	static std::array<std::string, 2> channels = {"Mono", "Stereo"};
 
-void printFileData(const jukebox::SoundFile &file) {
 	std::cout << file.getFilename() << " attributes: " << std::endl;
 	std::cout << file.getBitsPerSample() << " bits" << std::endl;
 	std::cout << channels[file.getNumChannels() - 1] << std::endl;
@@ -56,33 +97,4 @@ jukebox::SoundFile loadSoundFile(const std::string &filename) {
 		return jukebox::factory::loadMIDIFile(filename);
 	else
 		throw std::invalid_argument("file format not supported.");
-}
-
-int main(int argc, char **argv) {
-	if( argc < 2 ) {
-		std::cout << "usage: " << argv[0] << " filename.[wav|ogg|mp3|mid]" << std::endl;
-		return 1;
-	}
-
-	std::string filename(argv[1]);
-
-	try {
-		auto soundFile = loadSoundFile(filename);
-		printFileData(soundFile);
-		auto sound = jukebox::factory::makeFadeOnStopSound(soundFile, 3);
-		sound.loop(true);
-
-		jukebox::Mixer mixer;
-		mixer.setVolume(100);
-		sound.play();
-
-		std::cout << "hit enter to fade out..." << std::endl;
-		std::cin.get();
-		sound.stop();
-
-		std::cout << "hit enter to exit..." << std::endl;
-		std::cin.get();
-	} catch (std::exception &e) {
-		std::cerr << "error loading " << filename << ": " << e.what() << std::endl;
-	}
 }
