@@ -8,6 +8,18 @@
 #include "jukebox/FileFormats/MIDIFileImpl.h"
 #include "MIDIDecoderImpl.h"
 
+/*TODO: set once an empty log function using fluid_set_log_function()
+ * to disable console messages printed by default log function
+ */
+
+//TODO: find smaller sound fonts
+
+/*TODO: see if there is a way to load single sound font and share
+ * it among several synth objects or try to share a synth object with
+ * several players to avoid loading a sound font for each sound
+ * being played
+ */
+
 namespace jukebox {
 
 const std::string soundFont = "GeneralUser GS v1.471.sf2"; //"FluidR3_GM.sf2";
@@ -34,17 +46,22 @@ MIDIDecoderImpl::MIDIDecoderImpl(MIDIFileImpl& fileImpl) :
 		synth(new_fluid_synth(settings.get()), freeFluidSynthSynth),
 		player(new_fluid_player(synth.get()), freeFluidSynthPlayer) {
 
-    if (fluid_is_soundfont(soundFont.c_str()))
-    	fluid_synth_sfload(synth.get(), soundFont.c_str(), 1);
-    else
-    	throw std::invalid_argument(soundFont + " is not a sound font file.");
-    fluid_player_add_mem(player.get(), fileImpl.getFileBuffer(), fileImpl.getFileSize());
-    fluid_player_play(player.get());
+	if (fluid_synth_get_sfont(synth.get(), 0) == nullptr) {
+		if (fluid_is_soundfont(soundFont.c_str()))
+			fluid_synth_sfload(synth.get(), soundFont.c_str(), 1);
+		else
+			throw std::invalid_argument(soundFont + " is not a sound font file.");
+	}
 }
 
 int MIDIDecoderImpl::getSamples(char* buf, int pos, int len) {
 	if (pos == 0)
 		reset();
+
+	if (pos >= fileImpl.getDataSize())
+		return 0;
+	if (pos + len > fileImpl.getDataSize())
+		len = fileImpl.getDataSize() - pos;
 
 	fluid_synth_write_s16(
 			synth.get(), len/4, // 16 bit Stereo
@@ -55,9 +72,11 @@ int MIDIDecoderImpl::getSamples(char* buf, int pos, int len) {
 }
 
 void MIDIDecoderImpl::reset() {
-	if (fluid_player_status() == FLUID_PLAYER_PLAYING)
-		fluid_player_join(player.get());
+	/*if (fluid_player_get_status(player.get()) == FLUID_PLAYER_PLAYING)
+		fluid_player_join(player.get());*/
 	fluid_player_stop(player.get());
+	player.reset(new_fluid_player(synth.get()));
+	fluid_player_add_mem(player.get(), fileImpl.getFileBuffer(), fileImpl.getFileSize());
     fluid_player_play(player.get());
 }
 

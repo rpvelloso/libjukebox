@@ -58,10 +58,6 @@ short MP3FileImpl::getBitsPerSample() const {
 	return 16;
 }
 
-int MP3FileImpl::getDataSize() const {
-	return dataSize;
-}
-
 const std::string& MP3FileImpl::getFilename() const {
 	return filename;
 }

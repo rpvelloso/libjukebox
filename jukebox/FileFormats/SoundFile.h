@@ -37,7 +37,7 @@ public:
 
 private:
 	std::unique_ptr<SoundFileImpl> impl;
-	int blockSize, dataSize;
+	int blockSize;
 };
 
 // TODO this is very confusing: a wave file factory in SoundFile.h - perhaps move this factory to there and create a wave file impl, instead?

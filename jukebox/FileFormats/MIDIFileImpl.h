@@ -22,7 +22,6 @@ public:
 	short getNumChannels() const override;
 	int getSampleRate() const override;
 	short getBitsPerSample() const override;
-	int getDataSize() const override;
 	const std::string &getFilename() const override;
 	std::unique_ptr<Decoder> makeDecoder() override;
 	uint8_t *getFileBuffer();
@@ -30,7 +29,6 @@ public:
 private:
 	std::string filename;
 	int fileSize = 0;
-	int dataSize = 0;
 	std::unique_ptr<uint8_t> fileBuffer;
 
 	void load(std::istream& inp);

@@ -85,10 +85,6 @@ short VorbisFileImpl::getBitsPerSample() const {
 	return 16;
 }
 
-int VorbisFileImpl::getDataSize() const {
-	return dataSize;
-}
-
 const std::string& VorbisFileImpl::getFilename() const {
 	return filename;
 }

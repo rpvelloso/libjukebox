@@ -35,7 +35,6 @@ public:
 	short getNumChannels() const override;
 	int getSampleRate() const override;
 	short getBitsPerSample() const override;
-	int getDataSize() const override;
 	const std::string &getFilename() const override;
 	std::unique_ptr<Decoder> makeDecoder() override;
 	uint8_t *getFileBuffer();
@@ -43,7 +42,6 @@ public:
 private:
 	short numChannels = 0;
 	int sampleRate = 0;
-	int dataSize = 0;
 	int fileSize = 0;
 	std::unique_ptr<uint8_t []> fileBuffer;
 	std::string filename;

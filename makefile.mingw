@@ -3,7 +3,7 @@ CXXFLAGS = -Wall -O3 -ggdb -std=c++1y -fPIC -I. -I./win/ -I/local/include
 CFLAGS = -Wall -O3 -ggdb
 LDFLAGS = -ldxguid -ldsound -lwinmm -lfluidsynth -L/local/lib 
 objects = ./jukebox/Sound/Sound.o ./jukebox/Sound/SoundImpl.o \
-./jukebox/FileFormats/SoundFile.o ./jukebox/FileFormats/WaveFileImpl.o ./jukebox/FileFormats/VorbisFileImpl.o \
+./jukebox/FileFormats/SoundFile.o ./jukebox/FileFormats/SoundFileImpl.o ./jukebox/FileFormats/WaveFileImpl.o ./jukebox/FileFormats/VorbisFileImpl.o \
 ./jukebox/FileFormats/MP3FileImpl.o ./jukebox/FileFormats/MIDIFileImpl.o \
 ./jukebox/Mixer/Mixer.o ./jukebox/Sound/Decorators/FadeOnStopSoundImpl.o ./jukebox/Sound/Decorators/FadedSoundImpl.o \
 ./jukebox/Decoders/Decoder.o ./jukebox/Decoders/DecoderImpl.o ./jukebox/Decoders/MIDIDecoderImpl.o \
@@ -11,7 +11,7 @@ objects = ./jukebox/Sound/Sound.o ./jukebox/Sound/SoundImpl.o \
 ./win/Sound/DirectSoundBuffer.o ./win/Mixer/WindowsMixer.o
 
 SRCS = ./jukebox/Sound/Sound.cpp ./jukebox/Sound/SoundImpl.cpp \
-./jukebox/FileFormats/SoundFile.cpp ./jukebox/FileFormats/WaveFileImpl.cpp ./jukebox/FileFormats/VorbisFileImpl.cpp \
+./jukebox/FileFormats/SoundFile.cpp ./jukebox/FileFormats/SoundFileImpl.cpp ./jukebox/FileFormats/WaveFileImpl.cpp ./jukebox/FileFormats/VorbisFileImpl.cpp \
 ./jukebox/FileFormats/MP3FileImpl.cpp ./jukebox/FileFormats/MIDIFileImpl.cpp \
 ./jukebox/Mixer/Mixer.cpp ./jukebox/Sound/Decorators/FadeOnStopSoundImpl.cpp ./jukebox/Sound/Decorators/FadedSoundImpl.cpp \
 ./jukebox/Decoders/Decoder.cpp ./jukebox/Decoders/DecoderImpl.cpp ./jukebox/Decoders/MIDIDecoderImpl.cpp \

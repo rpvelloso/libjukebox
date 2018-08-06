@@ -51,10 +51,6 @@ short WaveFileImpl::getBitsPerSample() const {
 	return header2.BitsPerSample;
 }
 
-int WaveFileImpl::getDataSize() const {
-	return header3.Subchunk2Size;
-}
-
 std::unique_ptr<Decoder> WaveFileImpl::makeDecoder() {
 	return std::make_unique<Decoder>(new WaveDecoderImpl(*this));
 }
@@ -96,6 +92,7 @@ void WaveFileImpl::load() {
 	if (header3.Subchunk2Size > MAX_WAVE_SIZE)
 		throw std::runtime_error("error loading " + filename + ". data size is too big");
 
+	dataSize = header3.Subchunk2Size;
 	headerSize = inputStream.tellg();
 }
 
