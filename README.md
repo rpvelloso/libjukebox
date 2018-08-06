@@ -13,6 +13,19 @@ Plataform independent (windows/linux) C++ audio playback library (uses DirectSou
 - Fade on stop;
 - Extensible architecture allows implementation of custom effects.
 
+# Building
+make -f makefile.linux
+or
+make -f makefile.mingw
+
+This will compile the library (.so or .dll) and examples in 'bin/' directory. 
+All you'll need to use is the header libsockets.h and the library to link against your own project.
+
+Before building this library, if you want MIDI support, follow the instructions 
+for installing [FluidSynth](https://github.com/FluidSynth/fluidsynth/wiki/BuildingWithCMake).
+
+(TODO: building without MIDI file support...)
+
 # Example
 ```cpp
 #include <iostream>
