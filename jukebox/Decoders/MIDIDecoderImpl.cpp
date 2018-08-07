@@ -37,11 +37,18 @@ void freeFluidSynthPlayer(fluid_player_t *player) {
 // empty log function to remove warning messages from console
 void dummy_fluid_log_function(int level, char *	message,void * data){}
 
+/* Soundfonts:
+ * GeneralUser GS v1.471.sf2 - 30MB -> https://www.dropbox.com/s/4x27l49kxcwamp5/GeneralUser_GS_1.471.zip?dl=1
+ * FluidR3_GM.sf2 - 140MB -> https://pt.osdn.net/projects/sfnet_androidframe/downloads/soundfonts/FluidR3_GM.sf2/
+ * Musyng.sf2 - 1.6GB :O -> https://drive.google.com/file/d/0B6caGN_QlJVEUzVtX0tKOWVoWXc/edit
+ * GXSCC_gm_033.sf2 - 126kb 8 bit style o/ -> https://musical-artifacts.com/artifacts/9
+ * */
+
 class FluidSynthInitialization {
 friend class MIDIDecoderImpl;
 public:
 	static const std::string &getSoundFontFilename() {
-		static std::string soundFont = "GXSCC_gm_033.sf2";// "GeneralUser GS v1.471.sf2"; //"FluidR3_GM.sf2";
+		static std::string soundFont = "../jukebox_test/data/GeneralUser GS v1.471.sf2";
 		return soundFont;
 	}
 private:
