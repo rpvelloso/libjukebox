@@ -17,9 +17,7 @@
 #define LIBJUKEBOX_VORBISFILE_2017_12_23_H_
 
 #include <memory>
-#include <mutex>
-
-#include "SoundFile.h"
+#include "jukebox/Decoders/Decoder.h"
 #include "SoundFileImpl.h"
 
 typedef struct stb_vorbis stb_vorbis;
@@ -35,29 +33,19 @@ public:
 	short getNumChannels() const override;
 	int getSampleRate() const override;
 	short getBitsPerSample() const override;
-	int getDataSize() const override;
 	const std::string &getFilename() const override;
-	int read(char *buf, int pos, int len) override;
+	std::unique_ptr<Decoder> makeDecoder() override;
+	uint8_t *getFileBuffer();
+	int getFileSize() const;
 private:
 	short numChannels = 0;
 	int sampleRate = 0;
-	int dataSize = 0;
-	std::unique_ptr<stb_vorbis, decltype(&closeVorbis)> vorbisHandler;
-	std::unique_ptr<unsigned char []> file;
+	int fileSize = 0;
+	std::unique_ptr<uint8_t []> fileBuffer;
 	std::string filename;
-	std::mutex readMutex;
 
 	void load(std::istream &inp);
 };
-
-namespace factory {
-	SoundFile loadVorbisFile(const std::string &filename);
-	SoundFile loadVorbisStream(std::istream &inp);
-	SoundFile loadBufferedVorbisFile(const std::string &filename);
-	SoundFile loadBufferedVorbisStream(std::istream &inp);
-	SoundFile loadFadedVorbisFile(const std::string &filename, int fadeInSecs, int fadeOutSecs);
-	SoundFile loadFadedVorbisStream(std::istream &inp, int fadeInSecs, int fadeOutSecs);
-}
 
 } /* namespace jukebox */
 

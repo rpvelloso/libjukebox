@@ -19,15 +19,28 @@
 #include <memory>
 
 #include "Sound.h"
+#include "SoundImpl.h"
 #include "jukebox/FileFormats/SoundFile.h"
 
 namespace jukebox {
-
 namespace factory {
-	Sound makeSound(SoundFile &file);
-	Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs);
-}
 
+Sound makeSound(SoundFile &file);
+SoundImpl *makeSoundImpl(SoundFile& file);
+
+Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs);
+Sound makeFadedSound(SoundFile &file, int fadeInSecs, int fadeOutSecs);
+
+SoundFile loadFile(const std::string &filename);
+
+SoundFile loadWaveFile(const std::string &filename);
+SoundFile loadWaveStream(std::istream &inp);
+SoundFile loadVorbisFile(const std::string &filename);
+SoundFile loadVorbisStream(std::istream &inp);
+SoundFile loadMP3File(const std::string &filename);
+SoundFile loadMP3Stream(std::istream &inp);
+
+}
 }
 
 #endif

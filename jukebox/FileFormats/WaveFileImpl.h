@@ -22,8 +22,8 @@
 #include <cstdint>
 #include <mutex>
 
-#include "SoundFile.h"
 #include "SoundFileImpl.h"
+#include "jukebox/Decoders/Decoder.h"
 
 namespace jukebox {
 
@@ -54,9 +54,9 @@ public:
 	short getNumChannels() const override;
 	int getSampleRate() const override;
 	short getBitsPerSample() const override;
-	int getDataSize() const override;
 	const std::string &getFilename() const override;
-	int read(char *buf, int pos, int len) override;
+	int read(char *buf, int pos, int len);
+	std::unique_ptr<Decoder> makeDecoder();
 private:
 	std::fstream fileStream;
 	std::istream inputStream;
@@ -69,15 +69,6 @@ private:
 
 	void load();
 };
-
-namespace factory {
-	SoundFile loadWaveFile(const std::string &filename);
-	SoundFile loadWaveStream(std::istream &inp);
-	SoundFile loadBufferedWaveFile(const std::string &filename);
-	SoundFile loadBufferedWaveStream(std::istream &inp);
-	SoundFile loadFadedWaveFile(const std::string &filename, int fadeInSecs, int fadeOutSecs);
-	SoundFile loadFadedWaveStream(std::istream &inp, int fadeInSecs, int fadeOutSecs);
-}
 
 }
 

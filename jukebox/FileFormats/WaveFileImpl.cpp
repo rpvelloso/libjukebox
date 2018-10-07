@@ -16,8 +16,7 @@
 #include <algorithm>
 #include <exception>
 
-#include "FadedSoundFileImpl.h"
-#include "BufferedSoundFileImpl.h"
+#include "jukebox/Decoders/WaveDecoderImpl.h"
 #include "SoundFile.h"
 #include "WaveFileImpl.h"
 
@@ -52,8 +51,8 @@ short WaveFileImpl::getBitsPerSample() const {
 	return header2.BitsPerSample;
 }
 
-int WaveFileImpl::getDataSize() const {
-	return header3.Subchunk2Size;
+std::unique_ptr<Decoder> WaveFileImpl::makeDecoder() {
+	return std::make_unique<Decoder>(new WaveDecoderImpl(*this));
 }
 
 void WaveFileImpl::load() {
@@ -93,34 +92,8 @@ void WaveFileImpl::load() {
 	if (header3.Subchunk2Size > MAX_WAVE_SIZE)
 		throw std::runtime_error("error loading " + filename + ". data size is too big");
 
+	dataSize = header3.Subchunk2Size;
 	headerSize = inputStream.tellg();
-}
-
-namespace factory {
-	SoundFile loadWaveFile(const std::string &filename) {
-		return SoundFile(new WaveFileImpl(filename));
-	}
-
-	SoundFile loadWaveStream(std::istream &inp) {
-		return SoundFile(new WaveFileImpl(inp));
-	}
-
-	SoundFile loadBufferedWaveFile(const std::string &filename) {
-		return SoundFile(new BufferedSoundFileImpl(new WaveFileImpl(filename)));
-	}
-
-	SoundFile loadBufferedWaveStream(std::istream &inp) {
-		return SoundFile(new BufferedSoundFileImpl(new WaveFileImpl(inp)));
-	}
-
-	SoundFile loadFadedWaveFile(const std::string &filename, int fadeInSecs, int fadeOutSecs) {
-		return SoundFile(new FadedSoundFileImpl(new WaveFileImpl(filename), fadeInSecs, fadeOutSecs));
-	}
-
-	SoundFile loadFadedWaveStream(std::istream &inp, int fadeInSecs, int fadeOutSecs) {
-		return SoundFile(new FadedSoundFileImpl(new WaveFileImpl(inp), fadeInSecs, fadeOutSecs));
-	}
-
 }
 
 const std::string &WaveFileImpl::getFilename() const {
@@ -141,4 +114,3 @@ int WaveFileImpl::read(char *buf, int pos, int len) {
 }
 
 }
-

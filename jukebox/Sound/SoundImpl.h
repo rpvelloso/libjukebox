@@ -17,7 +17,7 @@
 #define LIBJUKEBOX_SOUNDIMPL_2017_12_17_H_
 
 #include <memory>
-#include "SoundTransformation.h"
+#include <functional>
 #include "jukebox/FileFormats/SoundFile.h"
 
 namespace jukebox {
@@ -33,11 +33,11 @@ public:
 	virtual void loop(bool) = 0;
 	SoundFile &getSoundFile();
 	int getPosition() const;
-	void setTransformation(SoundTransformation *);
+	void setTransformation(std::function<void (void *, int, int)>);
 protected:
 	int position = 0;
 	SoundFile &soundFile;
-	std::unique_ptr<SoundTransformation> transformation;
+	std::function<void (void *, int, int)> transformation;
 };
 
 } /* namespace jukebox */

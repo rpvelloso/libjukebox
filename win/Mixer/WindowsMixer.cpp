@@ -15,6 +15,7 @@
 
 #include <windows.h>
 #include <stdexcept>
+#include <exception>
 #include <string>
 
 #include "WindowsMixer.h"

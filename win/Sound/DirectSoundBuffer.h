@@ -22,6 +22,7 @@
 
 #include "jukebox/FileFormats/SoundFile.h"
 #include "jukebox/Sound/SoundImpl.h"
+#include "jukebox/Decoders/Decoder.h"
 
 namespace jukebox {
 
@@ -41,6 +42,7 @@ private:
 	DSBUFFERDESC dsbdesc;
 	std::unique_ptr<struct IDirectSoundBuffer, decltype(&ReleaseBuffer)> pDsb;
 	std::thread loadBufferThread;
+	std::unique_ptr<Decoder> decoder;
 
 	bool looping = false;
 	void prepare();

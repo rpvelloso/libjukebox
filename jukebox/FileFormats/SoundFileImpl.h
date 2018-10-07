@@ -17,22 +17,23 @@
 #define LIBJUKEBOX_SOUNDFILEIMPL_2017_12_17_H_
 
 #include <string>
+#include "jukebox/Decoders/Decoder.h"
 
 namespace jukebox {
 
 class SoundFileImpl {
 public:
+	SoundFileImpl() = default;
 	virtual ~SoundFileImpl() = default;
 	virtual short getNumChannels() const = 0;
 	virtual int getSampleRate() const = 0;
 	virtual short getBitsPerSample() const = 0;
-	virtual int getDataSize() const = 0;
 	virtual const std::string &getFilename() const = 0;
-
-	/* this method should return DECODED/RAW audio;
-	 * the size of the buffer should be block aligned (i.e., multiples of num_channels * sample_size)
-	 */
-	virtual int read(char *buf, int pos, int len) = 0;
+	virtual std::unique_ptr<Decoder> makeDecoder() = 0;
+	virtual void truncAt(int pos);
+	virtual int getDataSize() const;
+protected:
+	int dataSize = 0;
 };
 
 } /* namespace jukebox */

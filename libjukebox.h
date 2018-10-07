@@ -1,26 +1,69 @@
+/*
+    Copyright 2017 Roberto Panerai Velloso.
+    This file is part of libjukebox.
+    libjukebox is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    libjukebox is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifndef _LIBJUKEBOX_H
 #define _LIBJUKEBOX_H
 
 #include <string>
 #include <memory>
 #include <istream>
+#include <functional>
 
 
 namespace jukebox {
 
+class SoundFileImpl;
+
+class DecoderImpl {
+public:
+ DecoderImpl(SoundFileImpl &fileImpl);
+ virtual ~DecoderImpl() = default;
+ virtual int getSamples(char *buf, int pos, int len) = 0;
+ int getBlockSize() const;
+
+private:
+ int blockSize;
+};
+
+}
+namespace jukebox {
+
+class Decoder {
+public:
+ Decoder(DecoderImpl * impl);
+ int getSamples(char *buf, int pos, int len);
+private:
+ std::unique_ptr<DecoderImpl> impl;
+};
+
+}
+namespace jukebox {
+
 class SoundFileImpl {
 public:
+ SoundFileImpl() = default;
  virtual ~SoundFileImpl() = default;
  virtual short getNumChannels() const = 0;
  virtual int getSampleRate() const = 0;
  virtual short getBitsPerSample() const = 0;
- virtual int getDataSize() const = 0;
  virtual const std::string &getFilename() const = 0;
-
-
-
-
- virtual int read(char *buf, int pos, int len) = 0;
+ virtual std::unique_ptr<Decoder> makeDecoder() = 0;
+ virtual void truncAt(int pos);
+ virtual int getDataSize() const;
+protected:
+ int dataSize = 0;
 };
 
 }
@@ -35,11 +78,12 @@ public:
  int getDataSize() const;
  const std::string &getFilename() const;
  double getDuration() const;
- int read(char* buf, int pos, int len);
  void truncAt(int pos);
+ std::unique_ptr<Decoder> makeDecoder();
+
 private:
  std::unique_ptr<SoundFileImpl> impl;
- int blockSize, dataSize;
+ int blockSize;
 };
 
 
@@ -48,14 +92,11 @@ namespace factory {
  extern SoundFile loadWaveStream(std::istream &inp);
  extern SoundFile loadVorbisFile(const std::string &filename);
  extern SoundFile loadVorbisStream(std::istream &inp);
- extern SoundFile loadBufferedWaveFile(const std::string &filename);
- extern SoundFile loadBufferedWaveStream(std::istream &inp);
- extern SoundFile loadBufferedVorbisFile(const std::string &filename);
- extern SoundFile loadBufferedVorbisStream(std::istream &inp);
- extern SoundFile loadFadedWaveFile(const std::string &filename, int fadeInSecs, int fadeOutSecs);
- extern SoundFile loadFadedWaveStream(std::istream &inp, int fadeInSecs, int fadeOutSecs);
- extern SoundFile loadFadedVorbisFile(const std::string &filename, int fadeInSecs, int fadeOutSecs);
- extern SoundFile loadFadedVorbisStream(std::istream &inp, int fadeInSecs, int fadeOutSecs);
+ extern SoundFile loadMP3File(const std::string &filename);
+ extern SoundFile loadMP3Stream(std::istream &inp);
+
+ extern SoundFile loadMIDIFile(const std::string &filename);
+ extern SoundFile loadMIDIStream(std::istream &inp);
 }
 
 }
@@ -84,28 +125,11 @@ public:
  virtual void loop(bool) = 0;
  SoundFile &getSoundFile();
  int getPosition() const;
- void setTransformation(SoundTransformation *);
+ void setTransformation(std::function<void (void *, int, int)>);
 protected:
  int position = 0;
  SoundFile &soundFile;
- std::unique_ptr<SoundTransformation> transformation;
-};
-
-}
-namespace jukebox {
-
-class FadeOnStopSoundImpl: public SoundImpl {
-public:
- FadeOnStopSoundImpl(SoundImpl *, int);
- virtual ~FadeOnStopSoundImpl() = default;
- void play() override;
- void stop() override;
- int getVolume() override;
- void setVolume(int) override;
- void loop(bool) override;
-private:
- std::unique_ptr<SoundImpl> impl;
- int fadeOutSecs;
+ std::function<void (void *, int, int)> transformation;
 };
 
 }
@@ -127,6 +151,7 @@ private:
 namespace factory {
  extern Sound makeSound(SoundFile &file);
  extern Sound makeFadeOnStopSound(SoundFile &file, int);
+ extern Sound makeFadedSound(SoundFile &file, int, int);
 }
 
 }

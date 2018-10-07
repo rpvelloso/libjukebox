@@ -17,15 +17,13 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+
 #include "jukebox/FileFormats/SoundFile.h"
-#include "jukebox/FileFormats/VorbisFileImpl.h"
-#include "jukebox/FileFormats/WaveFileImpl.h"
 #include "jukebox/Mixer/Mixer.h"
 #include "jukebox/Sound/Sound.h"
 #include "jukebox/Sound/Factory.h"
 
 std::string formatDuration(double duration) {
-	std::cout << "*** " << duration << std::endl;
 	int hr = duration/3600;
 	duration -= hr*3600;
 	int min = duration/60;
@@ -39,7 +37,7 @@ std::string formatDuration(double duration) {
 
 std::array<std::string, 2> channels = {"Mono", "Stereo"};
 
-void printFileData(const jukebox::SoundFile &file) {
+void printFileInfo(const jukebox::SoundFile &file) {
 	std::cout << file.getFilename() << " attributes: " << std::endl;
 	std::cout << file.getBitsPerSample() << " bits" << std::endl;
 	std::cout << channels[file.getNumChannels() - 1] << std::endl;
@@ -50,7 +48,7 @@ void printFileData(const jukebox::SoundFile &file) {
 
 int main(int argc, char **argv) {
 	if( argc < 3 ) {
-		std::cout << "you need to supply two audio (wav/ogg) files as arguments" << std::endl;
+		std::cout << "you need to supply two audio (wav/ogg/mp3/mid) files as arguments" << std::endl;
 		return 1;
 	}
 
@@ -59,18 +57,13 @@ int main(int argc, char **argv) {
 
 	std::cout << "ready to load " << filename1 << " as a file" << std::endl;
 
-	auto soundFile1 = filename1.back() == 'g'? // ogg?
-		jukebox::factory::loadBufferedVorbisFile(filename1):
-		jukebox::factory::loadBufferedWaveFile(filename1);
-
-	printFileData(soundFile1);
+	auto soundFile1 = jukebox::factory::loadFile(filename1);
+	printFileInfo(soundFile1);
 
 	std::cout << "ready to load " << filename2 << " as a stream" << std::endl;
 	std::fstream file(filename2, std::ios::binary|std::ios::in);
-	auto soundFile2 = filename2.back() == 'g'?
-		jukebox::factory::loadVorbisStream(file):
-		jukebox::factory::loadWaveStream(file);
-	printFileData(soundFile2);
+	auto soundFile2 = jukebox::factory::loadFile(filename2);
+	printFileInfo(soundFile2);
 
 	auto sound1 = jukebox::factory::makeSound(soundFile1);
 	sound1.loop(true);

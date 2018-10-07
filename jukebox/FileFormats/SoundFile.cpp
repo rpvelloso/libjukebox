@@ -22,8 +22,7 @@ namespace jukebox {
 
 SoundFile::SoundFile(SoundFileImpl *impl) :
 		impl(impl),
-		blockSize(impl->getNumChannels() * impl->getBitsPerSample()/8),
-		dataSize(impl->getDataSize()) {
+		blockSize(impl->getNumChannels() * impl->getBitsPerSample()/8) {
 };
 
 short SoundFile::getNumChannels() const {
@@ -39,7 +38,7 @@ short SoundFile::getBitsPerSample() const {
 };
 
 int SoundFile::getDataSize() const {
-	return dataSize;
+	return impl->getDataSize();
 };
 
 // sound duration in seconds
@@ -55,22 +54,13 @@ const std::string& SoundFile::getFilename() const {
 	return impl->getFilename();
 }
 
-int SoundFile::read(char* buf, int pos, int len) {
-	if (pos > dataSize)
-		return 0;
-	if (pos + len > dataSize)
-		len = dataSize - pos;
-
-	if (len % blockSize != 0)
-		throw std::runtime_error("invalid buffer size, should be block aligned.");
-	if (pos % blockSize != 0)
-		throw std::runtime_error("invalid stream position, should be block aligned.");
-
-	return impl->read(buf, pos, len);
+void jukebox::SoundFile::truncAt(int pos) {
+	impl->truncAt(pos);
 }
 
-void jukebox::SoundFile::truncAt(int pos) {
-	dataSize = std::min(pos, dataSize);
+std::unique_ptr<Decoder> SoundFile::makeDecoder() {
+	return impl->makeDecoder();
 }
 
 } /* namespace jukebox */
+

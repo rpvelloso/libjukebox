@@ -1,10 +1,11 @@
 #!/bin/bash
 headers=(
+	'jukebox/Decoders/DecoderImpl.h'
+	'jukebox/Decoders/Decoder.h'
 	'jukebox/FileFormats/SoundFileImpl.h'
 	'jukebox/FileFormats/SoundFile.h'
 	'jukebox/Sound/SoundTransformation.h'
 	'jukebox/Sound/SoundImpl.h'
-	'jukebox/Sound/FadeOnStopSoundImpl.h'
 	'jukebox/Sound/Sound.h'
 	'jukebox/Mixer/MixerImpl.h'
 	'jukebox/Mixer/Mixer.h'
@@ -21,12 +22,28 @@ done
 
 g++ -E tmp.h -o tmp2.h
 
-echo '#ifndef _LIBJUKEBOX_H
+echo '/*
+    Copyright 2017 Roberto Panerai Velloso.
+    This file is part of libjukebox.
+    libjukebox is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    libjukebox is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef _LIBJUKEBOX_H
 #define _LIBJUKEBOX_H
 
 #include <string>
 #include <memory>
 #include <istream>
+#include <functional>
 
 ' > libjukebox.h
 

@@ -17,7 +17,6 @@
 #include <cmath>
 
 #include "DirectSoundBuffer.h"
-#include "jukebox/Sound/FadeOnStopSoundImpl.h"
 #include "jukebox/Sound/Sound.h"
 
 namespace jukebox {
@@ -54,7 +53,9 @@ void ReleaseBuffer(LPDIRECTSOUNDBUFFER pDsb) {
 
 DirectSoundBuffer::DirectSoundBuffer(SoundFile &file) :
 	SoundImpl(file),
-	pDsb(nullptr, ReleaseBuffer) {
+	pDsb(nullptr, ReleaseBuffer),
+	decoder(file.makeDecoder()) {
+
 	prepare();
 }
 
@@ -123,13 +124,8 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 	if (FAILED(hr))
 		throw std::runtime_error("failed Lock");
 
-	size_t len = soundFile.read((char *)bufAddr, position, bufLen);
-	if (transformation) {
-		if (soundFile.getBitsPerSample() == 8)
-			(*transformation)((uint8_t *)bufAddr, position, (int)bufLen);
-		else
-			(*transformation)((int16_t *)bufAddr, position, (int)bufLen);
-	}
+	size_t len = decoder->getSamples((char *)bufAddr, position, bufLen);
+	transformation((uint8_t *)bufAddr, position, (int)bufLen);
 
 	position += len;
 	if (len < bufLen)
@@ -277,10 +273,9 @@ Sound makeSound(SoundFile& file) {
 	return Sound(new DirectSoundBuffer(file));
 }
 
-Sound makeFadeOnStopSound(SoundFile& file, int fadeOutSecs) {
-	return Sound(new FadeOnStopSoundImpl(new DirectSoundBuffer(file), fadeOutSecs));
+SoundImpl *makeSoundImpl(SoundFile& file) {
+	return new DirectSoundBuffer(file);
 }
-
 }
 
 } /* namespace jukebox */

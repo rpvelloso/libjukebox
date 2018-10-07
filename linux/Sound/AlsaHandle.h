@@ -23,6 +23,7 @@
 
 #include "jukebox/FileFormats/SoundFile.h"
 #include "jukebox/Sound/SoundImpl.h"
+#include "jukebox/Decoders/Decoder.h"
 
 namespace jukebox {
 
@@ -33,7 +34,7 @@ public:
 	AlsaHandle(SoundFile &file);
 	void play() override;
 	void stop() override;
-	int getVolume() const override;
+	int getVolume() override;
 	void setVolume(int) override;
 	void loop(bool) override;
 	~AlsaHandle();
@@ -43,9 +44,10 @@ private:
 	std::atomic<bool> playing;
 	int vol = 100;
 	bool looping = false;
+	std::unique_ptr<Decoder> decoder;
 
 	template <typename T>
-	void applyVolume(T *buf, size_t len);
+	void applyVolume(T *buf, int position, int len);
 
 	void config();
 	void prepare();

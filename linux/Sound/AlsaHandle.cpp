@@ -62,7 +62,8 @@ void closeAlsaHandle(snd_pcm_t *handle) {
 
 AlsaHandle::AlsaHandle(SoundFile &file) :
 	SoundImpl(file),
-	handlePtr(nullptr, closeAlsaHandle) {
+	handlePtr(nullptr, closeAlsaHandle),
+	decoder(file.makeDecoder()) {
 
 	snd_pcm_t *handle;
 	auto res = snd_pcm_open(&handle, ALSA_DEVICE, SND_PCM_STREAM_PLAYBACK, 0);
@@ -79,7 +80,7 @@ void AlsaHandle::play() {
 		StatusGuard statusGuard(playing, true);
 
 		size_t frameSize = (soundFile.getBitsPerSample()/8) * soundFile.getNumChannels();
-		std::unique_ptr<char[]> volBuf(new char[minFrames*frameSize]);
+		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[minFrames*frameSize]);
 
 		do {
 			position = 0;
@@ -87,13 +88,13 @@ void AlsaHandle::play() {
 
 			while (numFrames > 0 && playing) {
 				auto frames = std::min(numFrames, minFrames);
-				auto bytes = soundFile.read(volBuf.get(), position, frames*frameSize);
+				auto bytes = decoder->getSamples(reinterpret_cast<char *>(volBuf.get()), position, frames*frameSize);
 
 				if (bytes > 0) {
 					if (soundFile.getBitsPerSample() == 16)
-						applyVolume(reinterpret_cast<int16_t *>(volBuf.get()), bytes);
+						applyVolume(reinterpret_cast<int16_t *>(volBuf.get()), position, bytes);
 					else
-						applyVolume(volBuf.get(), bytes);
+						applyVolume(volBuf.get(), position, bytes);
 
 					auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), bytes / frameSize);
 					if (n > 0) {
@@ -110,7 +111,9 @@ void AlsaHandle::play() {
 }
 
 template<typename T>
-void AlsaHandle::applyVolume(T *buf, size_t len) {
+void AlsaHandle::applyVolume(T *buf, int position, int len) {
+	transformation(buf, position, len);
+
 	int offset = 0;
 	if (sizeof(T) == 1)
 		offset = 128;
@@ -160,7 +163,7 @@ void AlsaHandle::prepare() {
 	playing = false;
 }
 
-int AlsaHandle::getVolume() const {
+int AlsaHandle::getVolume() {
 	return vol;
 }
 
@@ -169,6 +172,10 @@ void AlsaHandle::setVolume(int vol) {
 }
 
 namespace factory {
+
+SoundImpl *makeSoundImpl(SoundFile &file) {
+	return new AlsaHandle(file);
+}
 
 Sound makeSound(SoundFile& file) {
 	return Sound(new AlsaHandle(file));
