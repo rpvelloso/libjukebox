@@ -24,6 +24,28 @@
 
 namespace jukebox {
 
+class MixerImpl {
+public:
+ virtual ~MixerImpl() = default;
+ virtual int getVolume() = 0;
+ virtual void setVolume(int vol) = 0;
+};
+
+}
+namespace jukebox {
+
+class Mixer {
+public:
+ Mixer();
+ int getVolume();
+ void setVolume(int vol);
+private:
+ MixerImpl &impl;
+};
+
+}
+namespace jukebox {
+
 class SoundFileImpl;
 
 class DecoderImpl {
@@ -80,35 +102,32 @@ public:
  double getDuration() const;
  void truncAt(int pos);
  std::unique_ptr<Decoder> makeDecoder();
-
 private:
  std::unique_ptr<SoundFileImpl> impl;
  int blockSize;
 };
 
-
-namespace factory {
- extern SoundFile loadWaveFile(const std::string &filename);
- extern SoundFile loadWaveStream(std::istream &inp);
- extern SoundFile loadVorbisFile(const std::string &filename);
- extern SoundFile loadVorbisStream(std::istream &inp);
- extern SoundFile loadMP3File(const std::string &filename);
- extern SoundFile loadMP3Stream(std::istream &inp);
-
- extern SoundFile loadMIDIFile(const std::string &filename);
- extern SoundFile loadMIDIStream(std::istream &inp);
-}
-
 }
 namespace jukebox {
 
-class SoundTransformation {
+class MIDIFileImpl: public SoundFileImpl {
 public:
- SoundTransformation(SoundFile &soundFile) : soundFile(soundFile) {};
- virtual ~SoundTransformation() = default;
- virtual void operator()(void *, int, int) = 0;
-protected:
- SoundFile &soundFile;
+ MIDIFileImpl(const std::string &filename);
+ MIDIFileImpl(std::istream& inp);
+ virtual ~MIDIFileImpl() = default;
+ short getNumChannels() const override;
+ int getSampleRate() const override;
+ short getBitsPerSample() const override;
+ const std::string &getFilename() const override;
+ std::unique_ptr<Decoder> makeDecoder() override;
+ uint8_t *getFileBuffer();
+ int getFileSize();
+private:
+ std::string filename;
+ int fileSize = 0;
+ std::unique_ptr<uint8_t> fileBuffer;
+
+ void load(std::istream& inp);
 };
 
 }
@@ -120,7 +139,7 @@ public:
  virtual ~SoundImpl() = default;
  virtual void play() = 0;
  virtual void stop() = 0;
- virtual int getVolume() = 0;
+ virtual int getVolume() const = 0;
  virtual void setVolume(int) = 0;
  virtual void loop(bool) = 0;
  SoundFile &getSoundFile();
@@ -140,7 +159,7 @@ public:
  Sound(SoundImpl *impl);
  void play();
  void stop();
- int getVolume();
+ int getVolume() const;
  void setVolume(int);
  void loop(bool);
  int getPosition() const;
@@ -148,37 +167,59 @@ private:
  std::unique_ptr<SoundImpl> impl;
 };
 
-namespace factory {
- extern Sound makeSound(SoundFile &file);
- extern Sound makeFadeOnStopSound(SoundFile &file, int);
- extern Sound makeFadedSound(SoundFile &file, int, int);
-}
-
 }
 namespace jukebox {
 
-class MixerImpl {
+class SoundTransformation {
 public:
- virtual ~MixerImpl() = default;
- virtual int getVolume() = 0;
- virtual void setVolume(int vol) = 0;
+ SoundTransformation(SoundFile &soundFile) : soundFile(soundFile) {};
+ virtual ~SoundTransformation() = default;
+ virtual void operator()(void *, int, int) = 0;
+protected:
+ SoundFile &soundFile;
 };
+
+}
+namespace jukebox {
+namespace factory {
+
+Sound makeSound(SoundFile &file);
+SoundImpl *makeSoundImpl(SoundFile& file);
+
+Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs);
+Sound makeFadedSound(SoundFile &file, int fadeInSecs, int fadeOutSecs);
+
+SoundFile loadFile(const std::string &filename);
+
+SoundFile loadWaveFile(const std::string &filename);
+SoundFile loadWaveStream(std::istream &inp);
+SoundFile loadVorbisFile(const std::string &filename);
+SoundFile loadVorbisStream(std::istream &inp);
+SoundFile loadMP3File(const std::string &filename);
+SoundFile loadMP3Stream(std::istream &inp);
+
+}
+}
+
+
+
+namespace jukebox {
+namespace factory {
+
+    inline SoundFile loadMIDIFile(const std::string &filename) {
+        return SoundFile(new MIDIFileImpl(filename));
+    }
+
+    inline SoundFile loadMIDIStream(std::istream &inp) {
+        return SoundFile(new MIDIFileImpl(inp));
+    }
+}
+}
+namespace jukebox {
 
 namespace factory {
  extern MixerImpl &makeMixerImpl();
 }
-
-}
-namespace jukebox {
-
-class Mixer {
-public:
- Mixer();
- int getVolume();
- void setVolume(int vol);
-private:
- MixerImpl &impl;
-};
 
 }
 

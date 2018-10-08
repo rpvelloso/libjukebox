@@ -1,14 +1,18 @@
 #!/bin/bash
 headers=(
+	'jukebox/Mixer/MixerImpl.h'
+	'jukebox/Mixer/Mixer.h'
 	'jukebox/Decoders/DecoderImpl.h'
 	'jukebox/Decoders/Decoder.h'
 	'jukebox/FileFormats/SoundFileImpl.h'
 	'jukebox/FileFormats/SoundFile.h'
-	'jukebox/Sound/SoundTransformation.h'
+	'jukebox/FileFormats/MIDIFileImpl.h'
 	'jukebox/Sound/SoundImpl.h'
 	'jukebox/Sound/Sound.h'
-	'jukebox/Mixer/MixerImpl.h'
-	'jukebox/Mixer/Mixer.h'
+	'jukebox/Sound/SoundTransformation.h'
+	'jukebox/Sound/Factory.h'
+	'jukebox/FileFormats/MIDIFactory.h'
+	'jukebox/Mixer/Factory.h'
 )
 
 rm -rf tmp.h tmp2.h libjukebox.h
