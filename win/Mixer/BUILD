@@ -5,7 +5,6 @@ cc_library(
 	srcs = ["WindowsMixer.cpp"],
 	hdrs = ["WindowsMixer.h"],
 	deps = [
-		"//jukebox/Mixer:mixer",
 		"//jukebox/Mixer:mixer_impl",
 		"@win32_libs//:winmm",
 	],

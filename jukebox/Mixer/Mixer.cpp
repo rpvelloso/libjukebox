@@ -13,8 +13,9 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <algorithm>
 #include "Mixer.h"
+#include <algorithm>
+#include "Factory.h"
 
 namespace {
 

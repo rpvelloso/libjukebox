@@ -33,4 +33,3 @@ void SoundImpl::setTransformation(std::function<void (void *, int, int)> tr) {
 }
 
 } /* namespace jukebox */
-

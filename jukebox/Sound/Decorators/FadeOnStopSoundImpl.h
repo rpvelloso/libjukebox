@@ -26,7 +26,7 @@ public:
 	virtual ~FadeOnStopSoundImpl() = default;
 	void play() override;
 	void stop() override;
-	int getVolume() override;
+	int getVolume() const override;
 	void setVolume(int) override;
 	void loop(bool) override;
 private:

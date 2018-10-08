@@ -1,0 +1,48 @@
+# TODO break down this target in multiple sub libraries
+
+add_library(libjukebox
+        Decoders/Decoder.cpp
+        Decoders/Decoder.h
+        Decoders/DecoderImpl.cpp
+        Decoders/DecoderImpl.h
+        Decoders/MP3DecoderImpl.cpp
+        Decoders/MP3DecoderImpl.h
+        Decoders/VorbisDecoderImpl.cpp
+        Decoders/VorbisDecoderImpl.h
+        Decoders/WaveDecoderImpl.cpp
+        Decoders/WaveDecoderImpl.h
+        Decoders/minimp3/minimp3.h
+        Decoders/stb_vorbis/stb_vorbis.c
+        FileFormats/MP3FileImpl.cpp
+        FileFormats/MP3FileImpl.h
+        FileFormats/SoundFile.cpp
+        FileFormats/SoundFile.h
+        FileFormats/SoundFileImpl.cpp
+        FileFormats/SoundFileImpl.h
+        FileFormats/VorbisFileImpl.cpp
+        FileFormats/VorbisFileImpl.h
+        FileFormats/WaveFileImpl.cpp
+        FileFormats/WaveFileImpl.h
+        Mixer/Factory.h
+        Mixer/Mixer.cpp
+        Mixer/Mixer.h
+        Mixer/MixerImpl.h
+        Sound/Factory.cpp
+        Sound/Factory.h
+        Sound/Sound.cpp
+        Sound/Sound.h
+        Sound/SoundImpl.cpp
+        Sound/SoundImpl.h
+        Sound/SoundTransformation.h
+        Sound/Decorators/FadedSoundImpl.cpp
+        Sound/Decorators/FadedSoundImpl.h
+        Sound/Decorators/FadeOnStopSoundImpl.cpp
+        Sound/Decorators/FadeOnStopSoundImpl.h)
+
+add_library(libjukebox_midi
+        Decoders/MIDIDecoderImpl.cpp
+        Decoders/MIDIDecoderImpl.h
+        FileFormats/MIDIFactory.h
+        FileFormats/MIDIFileImpl.cpp
+        FileFormats/MIDIFileImpl.h
+        FileFormats/midi/MidiFile.h)

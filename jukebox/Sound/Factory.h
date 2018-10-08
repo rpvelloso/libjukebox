@@ -1,5 +1,5 @@
 /*
-    Copyright 2017 Roberto Panerai Velloso.
+    Copyright 2018 Jose Diego Ferreira Martins.
     This file is part of libjukebox.
     libjukebox is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,33 +13,34 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBJUKEBOX_SOUNDIMPL_2017_12_17_H_
-#define LIBJUKEBOX_SOUNDIMPL_2017_12_17_H_
+#ifndef LIBJUKEBOX_SOUND_FACTORY_2018_03_01_H_
+#define LIBJUKEBOX_SOUND_FACTORY_2018_03_01_H_
 
 #include <memory>
-#include <functional>
+
+#include "Sound.h"
+#include "SoundImpl.h"
 #include "jukebox/FileFormats/SoundFile.h"
 
 namespace jukebox {
+namespace factory {
 
-class SoundImpl {
-public:
-	SoundImpl(SoundFile &file);
-	virtual ~SoundImpl() = default;
-	virtual void play() = 0;
-	virtual void stop() = 0;
-	virtual int getVolume() const = 0;
-	virtual void setVolume(int) = 0;
-	virtual void loop(bool) = 0;
-	SoundFile &getSoundFile();
-	int getPosition() const;
-	void setTransformation(std::function<void (void *, int, int)>);
-protected:
-	int position = 0;
-	SoundFile &soundFile;
-	std::function<void (void *, int, int)> transformation;
-};
+Sound makeSound(SoundFile &file);
+SoundImpl *makeSoundImpl(SoundFile& file);
 
-} /* namespace jukebox */
+Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs);
+Sound makeFadedSound(SoundFile &file, int fadeInSecs, int fadeOutSecs);
+
+SoundFile loadFile(const std::string &filename);
+
+SoundFile loadWaveFile(const std::string &filename);
+SoundFile loadWaveStream(std::istream &inp);
+SoundFile loadVorbisFile(const std::string &filename);
+SoundFile loadVorbisStream(std::istream &inp);
+SoundFile loadMP3File(const std::string &filename);
+SoundFile loadMP3Stream(std::istream &inp);
+
+}
+}
 
 #endif

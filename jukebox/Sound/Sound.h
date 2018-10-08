@@ -27,19 +27,13 @@ public:
 	Sound(SoundImpl *impl);
 	void play();
 	void stop();
-	int getVolume();
+	int getVolume() const;
 	void setVolume(int);
 	void loop(bool);
 	int getPosition() const;
 private:
 	std::unique_ptr<SoundImpl> impl;
 };
-
-namespace factory {
-	extern Sound makeSound(SoundFile &file);
-	extern Sound makeFadeOnStopSound(SoundFile &file, int);
-	extern Sound makeFadedSound(SoundFile &file, int, int);
-}
 
 } /* namespace jukebox */
 

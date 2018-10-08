@@ -17,10 +17,11 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <unistd.h>
-//#include <windows.h>
 
-#include "libjukebox.h"
+#include "jukebox/FileFormats/SoundFile.h"
+#include "jukebox/Mixer/Mixer.h"
+#include "jukebox/Sound/Sound.h"
+#include "jukebox/Sound/Factory.h"
 
 std::string formatDuration(double duration) {
 	int hr = duration/3600;
@@ -29,8 +30,7 @@ std::string formatDuration(double duration) {
 	duration -= min*60;
 	int secs = duration;
 
-	return
-		std::to_string(hr) + ":" +
+	return std::to_string(hr) + ":" +
 		(min<10?"0":"") + std::to_string(min) + ":" +
 		(secs<10?"0":"") + std::to_string(secs);
 }
@@ -46,17 +46,6 @@ void printFileInfo(const jukebox::SoundFile &file) {
 	std::cout << formatDuration(file.getDuration()) << std::endl << std::endl;
 }
 
-jukebox::SoundFile loadSoundFile(const std::string &filename) {
-return
-		filename.back() == 'g'? // ogg?
-		jukebox::factory::loadVorbisFile(filename):
-		filename.back() == '3'?
-		jukebox::factory::loadMP3File(filename):
-		filename.back() == 'd'?
-		jukebox::factory::loadMIDIFile(filename):
-		jukebox::factory::loadWaveFile(filename);
-}
-
 int main(int argc, char **argv) {
 	if( argc < 3 ) {
 		std::cout << "you need to supply two audio (wav/ogg/mp3/mid) files as arguments" << std::endl;
@@ -68,12 +57,12 @@ int main(int argc, char **argv) {
 
 	std::cout << "ready to load " << filename1 << " as a file" << std::endl;
 
-	auto soundFile1 = loadSoundFile(filename1);
+	auto soundFile1 = jukebox::factory::loadFile(filename1);
 	printFileInfo(soundFile1);
 
 	std::cout << "ready to load " << filename2 << " as a stream" << std::endl;
 	std::fstream file(filename2, std::ios::binary|std::ios::in);
-	auto soundFile2 = loadSoundFile(filename2);
+	auto soundFile2 = jukebox::factory::loadFile(filename2);
 	printFileInfo(soundFile2);
 
 	auto sound1 = jukebox::factory::makeSound(soundFile1);

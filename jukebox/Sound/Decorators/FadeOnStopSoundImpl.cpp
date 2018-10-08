@@ -13,9 +13,9 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
-#include <algorithm>
 #include "FadeOnStopSoundImpl.h"
+#include <algorithm>
+#include "jukebox/Sound/SoundTransformation.h"
 
 namespace jukebox {
 
@@ -87,7 +87,7 @@ void FadeOnStopSoundImpl::stop() {
 		impl->setTransformation(FadeOutOnStop(impl->getSoundFile(), fadeOutSecs, impl->getPosition()));
 }
 
-int FadeOnStopSoundImpl::getVolume() {
+int FadeOnStopSoundImpl::getVolume() const {
 	return impl->getVolume();
 }
 

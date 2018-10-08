@@ -96,16 +96,6 @@ void WaveFileImpl::load() {
 	headerSize = inputStream.tellg();
 }
 
-namespace factory {
-	SoundFile loadWaveFile(const std::string &filename) {
-		return SoundFile(new WaveFileImpl(filename));
-	}
-
-	SoundFile loadWaveStream(std::istream &inp) {
-		return SoundFile(new WaveFileImpl(inp));
-	}
-}
-
 const std::string &WaveFileImpl::getFilename() const {
 	return filename;
 }
@@ -124,4 +114,3 @@ int WaveFileImpl::read(char *buf, int pos, int len) {
 }
 
 }
-

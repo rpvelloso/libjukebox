@@ -17,8 +17,6 @@
 #define LIBJUKEBOX_VORBISFILE_2017_12_23_H_
 
 #include <memory>
-#include <mutex>
-
 #include "jukebox/Decoders/Decoder.h"
 #include "SoundFileImpl.h"
 

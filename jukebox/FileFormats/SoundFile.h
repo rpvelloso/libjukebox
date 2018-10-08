@@ -17,7 +17,6 @@
 #define LIBJUKEBOX_SOUNDFILE_2017_12_17_H_
 
 #include <memory>
-
 #include "SoundFileImpl.h"
 #include "jukebox/Decoders/Decoder.h"
 
@@ -34,24 +33,10 @@ public:
 	double getDuration() const;
 	void truncAt(int pos);
 	std::unique_ptr<Decoder> makeDecoder();
-
 private:
 	std::unique_ptr<SoundFileImpl> impl;
 	int blockSize;
 };
-
-// TODO this is very confusing: a wave file factory in SoundFile.h - perhaps move this factory to there and create a wave file impl, instead?
-namespace factory {
-	extern SoundFile loadWaveFile(const std::string &filename);
-	extern SoundFile loadWaveStream(std::istream &inp);
-	extern SoundFile loadVorbisFile(const std::string &filename);
-	extern SoundFile loadVorbisStream(std::istream &inp);
-	extern SoundFile loadMP3File(const std::string &filename);
-	extern SoundFile loadMP3Stream(std::istream &inp);
-
-	extern SoundFile loadMIDIFile(const std::string &filename);
-	extern SoundFile loadMIDIStream(std::istream &inp);
-}
 
 } /* namespace jukebox */
 

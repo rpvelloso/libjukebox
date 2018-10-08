@@ -97,14 +97,4 @@ int VorbisFileImpl::getFileSize() const {
 	return fileSize;
 }
 
-namespace factory {
-	SoundFile loadVorbisFile(const std::string &filename) {
-		return SoundFile(new VorbisFileImpl(filename));
-	}
-
-	SoundFile loadVorbisStream(std::istream &inp) {
-		return SoundFile(new VorbisFileImpl(inp));
-	}
-}
-
 } /* namespace jukebox */

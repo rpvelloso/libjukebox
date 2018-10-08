@@ -13,8 +13,9 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <algorithm>
 #include "FadedSoundImpl.h"
+#include <algorithm>
+#include "jukebox/Sound/SoundTransformation.h"
 
 namespace jukebox {
 
@@ -122,7 +123,7 @@ void FadedSoundImpl::stop() {
 	impl->stop();
 }
 
-int FadedSoundImpl::getVolume() {
+int FadedSoundImpl::getVolume() const {
 	return impl->getVolume();
 }
 

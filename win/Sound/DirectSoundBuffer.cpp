@@ -247,7 +247,7 @@ void DirectSoundBuffer::prepare() {
  * https://stackoverflow.com/questions/36072054/get-the-inverse-of-a-function-millibels-to-percentage-percentage-to-millibels
  * */
 
-int DirectSoundBuffer::getVolume() {
+int DirectSoundBuffer::getVolume() const {
 	LONG vol;
 	pDsb->GetVolume(&vol);
 

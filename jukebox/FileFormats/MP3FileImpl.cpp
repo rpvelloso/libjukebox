@@ -119,14 +119,4 @@ std::vector<std::pair<long, long>> &MP3FileImpl::getIndex() {
 	return frameIndex;
 }
 
-namespace factory {
-SoundFile loadMP3File(const std::string &filename) {
-	return SoundFile(new MP3FileImpl(filename));
-}
-
-SoundFile loadMP3Stream(std::istream &inp) {
-	return SoundFile(new MP3FileImpl(inp));
-}
-};
-
 } /* namespace jukebox */

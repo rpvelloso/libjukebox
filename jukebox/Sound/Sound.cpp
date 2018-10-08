@@ -15,8 +15,6 @@
 
 #include <algorithm>
 #include "Sound.h"
-#include "Decorators/FadeOnStopSoundImpl.h"
-#include "Decorators/FadedSoundImpl.h"
 
 namespace {
 
@@ -38,7 +36,7 @@ void Sound::stop() {
 	impl->stop();
 }
 
-int Sound::getVolume() {
+int Sound::getVolume() const {
 	auto vol = impl->getVolume();
 	return normalize(vol);
 }
@@ -55,18 +53,4 @@ int Sound::getPosition() const {
 	return impl->getPosition();
 }
 
-namespace factory {
-
-extern SoundImpl *makeSoundImpl(SoundFile &);
-
-Sound makeFadeOnStopSound(SoundFile& file, int fadeOutSecs) {
-	return Sound(new FadeOnStopSoundImpl(makeSoundImpl(file), fadeOutSecs));
-}
-
-Sound makeFadedSound(SoundFile& file, int fadeInSecs, int fadeOutSecs) {
-	return Sound(new FadedSoundImpl(makeSoundImpl(file), fadeInSecs, fadeOutSecs));
-}
-
-
-}
 } /* namespace jukebox */

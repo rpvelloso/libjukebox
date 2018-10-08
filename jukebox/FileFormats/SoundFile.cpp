@@ -63,3 +63,4 @@ std::unique_ptr<Decoder> SoundFile::makeDecoder() {
 }
 
 } /* namespace jukebox */
+
