@@ -76,6 +76,8 @@ AlsaHandle::AlsaHandle(SoundFile &file) :
 }
 
 void AlsaHandle::play() {
+	stop();
+
 	playThread = std::thread([this]() {
 		StatusGuard statusGuard(playing, true);
 
