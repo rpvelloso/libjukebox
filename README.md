@@ -102,16 +102,10 @@ jukebox::SoundFile loadSoundFile(const std::string &filename) {
 	auto extension = filename.substr(filename.find_last_of('.'));
 	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
 
-	if (extension == ".wav")
-		return jukebox::factory::loadWaveFile(filename);
-	else if (extension == ".ogg")
-		return jukebox::factory::loadVorbisFile(filename);
-	else if (extension == ".mp3")
-		return jukebox::factory::loadMP3File(filename);
-	else if (extension == ".mid")
+	if (extension == ".mid")
 		return jukebox::factory::loadMIDIFile(filename);
 	else
-		throw std::invalid_argument("file format not supported.");
+		return jukebox::factory::loadFile(filename);
 }
 ```
 # Credits
