@@ -77,7 +77,8 @@ DWORD DirectSoundBuffer::status() {
 }
 
 void DirectSoundBuffer::play() {
-  if (!playing()) {
+	stop();
+  //if (!playing()) {
 	rewind();
 
     DWORD playFlags = looping?DSBPLAY_LOOPING:0;
@@ -94,7 +95,7 @@ void DirectSoundBuffer::play() {
 
     if (FAILED(hr))
       throw std::runtime_error("failed Play");
-  }
+  //}
 }
 
 void DirectSoundBuffer::stop() {
@@ -129,7 +130,7 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 
 	position += len;
 	if (len < bufLen)
-		memset((char *)bufAddr+len, 0, bufLen-len);
+		memset((char *)bufAddr+len, soundFile.getBitsPerSample() == 16?0:128, bufLen-len);
 
 	pDsb->Unlock(
 		bufAddr,	// Address of lock start.
