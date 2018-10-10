@@ -126,8 +126,10 @@ void AlsaHandle::applyVolume(T *buf, int position, int len) {
 }
 
 void AlsaHandle::stop() {
-	if (playing)
+	if (playing) {
+		onStop();
 		playing = false;
+	}
 
 	if (playThread.joinable())
 		playThread.join();
