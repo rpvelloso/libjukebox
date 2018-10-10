@@ -31,6 +31,12 @@ public:
 	void setVolume(int);
 	void loop(bool);
 	int getPosition() const;
+	/*
+	 * this onStop event is need, so the client can be notified
+	 * when the sound stops and does not need to busy wait (poll) for it.
+	 * */
+	void setOnStopCallback(std::function<void(void)>);
+	void clearOnStopCallback();
 private:
 	std::unique_ptr<SoundImpl> impl;
 };

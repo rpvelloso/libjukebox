@@ -1,5 +1,6 @@
 #include "Factory.h"
 #include <exception>
+#include <algorithm>
 #include "jukebox/Sound/Decorators/FadedSoundImpl.h"
 #include "jukebox/Sound/Decorators/FadeOnStopSoundImpl.h"
 #include "jukebox/FileFormats/MP3FileImpl.h"
@@ -26,8 +27,11 @@ SoundFile loadFile(const std::string &filename)
 {
     auto fileExtension = [](std::string const & filename) {
         auto p = filename.rfind('.');
-        return p != std::string::npos ? filename.substr(p+1) : std::string();
+        std::string extension = p != std::string::npos ? filename.substr(p+1) : std::string();
+		std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+        return extension;
     };
+
     auto ext = fileExtension(filename);
     if (ext == "ogg") return loadVorbisFile(filename);
     if (ext == "mp3") return loadMP3File(filename);

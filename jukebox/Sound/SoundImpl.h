@@ -33,11 +33,13 @@ public:
 	virtual void loop(bool) = 0;
 	SoundFile &getSoundFile();
 	int getPosition() const;
-	void setTransformation(std::function<void (void *, int, int)>);
+	void setTransformationCallback(std::function<void(void *, int, int)>);
+	virtual void setOnStopCallback(std::function<void(void)>);
 protected:
 	int position = 0;
 	SoundFile &soundFile;
 	std::function<void (void *, int, int)> transformation;
+	std::function<void (void)> onStop;
 };
 
 } /* namespace jukebox */

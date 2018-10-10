@@ -17,7 +17,10 @@
 
 namespace jukebox {
 
-SoundImpl::SoundImpl(SoundFile &file) : soundFile(file), transformation([](void *, int, int){}) {
+SoundImpl::SoundImpl(SoundFile &file) :
+		soundFile(file),
+		transformation([](void *, int, int){}),
+		onStop([](void){}) {
 }
 
 SoundFile& SoundImpl::getSoundFile() {
@@ -28,8 +31,12 @@ int SoundImpl::getPosition() const {
 	return position;
 }
 
-void SoundImpl::setTransformation(std::function<void (void *, int, int)> tr) {
+void SoundImpl::setTransformationCallback(std::function<void(void *, int, int)> tr) {
 	transformation = tr;
+}
+
+void SoundImpl::setOnStopCallback(std::function<void(void)> os) {
+	onStop = os;
 }
 
 } /* namespace jukebox */

@@ -53,4 +53,12 @@ int Sound::getPosition() const {
 	return impl->getPosition();
 }
 
+void Sound::setOnStopCallback(std::function<void(void)> os) {
+	impl->setOnStopCallback(os);
+}
+
+void Sound::clearOnStopCallback() {
+	impl->setOnStopCallback([](){});
+}
+
 } /* namespace jukebox */

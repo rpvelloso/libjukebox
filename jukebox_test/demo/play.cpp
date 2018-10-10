@@ -45,6 +45,7 @@ int main(int argc, char **argv) {
 		jukebox::Mixer mixer;
 		mixer.setVolume(100); // max global volume
 		sound.setVolume(100); // max sound volume
+		sound.setOnStopCallback([](){std::cout << "parou!!!" << std::endl;});
 		sound.play(); // start playing
 
 		std::cout << "hit enter to fade out..." << std::endl;

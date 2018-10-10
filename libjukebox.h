@@ -144,11 +144,13 @@ public:
  virtual void loop(bool) = 0;
  SoundFile &getSoundFile();
  int getPosition() const;
- void setTransformation(std::function<void (void *, int, int)>);
+ void setTransformationCallback(std::function<void(void *, int, int)>);
+ virtual void setOnStopCallback(std::function<void(void)>);
 protected:
  int position = 0;
  SoundFile &soundFile;
  std::function<void (void *, int, int)> transformation;
+ std::function<void (void)> onStop;
 };
 
 }
@@ -163,6 +165,8 @@ public:
  void setVolume(int);
  void loop(bool);
  int getPosition() const;
+ void setOnStopCallback(std::function<void(void)>);
+ void clearOnStopCallback();
 private:
  std::unique_ptr<SoundImpl> impl;
 };

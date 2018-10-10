@@ -99,9 +99,12 @@ void DirectSoundBuffer::play() {
 }
 
 void DirectSoundBuffer::stop() {
+	auto callOnStop = playing();
 	auto hr = pDsb->Stop();
 	if (FAILED(hr))
 		throw std::runtime_error("failed Stop");
+	if (callOnStop)
+		onStop();
 }
 
 bool DirectSoundBuffer::playing() {

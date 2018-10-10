@@ -84,7 +84,7 @@ void FadeOnStopSoundImpl::play() {
 
 void FadeOnStopSoundImpl::stop() {
 	if (impl->getPosition() > 0 && fadeOutSecs > 0)
-		impl->setTransformation(FadeOutOnStop(impl->getSoundFile(), fadeOutSecs, impl->getPosition()));
+		impl->setTransformationCallback(FadeOutOnStop(impl->getSoundFile(), fadeOutSecs, impl->getPosition()));
 }
 
 int FadeOnStopSoundImpl::getVolume() const {
@@ -100,3 +100,8 @@ void FadeOnStopSoundImpl::loop(bool loop) {
 }
 
 } /* namespace jukebox */
+
+void jukebox::FadeOnStopSoundImpl::setOnStopCallback(
+		std::function<void(void)> os) {
+	impl->setOnStopCallback(os);
+}

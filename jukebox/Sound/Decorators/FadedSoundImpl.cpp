@@ -112,7 +112,7 @@ FadedSoundImpl::FadedSoundImpl(
 	SoundImpl(impl->getSoundFile()),
 	impl(impl) {
 
-	impl->setTransformation(Fade(soundFile, fadeInSecs, fadeOutSecs));
+	impl->setTransformationCallback(Fade(soundFile, fadeInSecs, fadeOutSecs));
 }
 
 void FadedSoundImpl::play() {
@@ -135,5 +135,8 @@ void FadedSoundImpl::loop(bool loop) {
 	impl->loop(loop);
 }
 
-} /* namespace jukebox */
+void FadedSoundImpl::setOnStopCallback(std::function<void(void)> os) {
+	impl->setOnStopCallback(os);
+}
 
+} /* namespace jukebox */
