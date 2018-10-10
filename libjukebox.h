@@ -165,6 +165,10 @@ public:
  void setVolume(int);
  void loop(bool);
  int getPosition() const;
+
+
+
+
  void setOnStopCallback(std::function<void(void)>);
  void clearOnStopCallback();
 private:

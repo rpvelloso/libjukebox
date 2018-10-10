@@ -47,7 +47,7 @@ private:
 	bool looping = false;
 	void prepare();
 	bool fillBuffer(int offset, size_t size);
-	void startThread();
+	void startThread(bool);
 	DWORD status();
 	bool playing();
 	void rewind();
