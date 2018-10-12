@@ -17,7 +17,7 @@ SRCS = ./jukebox/Sound/Sound.cpp ./jukebox/Sound/SoundImpl.cpp ./jukebox/Sound/F
 ./jukebox/Decoders/Decoder.cpp ./jukebox/Decoders/DecoderImpl.cpp ./jukebox/Decoders/MIDIDecoderImpl.cpp \
 ./jukebox/Decoders/WaveDecoderImpl.cpp ./jukebox/Decoders/VorbisDecoderImpl.cpp ./jukebox/Decoders/MP3DecoderImpl.cpp \
 ./win/Sound/DirectSoundBuffer.cpp ./win/Mixer/WindowsMixer.cpp \
-./jukebox_test/demo/test.cpp ./jukebox_test/demo/play.cpp  ./jukebox_test/demo/loop.cpp
+./jukebox_test/demo/test.cpp ./jukebox_test/demo/play.cpp ./jukebox_test/demo/loop.cpp
 
 all							:	./bin/libjukebox.dll ./bin/test.exe ./bin/play.exe ./bin/loop.exe
 ./bin/libjukebox.dll		:	$(objects)

@@ -167,7 +167,7 @@ void AlsaHandle::prepare() {
 	playing = false;
 }
 
-int AlsaHandle::getVolume() {
+int AlsaHandle::getVolume() const {
 	return vol;
 }
 

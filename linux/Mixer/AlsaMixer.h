@@ -26,16 +26,15 @@ namespace jukebox {
 extern void closeMixer(snd_mixer_t *handle);
 
 class AlsaMixer : public MixerImpl {
-	friend MixerImpl &factory::makeMixerImpl();
+	//friend MixerImpl &factory::makeMixerImpl();
 public:
+	AlsaMixer(const std::string &devName, const std::string &element);
 	int getVolume();
 	void setVolume(int vol);
 private:
 	std::unique_ptr<snd_mixer_t, decltype(&closeMixer)> handlePtr;
 	snd_mixer_elem_t* element_handle = nullptr;
 	long minVolume, maxVolume;
-
-	AlsaMixer(const std::string &devName, const std::string &element);
 };
 
 } /* namespace jukebox */

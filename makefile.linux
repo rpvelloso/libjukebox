@@ -17,16 +17,18 @@ SRCS = ./jukebox/Sound/Sound.cpp ./jukebox/Sound/SoundImpl.cpp ./jukebox/Sound/F
 ./jukebox/Decoders/Decoder.cpp ./jukebox/Decoders/DecoderImpl.cpp ./jukebox/Decoders/WaveDecoderImpl.cpp ./jukebox/Decoders/VorbisDecoderImpl.cpp ./jukebox/Decoders/MP3DecoderImpl.cpp \
 ./jukebox/Decoders/MIDIDecoderImpl.cpp \
 ./linux/Sound/AlsaHandle.cpp ./linux/Mixer/AlsaMixer.cpp \
-./jukebox_test/demo/test.cpp ./jukebox_test/demo/play.cpp
+./jukebox_test/demo/test.cpp ./jukebox_test/demo/play.cpp ./jukebox_test/demo/loop.cpp
 
 
-all					:	./bin/libjukebox.so ./bin/test ./bin/play
+all					:	./bin/libjukebox.so ./bin/test ./bin/play ./bin/loop
 ./bin/libjukebox.so	:	$(objects)
 	g++ -std=c++1y -ggdb -Wall $(objects) -shared $(LDFLAGS) -o ./bin/libjukebox.so
 ./bin/test			:	genheader ./jukebox_test/demo/main.o
 	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/main.cpp -I. -L./bin -ljukebox -o ./bin/test
 ./bin/play			:	genheader ./jukebox_test/demo/play.o
 	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/play.cpp -I. -L./bin -ljukebox -o ./bin/play
+./bin/loop			:	genheader ./jukebox_test/demo/loop.o ./bin/libjukebox.so
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/loop.o -Lbin -ljukebox -o ./bin/loop
 
 .PHONY		:	clean	genheader
 genheader	:
