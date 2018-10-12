@@ -12,7 +12,7 @@
     You should have received a copy of the GNU General Public License
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+#include <iostream>
 #include <algorithm>
 #include <cstdint>
 #include "AlsaHandle.h"
@@ -109,6 +109,8 @@ void AlsaHandle::play() {
 					break;
 			}
 		} while (looping && playing);
+		snd_pcm_drain(handlePtr.get());
+		onStop();
 	});
 }
 
@@ -126,10 +128,7 @@ void AlsaHandle::applyVolume(T *buf, int position, int len) {
 }
 
 void AlsaHandle::stop() {
-	if (playing) {
-		onStop();
-		playing = false;
-	}
+	playing = false;
 
 	if (playThread.joinable())
 		playThread.join();
