@@ -1,6 +1,7 @@
 CC = gcc
 CXXFLAGS = -DALSA_DEVICE=\"default\" -Wall -O3 -ggdb -std=c++1y -fPIC -I. -I./linux/
 CFLAGS = -Wall -O3 -ggdb
+BINS = ./bin/libjukebox.so ./bin/test ./bin/play ./bin/loop
 LDFLAGS = -lasound -lpthread -lfluidsynth
 objects = ./jukebox/Sound/Sound.o ./jukebox/Sound/SoundImpl.o ./jukebox/Sound/Factory.o \
 ./jukebox/FileFormats/SoundFile.o ./jukebox/FileFormats/SoundFileImpl.o ./jukebox/FileFormats/WaveFileImpl.o ./jukebox/FileFormats/VorbisFileImpl.o \
@@ -20,7 +21,7 @@ SRCS = ./jukebox/Sound/Sound.cpp ./jukebox/Sound/SoundImpl.cpp ./jukebox/Sound/F
 ./jukebox_test/demo/test.cpp ./jukebox_test/demo/play.cpp ./jukebox_test/demo/loop.cpp
 
 
-all					:	./bin/libjukebox.so ./bin/test ./bin/play ./bin/loop
+all					:	$(BINS)
 ./bin/libjukebox.so	:	$(objects)
 	g++ -std=c++1y -ggdb -Wall $(objects) -shared $(LDFLAGS) -o ./bin/libjukebox.so
 ./bin/test			:	genheader ./jukebox_test/demo/main.o
@@ -34,7 +35,7 @@ all					:	./bin/libjukebox.so ./bin/test ./bin/play ./bin/loop
 genheader	:
 	./genheader.sh
 clean		:
-	rm -rf $(DEPDIR) $(objects) ./jukebox_test/demo/*.o ./bin/libjukebox.so ./bin/test ./bin/play
+	rm -rf $(DEPDIR) $(objects) ./jukebox_test/demo/*.o $(BINS)
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)

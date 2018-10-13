@@ -1,6 +1,7 @@
 CC = gcc
 CXXFLAGS = -Wall -O3 -ggdb -std=c++1y -fPIC -I. -I./win/ -I/local/include
 CFLAGS = -Wall -O3 -ggdb
+BINS = ./bin/libjukebox.dll ./bin/test.exe ./bin/play.exe ./bin/loop.exe
 LDFLAGS = -ldxguid -ldsound -lwinmm -lfluidsynth -L/local/lib 
 objects = ./jukebox/Sound/Sound.o ./jukebox/Sound/SoundImpl.o ./jukebox/Sound/Factory.o \
 ./jukebox/FileFormats/SoundFile.o ./jukebox/FileFormats/SoundFileImpl.o ./jukebox/FileFormats/WaveFileImpl.o ./jukebox/FileFormats/VorbisFileImpl.o \
@@ -19,7 +20,7 @@ SRCS = ./jukebox/Sound/Sound.cpp ./jukebox/Sound/SoundImpl.cpp ./jukebox/Sound/F
 ./win/Sound/DirectSoundBuffer.cpp ./win/Mixer/WindowsMixer.cpp \
 ./jukebox_test/demo/test.cpp ./jukebox_test/demo/play.cpp ./jukebox_test/demo/loop.cpp
 
-all							:	./bin/libjukebox.dll ./bin/test.exe ./bin/play.exe ./bin/loop.exe
+all							:	$(BINS)
 ./bin/libjukebox.dll		:	$(objects)
 	g++ -std=c++1y -ggdb -Wall $(objects) -shared $(LDFLAGS) -o ./bin/libjukebox.dll
 ./bin/test.exe				:	genheader ./jukebox_test/demo/main.o ./bin/libjukebox.dll
@@ -33,7 +34,7 @@ all							:	./bin/libjukebox.dll ./bin/test.exe ./bin/play.exe ./bin/loop.exe
 genheader	:
 	./genheader.sh
 clean		:
-	rm -rf $(DEPDIR) $(objects) ./jukebox_test/demo/*.o  ./bin/libjukebox.dll ./bin/test.exe ./bin/play.exe
+	rm -rf $(DEPDIR) $(objects) ./jukebox_test/demo/*.o  $(BINS)
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)

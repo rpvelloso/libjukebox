@@ -141,10 +141,17 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 
 class HandleGuard {
 public:
-	HandleGuard(HANDLE handle) : handle(handle) {};
-	~HandleGuard() {CloseHandle(handle);};
+	HandleGuard(HANDLE handle, std::function<void(void)> onStop) :
+		handle(handle),
+		onStop(onStop) {
+	};
+	~HandleGuard() {
+		onStop();
+		CloseHandle(handle);
+	};
 private:
 	HANDLE handle;
+	std::function<void(void)> onStop;
 };
 
 void DirectSoundBuffer::startThread(bool reload) {
@@ -180,7 +187,9 @@ void DirectSoundBuffer::startThread(bool reload) {
 	if (reload) {
 		loadBufferThread = std::thread(
 			[this](auto event){
-				HandleGuard handleGuard(event);
+				HandleGuard handleGuard(
+					event,
+					onStop);
 
 				size_t offsets[2] = {0, dsbdesc.dwBufferBytes / 2};
 
@@ -203,16 +212,16 @@ void DirectSoundBuffer::startThread(bool reload) {
 				} while (looping && playing());
 				if (playing())
 					stop();
-				onStop();
 			},
 			notifyPos[0].hEventNotify);
 	} else {
 		loadBufferThread = std::thread(
 			[this](auto event){
-				HandleGuard handleGuard(event);
+				HandleGuard handleGuard(
+					event,
+					onStop);
 
 				WaitForSingleObject(event, INFINITE);
-				onStop();
 			},
 			notifyPos[0].hEventNotify);
 	}
