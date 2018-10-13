@@ -32,19 +32,30 @@ constexpr size_t minFrames = ALSA_MIN_FRAMES;
 
 class StatusGuard {
 public:
-  StatusGuard(std::atomic<bool> &status, bool entry) :
+  StatusGuard(
+		  std::atomic<bool> &status,
+		  bool entry,
+		  std::function<void(void)> &onStop) :
 	  status(status),
-	  exitStatus(!entry) {
+	  exitStatus(!entry),
+	  onStop(onStop) {
 
 	  status = entry;
   };
 
   ~StatusGuard() {
+	  onStop();
 	  status = exitStatus;
   }
 private:
   std::atomic<bool> &status;
   bool exitStatus;
+
+  /* this NEEDS to be passed by ref, otherwise when the user
+	 * changes the event the playing thread won't be notified
+	 * because it has a COPY and not the actual event handler.
+	 */
+  std::function<void(void)> &onStop;
 };
 
 }
@@ -79,7 +90,9 @@ void AlsaHandle::play() {
 	stop();
 
 	playThread = std::thread([this]() {
-		StatusGuard statusGuard(playing, true);
+		StatusGuard statusGuard(
+			playing, true,
+			onStop);
 
 		size_t frameSize = (soundFile.getBitsPerSample()/8) * soundFile.getNumChannels();
 		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[minFrames*frameSize]);
@@ -110,7 +123,6 @@ void AlsaHandle::play() {
 			}
 		} while (looping && playing);
 		snd_pcm_drain(handlePtr.get());
-		onStop();
 	});
 }
 
