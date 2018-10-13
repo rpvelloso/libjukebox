@@ -80,12 +80,7 @@ void DirectSoundBuffer::play() {
 	stop();
 	rewind();
 
-    DWORD playFlags = looping?DSBPLAY_LOOPING:0;
-
-    bool reload = fillBuffer(0, dsbdesc.dwBufferBytes);
-    startThread(reload);
-    if (reload)
-    	playFlags = DSBPLAY_LOOPING;
+    DWORD playFlags = startThread();
 
     auto hr = pDsb->Play(
         0,	// Unused.
@@ -141,7 +136,7 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 
 class HandleGuard {
 public:
-	HandleGuard(HANDLE handle, std::function<void(void)> onStop) :
+	HandleGuard(HANDLE handle, std::function<void(void)> &onStop) :
 		handle(handle),
 		onStop(onStop) {
 	};
@@ -151,10 +146,18 @@ public:
 	};
 private:
 	HANDLE handle;
-	std::function<void(void)> onStop;
+
+	/* this NEEDS to be passed by ref, otherwise when the user
+	 * changes the event the playing thread won't be notified
+	 * because it has a COPY and not the actual event handler.
+	 */
+	std::function<void(void)> &onStop;
 };
 
-void DirectSoundBuffer::startThread(bool reload) {
+/* this method returns the PLAYING FLAGS for DSOUND play.
+ * These flags depend whether or not we'll be refilling the playing buffer.
+ */
+DWORD DirectSoundBuffer::startThread() {
 	LPDIRECTSOUNDNOTIFY notifyIface;
 	DSBPOSITIONNOTIFY notifyPos[3];
 
@@ -162,17 +165,14 @@ void DirectSoundBuffer::startThread(bool reload) {
 	if (FAILED(hr))
 		throw std::runtime_error("failed QueryInterface");
 
-	if (reload) {
-		notifyPos[0].dwOffset = (dsbdesc.dwBufferBytes / 2) - 1;
-		notifyPos[0].hEventNotify = CreateEvent(nullptr, false, false, nullptr);
-		notifyPos[1].dwOffset = dsbdesc.dwBufferBytes - 1;
-		notifyPos[1].hEventNotify = notifyPos[0].hEventNotify;
-		notifyPos[2].dwOffset = DSCBPN_OFFSET_STOP;
-		notifyPos[2].hEventNotify = notifyPos[0].hEventNotify;
-	} else {
-		notifyPos[0].dwOffset = DSCBPN_OFFSET_STOP;
-		notifyPos[0].hEventNotify = CreateEvent(nullptr, false, false, nullptr);
-	}
+	notifyPos[0].dwOffset = DSCBPN_OFFSET_STOP; // sound stop event
+	notifyPos[0].hEventNotify = CreateEvent(nullptr, false, false, nullptr);
+	notifyPos[1].dwOffset = (dsbdesc.dwBufferBytes / 2) - 1; // half way buffer event
+	notifyPos[1].hEventNotify = notifyPos[0].hEventNotify;
+	notifyPos[2].dwOffset = dsbdesc.dwBufferBytes - 1; // end of buffer event
+	notifyPos[2].hEventNotify = notifyPos[0].hEventNotify;
+
+    bool reload = fillBuffer(0, dsbdesc.dwBufferBytes);
 
 	hr = notifyIface->SetNotificationPositions(reload?3:1, notifyPos);
 	notifyIface->Release();
@@ -214,6 +214,7 @@ void DirectSoundBuffer::startThread(bool reload) {
 					stop();
 			},
 			notifyPos[0].hEventNotify);
+		return DSBPLAY_LOOPING;
 	} else {
 		loadBufferThread = std::thread(
 			[this](auto event){
@@ -224,6 +225,7 @@ void DirectSoundBuffer::startThread(bool reload) {
 				WaitForSingleObject(event, INFINITE);
 			},
 			notifyPos[0].hEventNotify);
+	    return looping?DSBPLAY_LOOPING:0;
 	}
 }
 
