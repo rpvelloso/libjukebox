@@ -102,6 +102,9 @@ bool DirectSoundBuffer::playing() {
 }
 
 bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
+	if (position >= soundFile.getDataSize())
+		return false;
+
 	// fill secondary buffer with wav/sound
 	LPVOID bufAddr;
 	DWORD bufLen;
@@ -184,49 +187,40 @@ DWORD DirectSoundBuffer::startThread() {
 	if (loadBufferThread.joinable())
 		loadBufferThread.join();
 
-	if (reload) {
-		loadBufferThread = std::thread(
-			[this](auto event){
-				HandleGuard handleGuard(
-					event,
-					onStop);
+	loadBufferThread = std::thread(
+		[this](auto event){
+			HandleGuard handleGuard(
+				event,
+				onStop);
 
-				size_t offsets[2] = {0, dsbdesc.dwBufferBytes / 2};
+			size_t offsets[2] = {0, dsbdesc.dwBufferBytes / 2};
 
+			do {
+
+				bool offset = true;
 				do {
+					offset = !offset;
+					WaitForSingleObject(event, INFINITE);
+				} while (
+					playing() &&
+					fillBuffer(offsets[offset], dsbdesc.dwBufferBytes / 2));
 
-					bool offset = true;
-					do {
-						offset = !offset;
-						WaitForSingleObject(event, INFINITE);
-					} while (
-						playing() &&
-						fillBuffer(offsets[offset], dsbdesc.dwBufferBytes / 2));
+				if (playing()) {
+					WaitForSingleObject(event, INFINITE);
+					rewind();
+					fillBuffer(0, dsbdesc.dwBufferBytes);
+				}
 
-					if (playing()) {
-						WaitForSingleObject(event, INFINITE);
-						rewind();
-						fillBuffer(0, dsbdesc.dwBufferBytes);
-					}
+			} while (looping && playing());
+			if (playing())
+				stop();
+		},
+		notifyPos[0].hEventNotify);
 
-				} while (looping && playing());
-				if (playing())
-					stop();
-			},
-			notifyPos[0].hEventNotify);
+	if (reload)
 		return DSBPLAY_LOOPING;
-	} else {
-		loadBufferThread = std::thread(
-			[this](auto event){
-				HandleGuard handleGuard(
-					event,
-					onStop);
-
-				WaitForSingleObject(event, INFINITE);
-			},
-			notifyPos[0].hEventNotify);
+	else
 	    return looping?DSBPLAY_LOOPING:0;
-	}
 }
 
 void DirectSoundBuffer::prepare() {
