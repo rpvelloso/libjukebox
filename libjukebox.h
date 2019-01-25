@@ -205,6 +205,8 @@ SoundFile loadVorbisFile(const std::string &filename);
 SoundFile loadVorbisStream(std::istream &inp);
 SoundFile loadMP3File(const std::string &filename);
 SoundFile loadMP3Stream(std::istream &inp);
+SoundFile loadFLACFile(const std::string &filename);
+SoundFile loadFLACStream(std::istream &inp);
 
 }
 }

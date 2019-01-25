@@ -6,6 +6,7 @@
 #include "jukebox/FileFormats/MP3FileImpl.h"
 #include "jukebox/FileFormats/VorbisFileImpl.h"
 #include "jukebox/FileFormats/WaveFileImpl.h"
+#include "jukebox/FileFormats/FLACFileImpl.h"
 
 namespace jukebox {
 namespace factory {
@@ -35,6 +36,7 @@ SoundFile loadFile(const std::string &filename)
     auto ext = fileExtension(filename);
     if (ext == "ogg") return loadVorbisFile(filename);
     if (ext == "mp3") return loadMP3File(filename);
+    if (ext == "flac") return loadFLACFile(filename);
     // if (ext == "mid") return loadMIDIFile(filename);
     if (ext == "wav") return loadWaveFile(filename);
 
@@ -69,6 +71,16 @@ SoundFile loadMP3File(const std::string &filename)
 SoundFile loadMP3Stream(std::istream &inp)
 {
     return SoundFile(new MP3FileImpl(inp));
+}
+
+SoundFile loadFLACFile(const std::string &filename)
+{
+    return SoundFile(new FLACFileImpl(filename));
+}
+
+SoundFile loadFLACStream(std::istream &inp)
+{
+    return SoundFile(new FLACFileImpl(inp));
 }
 
 }
