@@ -24,7 +24,7 @@ jukebox::SoundFile loadSoundFile(const std::string &filename);
 
 int main(int argc, char **argv) {
 	if( argc < 2 ) {
-		std::cout << "usage: " << argv[0] << " filename.[wav|ogg|mp3|mid]" << std::endl;
+		std::cout << "usage: " << argv[0] << " filename.[wav|ogg|mp3|mid|flac]" << std::endl;
 		return 1;
 	}
 

@@ -6,6 +6,7 @@ Plataform independent (windows/linux) C++ audio playback library (uses DirectSou
 - MP3 (using [minimp3](https://github.com/lieff/minimp3));
 - Ogg Vorbis (using [stb_vorbis](https://github.com/nothings/stb));
 - MIDI (using [FluiSynth](https://github.com/FluidSynth/fluidsynth) + [MidiFile](https://github.com/craigsapp/midifile));
+- FLAC (using [dr_flac](https://github.com/mackron/dr_libs));
 - Extensible architecture allows implementation of other formats, transparently.
 
 # Effects
@@ -39,7 +40,7 @@ jukebox::SoundFile loadSoundFile(const std::string &filename);
 
 int main(int argc, char **argv) {
 	if( argc < 2 ) {
-		std::cout << "usage: " << argv[0] << " filename.[wav|ogg|mp3|mid]" << std::endl;
+		std::cout << "usage: " << argv[0] << " filename.[wav|ogg|mp3|mid|flac]" << std::endl;
 		return 1;
 	}
 
@@ -115,3 +116,4 @@ jukebox::SoundFile loadSoundFile(const std::string &filename) {
 - FluidSynth MIDI synthesizer: https://github.com/FluidSynth/fluidsynth
 - Soundfont: http://schristiancollins.com/generaluser.php
 - MIDI file parser: https://github.com/craigsapp/midifile
+- FLAC decoder: https://github.com/mackron/dr_libs

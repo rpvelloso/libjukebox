@@ -24,7 +24,7 @@ jukebox::SoundFile loadSoundFile(const std::string &filename);
 
 int main(int argc, char **argv) {
 	if( argc < 3 ) {
-		std::cout << "you need to supply two audio (wav/ogg/mp3/mid) files as arguments" << std::endl;
+		std::cout << "you need to supply two audio (wav/ogg/mp3/mid/flac) files as arguments" << std::endl;
 		return 1;
 	}
 
