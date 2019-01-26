@@ -32,6 +32,7 @@ private:
 	short numChannels = 0;
 	int sampleRate = 0;
 	int fileSize = 0;
+	short bitsPerSample = 0;
 	std::unique_ptr<uint8_t []> fileBuffer;
 	std::string filename;
 

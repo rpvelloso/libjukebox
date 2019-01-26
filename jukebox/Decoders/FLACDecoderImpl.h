@@ -30,6 +30,7 @@ public:
 private:
 	FLACFileImpl &fileImpl;
 	int numChannels;
+	short bytesPerSample;
 	std::unique_ptr<drflac, decltype(&closeFlac)> flacHandler;
 };
 

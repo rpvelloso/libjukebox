@@ -44,7 +44,7 @@ int FLACFileImpl::getSampleRate() const {
 }
 
 short FLACFileImpl::getBitsPerSample() const {
-	return 16;
+	return bitsPerSample;
 }
 
 const std::string& FLACFileImpl::getFilename() const {
@@ -80,7 +80,8 @@ void FLACFileImpl::load(std::istream& inp) {
 
 	numChannels = flacHandler->channels;
 	sampleRate = flacHandler->sampleRate;
-	dataSize = (flacHandler->totalSampleCount * 2) ;
+	bitsPerSample = flacHandler->bitsPerSample <= 16?16:32;
+	dataSize = (flacHandler->totalSampleCount * (bitsPerSample >> 3)) ;
 }
 
 } /* namespace jukebox */

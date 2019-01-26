@@ -23,6 +23,7 @@ FLACDecoderImpl::FLACDecoderImpl(FLACFileImpl& fileImpl) :
 	DecoderImpl(fileImpl),
 	fileImpl(fileImpl),
 	numChannels(fileImpl.getNumChannels()),
+	bytesPerSample(fileImpl.getBitsPerSample() >> 3),
 	flacHandler(nullptr, closeFlac) {
 
 	flacHandler.reset(drflac_open_memory(fileImpl.getFileBuffer(), fileImpl.getFileSize()));
@@ -32,11 +33,18 @@ FLACDecoderImpl::FLACDecoderImpl(FLACFileImpl& fileImpl) :
 }
 
 int FLACDecoderImpl::getSamples(char* buf, int pos, int len) {
-	drflac_seek_to_pcm_frame(flacHandler.get(), (pos / 2) / numChannels);
-	return drflac_read_pcm_frames_s16(
-		flacHandler.get(),
-		len/2/numChannels,
-		(short *)buf) * numChannels * 2;
+	drflac_seek_to_pcm_frame(flacHandler.get(), (pos / bytesPerSample) / numChannels);
+	if (bytesPerSample == 2)
+		return drflac_read_pcm_frames_s16(
+			flacHandler.get(),
+			len/bytesPerSample/numChannels,
+			(short *)buf) * numChannels * bytesPerSample;
+
+	if (bytesPerSample == 4)
+		return drflac_read_pcm_frames_s32(
+			flacHandler.get(),
+			len/bytesPerSample/numChannels,
+			(int *)buf) * numChannels * bytesPerSample;
 }
 
 }
