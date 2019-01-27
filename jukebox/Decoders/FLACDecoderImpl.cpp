@@ -34,17 +34,17 @@ FLACDecoderImpl::FLACDecoderImpl(FLACFileImpl& fileImpl) :
 
 int FLACDecoderImpl::getSamples(char* buf, int pos, int len) {
 	drflac_seek_to_pcm_frame(flacHandler.get(), (pos / bytesPerSample) / numChannels);
-	if (bytesPerSample == 2)
-		return drflac_read_pcm_frames_s16(
-			flacHandler.get(),
-			len/bytesPerSample/numChannels,
-			(short *)buf) * numChannels * bytesPerSample;
 
 	if (bytesPerSample == 4)
 		return drflac_read_pcm_frames_s32(
 			flacHandler.get(),
 			len/bytesPerSample/numChannels,
 			(int *)buf) * numChannels * bytesPerSample;
+
+	return drflac_read_pcm_frames_s16(
+		flacHandler.get(),
+		len/bytesPerSample/numChannels,
+		(short *)buf) * numChannels * bytesPerSample;
 }
 
 }
