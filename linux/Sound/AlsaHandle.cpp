@@ -156,7 +156,9 @@ AlsaHandle::~AlsaHandle() {
 void AlsaHandle::config() {
   auto res = snd_pcm_set_params(
     handlePtr.get(),
-	soundFile.getBitsPerSample() == 16 ? SND_PCM_FORMAT_S16_LE : SND_PCM_FORMAT_U8,
+    soundFile.getBitsPerSample() == 32 ? SND_PCM_FORMAT_S32_LE :
+    soundFile.getBitsPerSample() == 16 ? SND_PCM_FORMAT_S16_LE :
+	SND_PCM_FORMAT_U8,
 	SND_PCM_ACCESS_RW_INTERLEAVED,
     soundFile.getNumChannels(),
     soundFile.getSampleRate(),
