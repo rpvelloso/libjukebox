@@ -126,7 +126,7 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 
 	position += len;
 	if (len < bufLen)
-		memset((char *)bufAddr+len, soundFile.getBitsPerSample() >= 16?0:128, bufLen-len);
+		memset((char *)bufAddr+len, soundFile.getBitsPerSample() == 8?128:0, bufLen-len);
 
 	pDsb->Unlock(
 		bufAddr,	// Address of lock start.
