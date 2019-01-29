@@ -140,11 +140,13 @@ void AlsaHandle::play() {
 }
 
 template<typename T>
-void AlsaHandle::applyVolume(AlsaHandle &self, void *buf, int position, int len) {
+void AlsaHandle::_applyVolume(AlsaHandle &self, void *buf, int position, int len) {
 
 	int offset = self.soundFile.silenceLevel();
+	T *beginIt = reinterpret_cast<T *>(buf);
+	T *endIt = beginIt + (len/sizeof(T));
 
-	std::for_each(buf, buf+(len/sizeof(T)), [&self, offset](T &c){
+	std::for_each(beginIt, endIt, [&self, offset](T &c){
 		c = static_cast<T>((static_cast<double>(self.vol)/100.0*static_cast<double>(c - offset)) + offset);
 	});
 }
