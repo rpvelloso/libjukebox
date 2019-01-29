@@ -106,10 +106,12 @@ void AlsaHandle::play() {
 				auto bytes = decoder->getSamples(reinterpret_cast<char *>(volBuf.get()), position, frames*frameSize);
 
 				if (bytes > 0) {
-					if (soundFile.getBitsPerSample() == 16)
+					if (soundFile.getBitsPerSample() == 8)
+						applyVolume(volBuf.get(), position, bytes);
+					else if (soundFile.getBitsPerSample() == 16)
 						applyVolume(reinterpret_cast<int16_t *>(volBuf.get()), position, bytes);
 					else
-						applyVolume(volBuf.get(), position, bytes);
+						applyVolume(reinterpret_cast<int32_t *>(volBuf.get()), position, bytes);
 
 					auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), bytes / frameSize);
 					if (n > 0) {
@@ -130,9 +132,7 @@ template<typename T>
 void AlsaHandle::applyVolume(T *buf, int position, int len) {
 	transformation(buf, position, len);
 
-	int offset = 0;
-	if (sizeof(T) == 1)
-		offset = 128;
+	int offset = soundFile.silenceLevel();
 
 	std::for_each(buf, buf+(len/sizeof(T)), [this, offset](T &c){
 		c = static_cast<T>((static_cast<double>(vol)/100.0*static_cast<double>(c - offset)) + offset);

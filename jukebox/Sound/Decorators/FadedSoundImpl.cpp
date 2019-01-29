@@ -32,15 +32,39 @@ public:
 			fadeInEndPos = std::min(
 					sf.getSampleRate()*
 					sf.getNumChannels()*
-					(sf.getBitsPerSample() == 8?1:2)*
+					(sf.getBitsPerSample() >> 3)*
 					fadeInSecs, sf.getDataSize());
 
 		if (fadeOutSecs > 0)
 			fadeOutStartPos -= std::min(
 					sf.getSampleRate()*
 					sf.getNumChannels()*
-					(sf.getBitsPerSample() == 8?1:2)*
+					(sf.getBitsPerSample() >> 3)*
 					fadeOutSecs, sf.getDataSize());
+
+		if (soundFile.getBitsPerSample() == 8) {
+			fadeIn = [](Fade& self, void *buf, int pos, int len) {
+				_fadeIn<uint8_t>(self, buf, pos, len);
+			};
+			fadeOut = [](Fade& self, void *buf, int pos, int len) {
+				_fadeOut<uint8_t>(self, buf, pos, len);
+			};
+		} else if (soundFile.getBitsPerSample() == 16) {
+			fadeIn = [](Fade& self, void *buf, int pos, int len) {
+				_fadeIn<int16_t>(self, buf, pos, len);
+			};
+			fadeOut = [](Fade& self, void *buf, int pos, int len) {
+				_fadeOut<int16_t>(self, buf, pos, len);
+			};
+		} else {
+			fadeIn = [](Fade& self, void *buf, int pos, int len) {
+				_fadeIn<int32_t>(self, buf, pos, len);
+			};
+			fadeOut = [](Fade& self, void *buf, int pos, int len) {
+				_fadeOut<int32_t>(self, buf, pos, len);
+			};
+		}
+
 	};
 
 	void operator()(void *buf, int pos, int len) {
@@ -52,52 +76,42 @@ public:
 		if (pos + len > dataSize)
 			len = (dataSize - pos);
 
-		if (pos < fadeInEndPos) {
-			if (soundFile.getBitsPerSample() == 16)
-				fadeIn((int16_t *)buf, pos, len);
-			else
-				fadeIn((uint8_t *)buf, pos, len);
-		}
+		if (pos < fadeInEndPos)
+			fadeIn(*this, buf, pos, len);
 
-		if (pos >= fadeOutStartPos) {
-			if (soundFile.getBitsPerSample() == 16)
-				fadeOut((int16_t *)buf, pos, len);
-			else
-				fadeOut((uint8_t *)buf, pos, len);
-		}
+		if (pos >= fadeOutStartPos)
+			fadeOut(*this, buf, pos, len);
 	};
 private:
 	int fadeInSecs, fadeOutSecs;
 	int fadeInEndPos, fadeOutStartPos;
+	std::function<void(Fade&, void *, int, int)> fadeIn;
+	std::function<void(Fade&, void *, int, int)> fadeOut;
 
 	template<typename T>
-	void fadeIn(T* buf, int pos, int len) {
+	static void _fadeIn(Fade &self, void* buf, int pos, int len) {
 		T *beginIt = reinterpret_cast<T *>(buf);
 		T *endIt = beginIt + (len/sizeof(T));
 
-		int offset = 0;
-		if (sizeof(T) == 1)
-			offset = 128;
+		int offset = self.soundFile.silenceLevel();
 
-		std::for_each(beginIt, endIt, [this, offset, &pos](T &sample){
-			sample = (T)((((float)(sample - offset) * (float)pos)/(float)fadeInEndPos) + offset);
+		std::for_each(beginIt, endIt, [&self, offset, &pos](T &sample){
+			sample = (T)((((float)(sample - offset) * (float)pos)/(float)self.fadeInEndPos) + offset);
 			++pos;
 		});
 	}
 
 	template<typename T>
-	void fadeOut(T* buf, int pos, int len) {
+	static void _fadeOut(Fade &self, void* buf, int pos, int len) {
 		T *beginIt = reinterpret_cast<T *>(buf);
 		T *endIt = beginIt + (len/sizeof(T));
 
-		auto n = soundFile.getDataSize();
-		auto fadeLen = n - fadeOutStartPos;
+		auto n = self.soundFile.getDataSize();
+		auto fadeLen = n - self.fadeOutStartPos;
 
-		int offset = 0;
-		if (sizeof(T) == 1)
-			offset = 128;
+		int offset = self.soundFile.silenceLevel();
 
-		std::for_each(beginIt, endIt, [this, n, fadeLen, offset, &pos](T &sample){
+		std::for_each(beginIt, endIt, [n, fadeLen, offset, &pos](T &sample){
 			sample = (T)((((float)(sample - offset) * (float)(n - pos))/(float)(fadeLen)) + offset);
 			++pos;
 		});

@@ -15,6 +15,8 @@
 
 #include "FadeOnStopSoundImpl.h"
 #include <algorithm>
+#include <functional>
+#include <iostream>
 #include "jukebox/Sound/SoundTransformation.h"
 
 namespace jukebox {
@@ -30,42 +32,53 @@ public:
 			fadeOutStartPos + (
 			soundFile.getSampleRate()*
 			soundFile.getNumChannels()*
-			(soundFile.getBitsPerSample() == 8?1:2)*
+			(soundFile.getBitsPerSample() >> 3)*
 			fadeOutSecs);
 
 		if (stopPos < soundFile.getDataSize()) {
 			fade = true;
 			soundFile.truncAt(stopPos);
 		}
+
+		if (soundFile.getBitsPerSample() == 8) {
+			fadeOut = [](FadeOutOnStop& self, void *buf, int pos, int len) {
+				_fadeOut<uint8_t>(self, buf, pos, len);
+			};
+		} else if (soundFile.getBitsPerSample() == 16) {
+			fadeOut = [](FadeOutOnStop& self, void *buf, int pos, int len) {
+				_fadeOut<int16_t>(self, buf, pos, len);
+			};
+		} else {
+			fadeOut = [](FadeOutOnStop& self, void *buf, int pos, int len) {
+				_fadeOut<int32_t>(self, buf, pos, len);
+			};
+		}
+
 	};
 
 	void operator()(void *buf, int pos, int len) override {
-		if (pos >= fadeOutStartPos) {
-			if (soundFile.getBitsPerSample() == 8)
-				fadeOut((uint8_t *)buf, pos, len);
-			else
-				fadeOut((int16_t *)buf, pos, len);
-		}
+		if (pos >= fadeOutStartPos)
+			fadeOut(*this, buf, pos, len);
 	};
 private:
 	int fadeOutSecs, fadeOutStartPos;
 	bool fade = false;
+	std::function<void(FadeOutOnStop&, void *, int, int)> fadeOut;
+
 	template<typename T>
-	void fadeOut(T *buf, int pos, int len) {
-		if (!fade)
+	static void _fadeOut(FadeOutOnStop& self, void *buf, int pos, int len) {
+		if (!self.fade)
 			return;
 
 		T *beginIt = reinterpret_cast<T *>(buf);
 		T *endIt = beginIt + (len/sizeof(T));
 
-		auto n = soundFile.getDataSize();
-		auto fadeLen = n - fadeOutStartPos;
+		auto n = self.soundFile.getDataSize();
+		auto fadeLen = n - self.fadeOutStartPos;
 
-		int offset = 0;
-		if (sizeof(T) == 1)
-			offset = 128;
+		int offset = self.soundFile.silenceLevel();
 
-		std::for_each(beginIt, endIt, [this, n, fadeLen, offset, &pos](T &sample){
+		std::for_each(beginIt, endIt, [n, fadeLen, offset, &pos](T &sample){
 			sample = (T)((((float)(sample - offset) * (float)(n - pos))/(float)(fadeLen)) + offset);
 			++pos;
 		});

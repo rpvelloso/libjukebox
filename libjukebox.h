@@ -102,6 +102,7 @@ public:
  double getDuration() const;
  void truncAt(int pos);
  std::unique_ptr<Decoder> makeDecoder();
+ int silenceLevel() const;
 private:
  std::unique_ptr<SoundFileImpl> impl;
  int blockSize;

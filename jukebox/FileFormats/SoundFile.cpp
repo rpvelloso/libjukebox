@@ -62,5 +62,9 @@ std::unique_ptr<Decoder> SoundFile::makeDecoder() {
 	return impl->makeDecoder();
 }
 
+int SoundFile::silenceLevel() const {
+	return impl->getBitsPerSample() == 8?128:0;
+}
+
 } /* namespace jukebox */
 
