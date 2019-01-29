@@ -19,6 +19,7 @@
 #include <atomic>
 #include <memory>
 #include <thread>
+#include <functional>
 #include <alsa/asoundlib.h>
 
 #include "jukebox/FileFormats/SoundFile.h"
@@ -45,9 +46,10 @@ private:
 	int vol = 100;
 	bool looping = false;
 	std::unique_ptr<Decoder> decoder;
+	std::function<void(AlsaHandle &self, void *, int , int )> applyVolume;
 
 	template <typename T>
-	void applyVolume(T *buf, int position, int len);
+	static void _applyVolume(AlsaHandle &self, void *buf, int position, int len);
 
 	void config();
 	void prepare();
