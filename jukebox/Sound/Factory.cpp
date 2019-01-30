@@ -3,6 +3,7 @@
 #include <algorithm>
 #include "jukebox/Sound/Decorators/FadedSoundImpl.h"
 #include "jukebox/Sound/Decorators/FadeOnStopSoundImpl.h"
+#include "jukebox/Sound/Decorators/ReverbSoundImpl.h"
 #include "jukebox/FileFormats/MP3FileImpl.h"
 #include "jukebox/FileFormats/VorbisFileImpl.h"
 #include "jukebox/FileFormats/WaveFileImpl.h"
@@ -21,6 +22,11 @@ Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs)
 Sound makeFadedSound(SoundFile &file, int fadeInSecs, int fadeOutSecs)
 {
     return Sound(new FadedSoundImpl(makeSoundImpl(file), fadeInSecs, fadeOutSecs));
+}
+
+Sound makeReverbSound(SoundFile &file)
+{
+    return Sound(new ReverbSoundImpl(makeSoundImpl(file)));
 }
 
 // TODO: add more extensions and/or a way to autodetect the file format

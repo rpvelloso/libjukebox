@@ -197,6 +197,7 @@ SoundImpl *makeSoundImpl(SoundFile& file);
 
 Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs);
 Sound makeFadedSound(SoundFile &file, int fadeInSecs, int fadeOutSecs);
+Sound makeReverbSound(SoundFile &file);
 
 SoundFile loadFile(const std::string &filename);
 

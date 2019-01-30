@@ -106,9 +106,9 @@ void FadeOnStopSoundImpl::loop(bool loop) {
 	impl->loop(loop);
 }
 
-} /* namespace jukebox */
-
-void jukebox::FadeOnStopSoundImpl::setOnStopCallback(
+void FadeOnStopSoundImpl::setOnStopCallback(
 		std::function<void(void)> os) {
 	impl->setOnStopCallback(os);
 }
+
+} /* namespace jukebox */
