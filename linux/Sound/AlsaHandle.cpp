@@ -85,20 +85,7 @@ AlsaHandle::AlsaHandle(SoundFile &file) :
 	config();
 	prepare();
 
-	if (soundFile.getBitsPerSample() == 8) {
-		applyVolume = [](AlsaHandle &self, void *buf, int pos, int len) {
-			_applyVolume<uint8_t>(self, buf, pos, len);
-		};
-	} else if (soundFile.getBitsPerSample() == 16) {
-		applyVolume = [](AlsaHandle &self, void *buf, int pos, int len) {
-			_applyVolume<int16_t>(self, buf, pos, len);
-		};
-	} else {
-		applyVolume = [](AlsaHandle &self, void *buf, int pos, int len) {
-			_applyVolume<int32_t>(self, buf, pos, len);
-		};
-	}
-
+	applyVolume = applyVolumeFunc[soundFile.getBitsPerSample()];
 }
 
 void AlsaHandle::play() {
@@ -138,6 +125,12 @@ void AlsaHandle::play() {
 		snd_pcm_drain(handlePtr.get());
 	});
 }
+
+static std::unordered_map<short, decltype(AlsaHandle::applyVolume)> AlsaHandle::applyVolumeFunc = {
+		{ 8, &AlsaHandle::_applyVolume<uint8_t>},
+		{16, &AlsaHandle::_applyVolume<int16_t>},
+		{32, &AlsaHandle::_applyVolume<int32_t>}
+};
 
 template<typename T>
 void AlsaHandle::_applyVolume(AlsaHandle &self, void *buf, int position, int len) {

@@ -16,7 +16,7 @@
 #include "FadeOnStopSoundImpl.h"
 #include <algorithm>
 #include <functional>
-#include <iostream>
+#include <unordered_map>
 #include "jukebox/Sound/SoundTransformation.h"
 
 namespace jukebox {
@@ -40,20 +40,7 @@ public:
 			soundFile.truncAt(stopPos);
 		}
 
-		if (soundFile.getBitsPerSample() == 8) {
-			fadeOut = [](FadeOutOnStop& self, void *buf, int pos, int len) {
-				_fadeOut<uint8_t>(self, buf, pos, len);
-			};
-		} else if (soundFile.getBitsPerSample() == 16) {
-			fadeOut = [](FadeOutOnStop& self, void *buf, int pos, int len) {
-				_fadeOut<int16_t>(self, buf, pos, len);
-			};
-		} else {
-			fadeOut = [](FadeOutOnStop& self, void *buf, int pos, int len) {
-				_fadeOut<int32_t>(self, buf, pos, len);
-			};
-		}
-
+		fadeOut = fadeOutFunc[soundFile.getBitsPerSample()];
 	};
 
 	void operator()(void *buf, int pos, int len) override {
@@ -64,6 +51,7 @@ private:
 	int fadeOutSecs, fadeOutStartPos;
 	bool fade = false;
 	std::function<void(FadeOutOnStop&, void *, int, int)> fadeOut;
+	static std::unordered_map<short, decltype(fadeOut)> fadeOutFunc;
 
 	template<typename T>
 	static void _fadeOut(FadeOutOnStop& self, void *buf, int pos, int len) {
@@ -83,6 +71,12 @@ private:
 			++pos;
 		});
 	};
+};
+
+std::unordered_map<short, decltype(FadeOutOnStop::fadeOut)> FadeOutOnStop::fadeOutFunc = {
+		{8 , &FadeOutOnStop::_fadeOut<uint8_t>},
+		{16, &FadeOutOnStop::_fadeOut<int16_t>},
+		{32, &FadeOutOnStop::_fadeOut<int32_t>}
 };
 
 FadeOnStopSoundImpl::FadeOnStopSoundImpl(SoundImpl *impl, int fadeOutSecs) :

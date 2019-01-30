@@ -15,6 +15,7 @@
 
 #include "FadedSoundImpl.h"
 #include <algorithm>
+#include <unordered_map>
 #include "jukebox/Sound/SoundTransformation.h"
 
 namespace jukebox {
@@ -42,29 +43,8 @@ public:
 					(sf.getBitsPerSample() >> 3)*
 					fadeOutSecs, sf.getDataSize());
 
-		if (soundFile.getBitsPerSample() == 8) {
-			fadeIn = [](Fade& self, void *buf, int pos, int len) {
-				_fadeIn<uint8_t>(self, buf, pos, len);
-			};
-			fadeOut = [](Fade& self, void *buf, int pos, int len) {
-				_fadeOut<uint8_t>(self, buf, pos, len);
-			};
-		} else if (soundFile.getBitsPerSample() == 16) {
-			fadeIn = [](Fade& self, void *buf, int pos, int len) {
-				_fadeIn<int16_t>(self, buf, pos, len);
-			};
-			fadeOut = [](Fade& self, void *buf, int pos, int len) {
-				_fadeOut<int16_t>(self, buf, pos, len);
-			};
-		} else {
-			fadeIn = [](Fade& self, void *buf, int pos, int len) {
-				_fadeIn<int32_t>(self, buf, pos, len);
-			};
-			fadeOut = [](Fade& self, void *buf, int pos, int len) {
-				_fadeOut<int32_t>(self, buf, pos, len);
-			};
-		}
-
+		fadeIn = fadeInFunc[soundFile.getBitsPerSample()];
+		fadeOut = fadeOutFunc[soundFile.getBitsPerSample()];
 	};
 
 	void operator()(void *buf, int pos, int len) {
@@ -87,6 +67,8 @@ private:
 	int fadeInEndPos, fadeOutStartPos;
 	std::function<void(Fade&, void *, int, int)> fadeIn;
 	std::function<void(Fade&, void *, int, int)> fadeOut;
+	static std::unordered_map<short, decltype(fadeIn)> fadeInFunc;
+	static std::unordered_map<short, decltype(fadeOut)> fadeOutFunc;
 
 	template<typename T>
 	static void _fadeIn(Fade &self, void* buf, int pos, int len) {
@@ -117,6 +99,17 @@ private:
 		});
 	}
 
+};
+
+std::unordered_map<short, decltype(Fade::fadeIn)> Fade::fadeInFunc = {
+		{ 8, &Fade::_fadeIn<uint8_t>},
+		{16, &Fade::_fadeIn<int16_t>},
+		{32, &Fade::_fadeIn<int32_t>},
+};
+std::unordered_map<short, decltype(Fade::fadeOut)> Fade::fadeOutFunc = {
+		{ 8, &Fade::_fadeOut<uint8_t>},
+		{16, &Fade::_fadeOut<int16_t>},
+		{32, &Fade::_fadeOut<int32_t>},
 };
 
 FadedSoundImpl::FadedSoundImpl(

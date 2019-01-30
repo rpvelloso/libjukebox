@@ -47,6 +47,7 @@ private:
 	bool looping = false;
 	std::unique_ptr<Decoder> decoder;
 	std::function<void(AlsaHandle &self, void *, int , int )> applyVolume;
+	static std::unordered_map<short, decltype(applyVolume)> applyVolumeFunc;
 
 	template <typename T>
 	static void _applyVolume(AlsaHandle &self, void *buf, int position, int len);
