@@ -15,6 +15,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cstdint>
+#include <unordered_map>
 #include "AlsaHandle.h"
 #include "jukebox/Sound/Sound.h"
 
@@ -126,7 +127,7 @@ void AlsaHandle::play() {
 	});
 }
 
-static std::unordered_map<short, decltype(AlsaHandle::applyVolume)> AlsaHandle::applyVolumeFunc = {
+std::unordered_map<short, decltype(AlsaHandle::applyVolume)> AlsaHandle::applyVolumeFunc = {
 		{ 8, &AlsaHandle::_applyVolume<uint8_t>},
 		{16, &AlsaHandle::_applyVolume<int16_t>},
 		{32, &AlsaHandle::_applyVolume<int32_t>}
