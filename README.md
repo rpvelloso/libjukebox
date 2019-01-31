@@ -12,6 +12,7 @@ Plataform independent (windows/linux) C++ audio playback library (uses DirectSou
 # Effects
 - Fade in/out;
 - Fade on stop;
+- Simple reverberation (one delay with decay parameter);
 - Extensible architecture allows implementation of custom effects.
 
 # Building
