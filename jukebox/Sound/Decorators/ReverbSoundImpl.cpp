@@ -24,7 +24,7 @@ namespace jukebox {
 
 class Reverb : public SoundTransformation {
 public:
-	Reverb(SoundFile &sf, float delay = 0.5, float decay = 0.5) :
+	Reverb(SoundFile &sf, float delay, float decay) :
 		SoundTransformation(sf),
 		delay(delay),
 		decay(decay) {
@@ -52,13 +52,16 @@ private:
 	static void _reverb(Reverb& self, void *buf, int pos, int len) {
 		T *beginIt = reinterpret_cast<T *>(buf);
 		T *endIt = beginIt + (len/sizeof(T));
+		int offset = self.soundFile.silenceLevel();
 
-		//auto maxSample = std::numeric_limits<T>::max();
-		std::for_each(beginIt, endIt, [&self](T &sample) {
-			sample = (float)((float)sample * 0.5) + ((float)(self.echoBuffer[self.bufPos] * self.decay)*0.5);
-			//int64_t reverbSample = (.5 * (float)sample) + (.5 * (float)(self.echoBuffer[self.bufPos] * self.decay));
-			self.echoBuffer[self.bufPos] = sample;
-			self.bufPos = (self.bufPos + 1) % self.echoBuffer.size();
+		std::for_each(beginIt, endIt, [&self, offset](T &sample) {
+			int32_t signedSample = sample - offset;
+			signedSample =
+					(float)((float)signedSample * (1.0 - self.decay)) + // the original sound (some range sacrificed for the echo)
+					((float)(self.echoBuffer[self.bufPos] * self.decay)*0.5); // the echo attenuated
+			self.echoBuffer[self.bufPos] = signedSample; // save the echo for the next time round
+			sample = signedSample + offset;
+			self.bufPos = (self.bufPos + 1) % self.echoBuffer.size(); // circular echo/delay buffer
 		});
 	};
 };
@@ -69,11 +72,11 @@ std::unordered_map<short, decltype(Reverb::reverb)> Reverb::reverbFunc = {
 		{32, &Reverb::_reverb<int32_t>}
 };
 
-ReverbSoundImpl::ReverbSoundImpl(SoundImpl *impl) :
+ReverbSoundImpl::ReverbSoundImpl(SoundImpl *impl, float delay, float decay) :
 		SoundImpl(impl->getSoundFile()),
 		impl(impl) {
 
-	impl->setTransformationCallback(Reverb(impl->getSoundFile()));
+	impl->setTransformationCallback(Reverb(impl->getSoundFile(), delay, decay));
 }
 
 void ReverbSoundImpl::play() {

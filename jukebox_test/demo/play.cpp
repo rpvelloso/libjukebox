@@ -39,7 +39,9 @@ int main(int argc, char **argv) {
 
 		/* create a sound (decorated with fade-on-stop functionality)
 		 *  using previously loaded sound file */
-		auto sound = jukebox::factory::makeFadeOnStopSound(soundFile, 3); // 3 seconds of fade out
+		auto sound = argc == 4?
+			jukebox::factory::makeReverbSound(soundFile, std::stof(argv[2]), std::stof(argv[3])):
+		jukebox::factory::makeFadeOnStopSound(soundFile, 3); // 3 seconds of fade out
 		sound.loop(true); // set looping
 
 		jukebox::Mixer mixer;

@@ -48,7 +48,7 @@ class FluidSynthInitialization {
 friend class MIDIDecoderImpl;
 public:
 	static const std::string &getSoundFontFilename() {
-		static std::string soundFont = "../jukebox_test/data/GeneralUser GS v1.471.sf2";
+		static std::string soundFont = "./jukebox_test/data/GeneralUser GS v1.471.sf2";
 		return soundFont;
 	}
 private:
