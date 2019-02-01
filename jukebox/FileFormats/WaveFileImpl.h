@@ -28,24 +28,33 @@
 namespace jukebox {
 
 class WaveFileImpl : public SoundFileImpl {
-	struct WaveHeader1 {
-		char ChunkID[4];
-		uint32_t ChunkSize;
-		char Format[4];
-		char Subchunk1ID[4];
-		uint32_t Subchunk1Size;
+	struct WaveRIFFWAVEfmtHeader {
+		char chunkID[4];
+		uint32_t chunkSize;
+		char format[4];
+		char subChunkID[4];
+		uint32_t subChunkSize;
 	};
-	struct WaveHeader2 {
-		uint16_t AudioFormat;
-		uint16_t NumChannels;
-		uint32_t SampleRate;
-		uint32_t ByteRate;
-		uint16_t BlockAlign;
-		uint16_t BitsPerSample;
+	struct WaveFormatHeader {
+		uint16_t audioFormat;
+		uint16_t numChannels;
+		uint32_t sampleRate;
+		uint32_t byteRate;
+		uint16_t blockAlign;
+		uint16_t bitsPerSample;
 	};
-	struct WaveHeader3 {
-		char Subchunk2ID[4];
-		uint32_t Subchunk2Size;
+	struct WaveFactHeader {
+		char chunkID[4];
+		uint32_t chunkSize;
+		uint32_t numSamples;
+	};
+	struct WavePEAKHeader {
+		char chunkID[4];
+		char filler[20];
+	};
+	struct WaveDataHeader {
+		char chunkID[4];
+		uint32_t chunkSize;
 	};
 public:
 	WaveFileImpl(const std::string &filename);
@@ -57,13 +66,16 @@ public:
 	const std::string &getFilename() const override;
 	int read(char *buf, int pos, int len);
 	std::unique_ptr<Decoder> makeDecoder();
+	uint16_t getAudioFormat() const;
 private:
 	std::fstream fileStream;
 	std::istream inputStream;
 	std::string filename;
-	WaveHeader1 header1;
-	WaveHeader2 header2;
-	WaveHeader3 header3;
+	WaveRIFFWAVEfmtHeader waveRIFFWAVEfmtHeader;
+	WaveFormatHeader waveFormatHeader;
+	WaveFactHeader waveFactHeader;
+	WavePEAKHeader wavePEAKHeader;
+	WaveDataHeader waveDataHeader;
 	int headerSize = 0;
 	std::mutex readMutex;
 

@@ -15,10 +15,12 @@
 
 #include <algorithm>
 #include <exception>
+#include <iostream>
 
-#include "jukebox/Decoders/WaveDecoderImpl.h"
 #include "SoundFile.h"
 #include "WaveFileImpl.h"
+#include "../Decoders/WavePCMDecoderImpl.h"
+#include "../Decoders/WaveFloatDecoderImpl.h"
 
 namespace jukebox {
 
@@ -40,60 +42,112 @@ WaveFileImpl::WaveFileImpl(std::istream &inp, const std::string &filename) :
 }
 
 short WaveFileImpl::getNumChannels() const {
-	return header2.NumChannels;
+	return waveFormatHeader.numChannels;
 }
 
 int WaveFileImpl::getSampleRate() const {
-	return header2.SampleRate;
+	return waveFormatHeader.sampleRate;
 }
 
 short WaveFileImpl::getBitsPerSample() const {
-	return header2.BitsPerSample;
+	return waveFormatHeader.bitsPerSample;
 }
 
 std::unique_ptr<Decoder> WaveFileImpl::makeDecoder() {
-	return std::make_unique<Decoder>(new WaveDecoderImpl(*this));
+	switch (waveFormatHeader.audioFormat) {
+	case 1:
+		return std::make_unique<Decoder>(new WavePCMDecoderImpl(*this));
+	case 3:
+		return std::make_unique<Decoder>(new WaveFloatDecoderImpl(*this));
+	default:
+		throw std::runtime_error(
+			"invalid audio format: " +
+			std::to_string(waveFormatHeader.audioFormat) +
+			". can not decode.");
+	}
 }
 
 void WaveFileImpl::load() {
 	// TODO use different classes of exceptions
 	if (!inputStream) throw std::runtime_error("error opening " + filename);
 
-	inputStream.read((char *)&header1, sizeof(header1));
-	if (inputStream.gcount() != sizeof(header1))
+	std::streamsize headerBufSize =
+		sizeof(WaveRIFFWAVEfmtHeader) +
+		sizeof(WaveFormatHeader) +
+		sizeof(WaveFactHeader) +
+		sizeof(WavePEAKHeader) +
+		sizeof(WaveDataHeader);
+
+	std::unique_ptr<char []> headerBuf(new char[headerBufSize]);
+
+	inputStream.read(headerBuf.get(), headerBufSize);
+
+	if (inputStream.gcount() != headerBufSize)
 		throw std::runtime_error("error loading " + filename + ". invalid header #1 size");
 
-	if ((std::string(header1.ChunkID, 4) != "RIFF") ||
-		(std::string(header1.Format, 4) != "WAVE") ||
-		(std::string(header1.Subchunk1ID, 4) != "fmt "))
-		throw std::runtime_error("error loading " + filename + ". bad header #1 data");
+	char *nextHdrPtr = headerBuf.get();
+	std::copy(
+		nextHdrPtr,
+		nextHdrPtr + sizeof(WaveRIFFWAVEfmtHeader),
+		(char *)&waveRIFFWAVEfmtHeader);
 
-	inputStream.read((char *)&header2, sizeof(header2));
-	if (inputStream.gcount() != sizeof(header2))
-		throw std::runtime_error("error loading " + filename + ". invalid header #2 size");
+	nextHdrPtr += sizeof(WaveRIFFWAVEfmtHeader);
 
-	if (header2.AudioFormat != 1) // PCM
+	std::copy(
+		nextHdrPtr,
+		nextHdrPtr + sizeof(WaveFormatHeader),
+		(char *)&waveFormatHeader);
+
+	nextHdrPtr += sizeof(WaveFormatHeader);
+
+	if ((std::string(waveRIFFWAVEfmtHeader.chunkID, 4) != "RIFF") ||
+		(std::string(waveRIFFWAVEfmtHeader.format, 4) != "WAVE") ||
+		(std::string(waveRIFFWAVEfmtHeader.subChunkID, 4) != "fmt "))
+		throw std::runtime_error("error loading " + filename + ". bad RIFF header");
+
+	if (waveFormatHeader.audioFormat != 1 && waveFormatHeader.audioFormat != 3) // supports PCM & IEEE_FLOAT
 		throw std::runtime_error("error loading " + filename + ". invalid audio format");
 
-	// skip extra header data
-	inputStream.seekg(
-		std::max(header1.Subchunk1Size - 16, 0U),
-		std::ios::cur);
+	nextHdrPtr += std::max(waveRIFFWAVEfmtHeader.subChunkSize - 16, 0U);
 
-	inputStream.read((char *)&header3, sizeof(header3));
-	if (inputStream.gcount() != sizeof(header3))
-		throw std::runtime_error("error loading " + filename + ". invalid header #3 size");
+	std::string nextHeaderMarker(nextHdrPtr, nextHdrPtr + 4);
+	if (nextHeaderMarker == "fact") {
+		std::copy(nextHdrPtr, nextHdrPtr + sizeof(WaveFactHeader), (char *)&waveFactHeader);
+		nextHdrPtr += sizeof(WaveFactHeader);
+		nextHeaderMarker.assign(nextHdrPtr, nextHdrPtr + 4);
+		if (nextHeaderMarker == "PEAK") {
+			std::copy(nextHdrPtr, nextHdrPtr + sizeof(WavePEAKHeader), (char *)&wavePEAKHeader);
+			nextHdrPtr += sizeof(WavePEAKHeader);
+		}
+		nextHeaderMarker.assign(nextHdrPtr, nextHdrPtr + 4);
+	}
 
-	if (std::string(header3.Subchunk2ID, 4) != "data")
-		throw std::runtime_error("error loading " + filename + ". bad header #3 data");
+	if (nextHeaderMarker == "data")
+		std::copy(nextHdrPtr, nextHdrPtr + sizeof(WaveDataHeader), (char *)&waveDataHeader);
+	else
+		throw std::runtime_error("error loading " + filename + ". bad data header");
 
-	if (header3.Subchunk2Size <= 0)
+	nextHdrPtr += sizeof(WaveDataHeader);
+
+	if (waveDataHeader.chunkSize <= 0)
 		throw std::runtime_error("error loading " + filename + ". invalid data size");
-	if (header3.Subchunk2Size > MAX_WAVE_SIZE)
+	if (waveDataHeader.chunkSize > MAX_WAVE_SIZE)
 		throw std::runtime_error("error loading " + filename + ". data size is too big");
 
-	dataSize = header3.Subchunk2Size;
-	headerSize = inputStream.tellg();
+	dataSize = waveDataHeader.chunkSize;
+
+	inputStream.seekg(-dataSize, std::ios::end);
+
+	/*if (waveFormatHeader.audioFormat == 3) {// WAVE_FORMAT_IEEE_FLOAT
+		waveFormatHeader.bitsPerSample = 16;
+		dataSize /= 2; // 4 bytes float converted to 2 byte PCM
+	}*/
+
+	headerSize = nextHdrPtr - headerBuf.get();
+}
+
+uint16_t WaveFileImpl::getAudioFormat() const {
+	return waveFormatHeader.audioFormat;
 }
 
 const std::string &WaveFileImpl::getFilename() const {

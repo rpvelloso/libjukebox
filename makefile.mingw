@@ -8,7 +8,7 @@ objects = ./jukebox/Sound/Sound.o ./jukebox/Sound/SoundImpl.o ./jukebox/Sound/Fa
 ./jukebox/FileFormats/MP3FileImpl.o ./jukebox/FileFormats/MIDIFileImpl.o ./jukebox/FileFormats/FLACFileImpl.o \
 ./jukebox/Mixer/Mixer.o ./jukebox/Sound/Decorators/FadeOnStopSoundImpl.o ./jukebox/Sound/Decorators/FadedSoundImpl.o ./jukebox/Sound/Decorators/ReverbSoundImpl.o \
 ./jukebox/Decoders/Decoder.o ./jukebox/Decoders/DecoderImpl.o ./jukebox/Decoders/MIDIDecoderImpl.o \
-./jukebox/Decoders/WaveDecoderImpl.o ./jukebox/Decoders/VorbisDecoderImpl.o ./jukebox/Decoders/MP3DecoderImpl.o ./jukebox/Decoders/FLACDecoderImpl.o \
+./jukebox/Decoders/WavePCMDecoderImpl.o ./jukebox/Decoders/WaveFloatDecoderImpl.o ./jukebox/Decoders/VorbisDecoderImpl.o ./jukebox/Decoders/MP3DecoderImpl.o ./jukebox/Decoders/FLACDecoderImpl.o \
 ./win/Sound/DirectSoundBuffer.o ./win/Mixer/WindowsMixer.o
 
 SRCS = ./jukebox/Sound/Sound.cpp ./jukebox/Sound/SoundImpl.cpp ./jukebox/Sound/Factory.cpp \
@@ -16,7 +16,7 @@ SRCS = ./jukebox/Sound/Sound.cpp ./jukebox/Sound/SoundImpl.cpp ./jukebox/Sound/F
 ./jukebox/FileFormats/MP3FileImpl.cpp ./jukebox/FileFormats/MIDIFileImpl.cpp ./jukebox/FileFormats/FLACFileImpl.cpp \
 ./jukebox/Mixer/Mixer.cpp ./jukebox/Sound/Decorators/FadeOnStopSoundImpl.cpp ./jukebox/Sound/Decorators/FadedSoundImpl.cpp ./jukebox/Sound/Decorators/ReverbSoundImpl.cpp \
 ./jukebox/Decoders/Decoder.cpp ./jukebox/Decoders/DecoderImpl.cpp ./jukebox/Decoders/MIDIDecoderImpl.cpp \
-./jukebox/Decoders/WaveDecoderImpl.cpp ./jukebox/Decoders/VorbisDecoderImpl.cpp ./jukebox/Decoders/MP3DecoderImpl.cpp ./jukebox/Decoders/FLACDecoderImpl.cpp \
+./jukebox/Decoders/WavePCMDecoderImpl.cpp ./jukebox/Decoders/WaveFloatDecoderImpl.cpp ./jukebox/Decoders/VorbisDecoderImpl.cpp ./jukebox/Decoders/MP3DecoderImpl.cpp ./jukebox/Decoders/FLACDecoderImpl.cpp \
 ./win/Sound/DirectSoundBuffer.cpp ./win/Mixer/WindowsMixer.cpp \
 ./jukebox_test/demo/test.cpp ./jukebox_test/demo/play.cpp ./jukebox_test/demo/loop.cpp
 
