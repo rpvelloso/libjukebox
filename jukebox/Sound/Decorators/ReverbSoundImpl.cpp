@@ -18,6 +18,7 @@
 #include <functional>
 #include <unordered_map>
 #include <vector>
+#include <iostream>
 #include "jukebox/Sound/SoundTransformation.h"
 
 namespace jukebox {
@@ -34,7 +35,7 @@ public:
 
 		reverb = reverbFunc[soundFile.getBitsPerSample()];
 
-		float delayInterval = 1.5/numDelays;
+		float delayInterval = 1.0/numDelays;
 		for (auto &delayLine: delayBuffer) {
 			delayLine.resize(
 				delay * delayInterval *
@@ -60,15 +61,19 @@ private:
 	static void _reverb(Reverb& self, void *buf, int pos, int len) {
 		T *beginIt = reinterpret_cast<T *>(buf);
 		T *endIt = beginIt + (len/sizeof(T));
-		int offset = self.soundFile.silenceLevel();
+		auto offset = self.soundFile.silenceLevel();
 
 		std::for_each(beginIt, endIt, [&self, offset](T &sample) {
 			float signedSample = sample - offset;
+
 			float delaySum = 0;
+
 			for (int i = 0; i < self.numDelays; ++i)
 				delaySum += self.delayBuffer[i][self.bufPos[i]]; // sum all delay lines
-			signedSample += delaySum * self.decay; // attenuate full echo
-			signedSample /= (1 + self.numDelays*self.decay); // weighted average
+
+			signedSample =
+				(signedSample + (delaySum*self.decay)) / // add attenuated echos
+				((float)1.0 + (float)(self.numDelays)*self.decay); // weighted average
 
 			sample = signedSample + offset;
 
