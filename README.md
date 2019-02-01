@@ -28,6 +28,14 @@ for installing [FluidSynth](https://github.com/FluidSynth/fluidsynth/wiki/Buildi
 
 (TODO: building without MIDI file support...)
 
+# Simple Usage
+```cpp
+auto soundFile = jukebox::factory::loadFile("audio.mp3"); // open file
+auto sound = jukebox::factory::makeSound(soundFile); // create sound
+sound.play(); // start playing
+std::cout << "hit enter to exit..." << std::endl;
+std::cin.get();
+```
 # Example
 ```cpp
 #include <iostream>
