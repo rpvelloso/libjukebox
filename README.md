@@ -2,7 +2,7 @@
 Plataform independent (windows/linux) C++ audio playback library (uses DirectSound under Windows and Alsa under Linux).
 
 # Supported file formats:
-- RAW Wave;
+- RAW Wave (PCM and Float format);
 - MP3 (using [minimp3](https://github.com/lieff/minimp3));
 - Ogg Vorbis (using [stb_vorbis](https://github.com/nothings/stb));
 - MIDI (using [FluiSynth](https://github.com/FluidSynth/fluidsynth) + [MidiFile](https://github.com/craigsapp/midifile));
@@ -12,7 +12,7 @@ Plataform independent (windows/linux) C++ audio playback library (uses DirectSou
 # Effects
 - Fade in/out;
 - Fade on stop;
-- Simple reverberation (one delay with decay parameter);
+- Simple reverberation (multiple delay lines with decay parameter);
 - Extensible architecture allows implementation of custom effects.
 
 # Building
