@@ -24,26 +24,34 @@ namespace jukebox {
 
 class Reverb : public SoundTransformation {
 public:
-	Reverb(SoundFile &sf, float delay, float decay) :
+	Reverb(SoundFile &sf, float delay, float decay, int numDelays) :
 		SoundTransformation(sf),
+		numDelays(numDelays),
+		delayBuffer(numDelays),
+		bufPos(numDelays, 0),
 		delay(delay),
 		decay(decay) {
 
 		reverb = reverbFunc[soundFile.getBitsPerSample()];
 
-		echoBuffer.resize(
-			delay *
-			(float)(sf.getSampleRate() *
-			(sf.getBitsPerSample() >> 3) *
-			sf.getNumChannels()));
-	};
+		float delayInterval = 1.5/numDelays;
+		for (auto &delayLine: delayBuffer) {
+			delayLine.resize(
+				delay * delayInterval *
+				(float)(sf.getSampleRate() *
+				(sf.getBitsPerSample() >> 3) *
+				sf.getNumChannels()));
+			delayInterval += 0.5;
+		}
+};
 
 	void operator()(void *buf, int pos, int len) override {
 		reverb(*this, buf, pos, len);
 	};
 private:
-	std::vector<int32_t> echoBuffer;
-	size_t bufPos = 0;
+	int numDelays;
+	std::vector<std::vector<float> > delayBuffer;
+	std::vector<size_t> bufPos;
 	std::function<void(Reverb&, void *, int, int)> reverb;
 	static std::unordered_map<short, decltype(reverb)> reverbFunc;
 	float delay, decay;
@@ -55,13 +63,19 @@ private:
 		int offset = self.soundFile.silenceLevel();
 
 		std::for_each(beginIt, endIt, [&self, offset](T &sample) {
-			int32_t signedSample = sample - offset;
-			signedSample =
-					(float)((float)signedSample * (1.0 - self.decay)) + // the original sound (some range sacrificed for the echo)
-					((float)(self.echoBuffer[self.bufPos] * self.decay)*0.5); // the echo attenuated
-			self.echoBuffer[self.bufPos] = signedSample; // save the echo for the next time round
+			float signedSample = sample - offset;
+			float delaySum = 0;
+			for (int i = 0; i < self.numDelays; ++i)
+				delaySum += self.delayBuffer[i][self.bufPos[i]]; // sum all delay lines
+			signedSample += delaySum * self.decay; // attenuate full echo
+			signedSample /= (1 + self.numDelays*self.decay); // weighted average
+
 			sample = signedSample + offset;
-			self.bufPos = (self.bufPos + 1) % self.echoBuffer.size(); // circular echo/delay buffer
+
+			for (int i = 0; i < self.numDelays; ++i) {
+				self.delayBuffer[i][self.bufPos[i]] = signedSample; // save the echo for the next time round
+				self.bufPos[i] = (self.bufPos[i] + 1) % self.delayBuffer[i].size(); // circular echo/delay buffer
+			}
 		});
 	};
 };
@@ -72,11 +86,11 @@ std::unordered_map<short, decltype(Reverb::reverb)> Reverb::reverbFunc = {
 		{32, &Reverb::_reverb<int32_t>}
 };
 
-ReverbSoundImpl::ReverbSoundImpl(SoundImpl *impl, float delay, float decay) :
+ReverbSoundImpl::ReverbSoundImpl(SoundImpl *impl, float delay, float decay, int numDelays) :
 		SoundImpl(impl->getSoundFile()),
 		impl(impl) {
 
-	impl->setTransformationCallback(Reverb(impl->getSoundFile(), delay, decay));
+	impl->setTransformationCallback(Reverb(impl->getSoundFile(), delay, decay, numDelays));
 }
 
 void ReverbSoundImpl::play() {

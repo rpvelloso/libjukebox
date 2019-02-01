@@ -22,7 +22,7 @@ namespace jukebox {
 
 class ReverbSoundImpl: public SoundImpl {
 public:
-	ReverbSoundImpl(SoundImpl *, float delay = 0.5, float decay = 0.5);
+	ReverbSoundImpl(SoundImpl *, float delay, float decay, int numDelays);
 	virtual ~ReverbSoundImpl() = default;
 	void play() override;
 	void stop() override;

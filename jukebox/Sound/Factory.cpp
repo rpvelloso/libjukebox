@@ -24,9 +24,9 @@ Sound makeFadedSound(SoundFile &file, int fadeInSecs, int fadeOutSecs)
     return Sound(new FadedSoundImpl(makeSoundImpl(file), fadeInSecs, fadeOutSecs));
 }
 
-Sound makeReverbSound(SoundFile &file, float delay, float decay)
+Sound makeReverbSound(SoundFile &file, float delay, float decay, int numDelays)
 {
-    return Sound(new ReverbSoundImpl(makeSoundImpl(file), delay, decay));
+    return Sound(new ReverbSoundImpl(makeSoundImpl(file), delay, decay, numDelays));
 }
 
 // TODO: add more extensions and/or a way to autodetect the file format
