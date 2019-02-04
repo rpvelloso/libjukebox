@@ -17,14 +17,14 @@
 
 namespace jukebox {
 
-SoundImpl::SoundImpl(SoundFile &file) :
-		soundFile(file),
+SoundImpl::SoundImpl(Decoder *decoder) :
+		decoder(decoder),
 		transformation([](void *, int, int){}),
 		onStop([](void){}) {
 }
 
-SoundFile& SoundImpl::getSoundFile() {
-	return soundFile;
+Decoder& SoundImpl::getDecoder() {
+	return *decoder;
 }
 
 int SoundImpl::getPosition() const {

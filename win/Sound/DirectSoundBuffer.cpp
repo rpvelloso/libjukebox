@@ -51,10 +51,9 @@ void ReleaseBuffer(LPDIRECTSOUNDBUFFER pDsb) {
 		pDsb->Release();
 }
 
-DirectSoundBuffer::DirectSoundBuffer(SoundFile &file) :
-	SoundImpl(file),
-	pDsb(nullptr, ReleaseBuffer),
-	decoder(file.makeDecoder()) {
+DirectSoundBuffer::DirectSoundBuffer(Decoder *decoder) :
+	SoundImpl(decoder),
+	pDsb(nullptr, ReleaseBuffer) {
 
 	prepare();
 }
@@ -290,11 +289,11 @@ void DirectSoundBuffer::rewind() {
 namespace factory {
 
 Sound makeSound(SoundFile& file) {
-	return Sound(new DirectSoundBuffer(file));
+	return Sound(new DirectSoundBuffer(file.makeDecoder()));
 }
 
 SoundImpl *makeSoundImpl(SoundFile& file) {
-	return new DirectSoundBuffer(file);
+	return new DirectSoundBuffer(file.makeDecoder());
 }
 }
 

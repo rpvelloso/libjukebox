@@ -18,26 +18,26 @@
 
 #include <memory>
 #include <functional>
-#include "jukebox/FileFormats/SoundFile.h"
+#include "jukebox/Decoders/Decoder.h"
 
 namespace jukebox {
 
 class SoundImpl {
 public:
-	SoundImpl(SoundFile &file);
+	SoundImpl(Decoder *);
 	virtual ~SoundImpl() = default;
 	virtual void play() = 0;
 	virtual void stop() = 0;
 	virtual int getVolume() const = 0;
 	virtual void setVolume(int) = 0;
 	virtual void loop(bool) = 0;
-	SoundFile &getSoundFile();
+	Decoder &getDecoder();
 	int getPosition() const;
 	void setTransformationCallback(std::function<void(void *, int, int)>);
 	virtual void setOnStopCallback(std::function<void(void)>);
 protected:
 	int position = 0;
-	SoundFile &soundFile;
+	std::unique_ptr<Decoder> decoder;
 	std::function<void (void *, int, int)> transformation;
 	std::function<void (void)> onStop;
 };

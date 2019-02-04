@@ -80,7 +80,7 @@ std::unordered_map<short, decltype(FadeOutOnStop::fadeOut)> FadeOutOnStop::fadeO
 };
 
 FadeOnStopSoundImpl::FadeOnStopSoundImpl(SoundImpl *impl, int fadeOutSecs) :
-		SoundImpl(impl->getSoundFile()),
+		SoundImpl(impl->getDecoder()),
 		impl(impl),
 		fadeOutSecs(fadeOutSecs) {
 }

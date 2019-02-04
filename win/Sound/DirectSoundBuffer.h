@@ -30,7 +30,7 @@ extern void ReleaseBuffer(LPDIRECTSOUNDBUFFER);
 
 class DirectSoundBuffer: public SoundImpl {
 public:
-	DirectSoundBuffer(SoundFile &file);
+	DirectSoundBuffer(Decoder *);
 	~DirectSoundBuffer();
 	void play() override;
 	void stop() override;
@@ -42,7 +42,6 @@ private:
 	DSBUFFERDESC dsbdesc;
 	std::unique_ptr<struct IDirectSoundBuffer, decltype(&ReleaseBuffer)> pDsb;
 	std::thread loadBufferThread;
-	std::unique_ptr<Decoder> decoder;
 
 	bool looping = false;
 	void prepare();
