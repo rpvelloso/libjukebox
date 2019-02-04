@@ -102,7 +102,7 @@ bool DirectSoundBuffer::playing() {
 }
 
 bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
-	if (position >= soundFile.getDataSize())
+	if (position >= decoder->getDataSize())
 		return false;
 
 	// fill secondary buffer with wav/sound
@@ -126,7 +126,7 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 
 	position += len;
 	if (len < bufLen)
-		memset((char *)bufAddr+len, soundFile.silenceLevel(), bufLen-len);
+		memset((char *)bufAddr+len, decoder->silenceLevel(), bufLen-len);
 
 	pDsb->Unlock(
 		bufAddr,	// Address of lock start.
@@ -134,7 +134,7 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 		NULL,		// No wraparound portion.
 		0);			// No wraparound size.
 
-	return position < soundFile.getDataSize();
+	return position < decoder->getDataSize();
 }
 
 class HandleGuard {
@@ -227,9 +227,9 @@ void DirectSoundBuffer::prepare() {
 	memset((void *)&wfx, 0, sizeof(wfx));
 	memset((void *)&dsbdesc, 0, sizeof(dsbdesc));
 
-	wfx.wBitsPerSample = soundFile.getBitsPerSample();
-	wfx.nChannels = soundFile.getNumChannels();
-	wfx.nSamplesPerSec = soundFile.getSampleRate();
+	wfx.wBitsPerSample = decoder->getBitsPerSample();
+	wfx.nChannels = decoder->getNumChannels();
+	wfx.nSamplesPerSec = decoder->getSampleRate();
 	wfx.wFormatTag = WAVE_FORMAT_PCM;
 	wfx.nBlockAlign = (wfx.wBitsPerSample/8)*wfx.nChannels;
 	wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;

@@ -29,4 +29,24 @@ int Decoder::getSamples(char* buf, int pos, int len) {
 	return impl->getSamples(buf, pos, len);
 }
 
+short Decoder::getNumChannels() const {
+	return impl->getNumChannels();
+}
+
+int Decoder::getSampleRate() const {
+	return impl->getSampleRate();
+}
+
+short Decoder::getBitsPerSample() const {
+	return impl->getBitsPerSample();
+}
+
+int Decoder::getDataSize() const {
+	return impl->getDataSize();
+}
+
+int Decoder::silenceLevel() const {
+	return impl->silenceLevel();
+}
+
 } /* namespace socks */

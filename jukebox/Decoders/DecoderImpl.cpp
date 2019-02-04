@@ -19,11 +19,32 @@
 namespace jukebox {
 
 DecoderImpl::DecoderImpl(SoundFileImpl& fileImpl) :
+	fileImpl(fileImpl),
 	blockSize(fileImpl.getNumChannels() * fileImpl.getBitsPerSample()/8) {
 }
+
 int DecoderImpl::getBlockSize() const {
 	return blockSize;
 }
 
+short DecoderImpl::getNumChannels() const {
+	return fileImpl.getNumChannels();
 }
 
+int DecoderImpl::getSampleRate() const {
+	return fileImpl.getSampleRate();
+}
+
+short DecoderImpl::getBitsPerSample() const {
+	return fileImpl.getBitsPerSample();
+}
+
+int DecoderImpl::getDataSize() const {
+	return fileImpl.getDataSize();
+}
+
+int DecoderImpl::silenceLevel() const {
+	return fileImpl.silenceLevel();
+}
+
+}

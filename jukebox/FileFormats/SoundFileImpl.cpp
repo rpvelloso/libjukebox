@@ -25,6 +25,8 @@ int SoundFileImpl::getDataSize() const {
 	return dataSize;
 };
 
+int jukebox::SoundFileImpl::silenceLevel() const {
+	return getBitsPerSample() == 8?128:0;
 }
 
-
+}

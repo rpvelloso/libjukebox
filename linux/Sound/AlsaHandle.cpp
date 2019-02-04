@@ -86,7 +86,7 @@ AlsaHandle::AlsaHandle(SoundFile &file) :
 	config();
 	prepare();
 
-	applyVolume = applyVolumeFunc[soundFile.getBitsPerSample()];
+	applyVolume = applyVolumeFunc[decoder->getBitsPerSample()];
 }
 
 void AlsaHandle::play() {
@@ -97,12 +97,12 @@ void AlsaHandle::play() {
 			playing, true,
 			onStop);
 
-		size_t frameSize = (soundFile.getBitsPerSample()/8) * soundFile.getNumChannels();
+		size_t frameSize = (decoder->getBitsPerSample()/8) * decoder->getNumChannels();
 		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[minFrames*frameSize]);
 
 		do {
 			position = 0;
-			size_t numFrames = soundFile.getDataSize() / frameSize;
+			size_t numFrames = decoder->getDataSize() / frameSize;
 
 			while (numFrames > 0 && playing) {
 				auto frames = std::min(numFrames, minFrames);
@@ -136,7 +136,7 @@ std::unordered_map<short, decltype(AlsaHandle::applyVolume)> AlsaHandle::applyVo
 template<typename T>
 void AlsaHandle::_applyVolume(AlsaHandle &self, void *buf, int position, int len) {
 
-	int offset = self.soundFile.silenceLevel();
+	int offset = self.decoder->silenceLevel();
 	T *beginIt = reinterpret_cast<T *>(buf);
 	T *endIt = beginIt + (len/sizeof(T));
 
@@ -162,12 +162,12 @@ AlsaHandle::~AlsaHandle() {
 void AlsaHandle::config() {
   auto res = snd_pcm_set_params(
     handlePtr.get(),
-    soundFile.getBitsPerSample() == 32 ? SND_PCM_FORMAT_S32_LE :
-    soundFile.getBitsPerSample() == 16 ? SND_PCM_FORMAT_S16_LE :
+	decoder->getBitsPerSample() == 32 ? SND_PCM_FORMAT_S32_LE :
+	decoder->getBitsPerSample() == 16 ? SND_PCM_FORMAT_S16_LE :
 	SND_PCM_FORMAT_U8,
 	SND_PCM_ACCESS_RW_INTERLEAVED,
-    soundFile.getNumChannels(),
-    soundFile.getSampleRate(),
+	decoder->getNumChannels(),
+	decoder->getSampleRate(),
     1,
     500000);
   if (res != 0)

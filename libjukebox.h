@@ -54,8 +54,13 @@ public:
  virtual ~DecoderImpl() = default;
  virtual int getSamples(char *buf, int pos, int len) = 0;
  int getBlockSize() const;
-
+ short getNumChannels() const;
+ int getSampleRate() const;
+ short getBitsPerSample() const;
+ int getDataSize() const;
+ int silenceLevel() const;
 private:
+ SoundFileImpl &fileImpl;
  int blockSize;
 };
 
@@ -66,6 +71,11 @@ class Decoder {
 public:
  Decoder(DecoderImpl * impl);
  int getSamples(char *buf, int pos, int len);
+ short getNumChannels() const;
+ int getSampleRate() const;
+ short getBitsPerSample() const;
+ int getDataSize() const;
+ int silenceLevel() const;
 private:
  std::unique_ptr<DecoderImpl> impl;
 };
@@ -82,6 +92,7 @@ public:
  virtual short getBitsPerSample() const = 0;
  virtual const std::string &getFilename() const = 0;
  virtual std::unique_ptr<Decoder> makeDecoder() = 0;
+ virtual int silenceLevel() const;
  virtual void truncAt(int pos);
  virtual int getDataSize() const;
 protected:

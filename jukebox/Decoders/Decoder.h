@@ -25,6 +25,11 @@ class Decoder {
 public:
 	Decoder(DecoderImpl * impl);
 	int getSamples(char *buf, int pos, int len);
+	short getNumChannels() const;
+	int getSampleRate() const;
+	short getBitsPerSample() const;
+	int getDataSize() const;
+	int silenceLevel() const;
 private:
 	std::unique_ptr<DecoderImpl> impl;
 };
