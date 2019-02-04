@@ -104,8 +104,6 @@ void AlsaHandle::play() {
 			size_t numFrames = decoder->getDataSize() / frameSize;
 
 			while (numFrames > 0 && playing) {
-				size_t numFrames = decoder->getDataSize() / frameSize;
-
 				auto frames = std::min(numFrames, minFrames);
 				auto bytes = decoder->getSamples(reinterpret_cast<char *>(volBuf.get()), position, frames*frameSize);
 
