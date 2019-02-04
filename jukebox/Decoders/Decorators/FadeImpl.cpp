@@ -28,6 +28,36 @@ std::unordered_map<short, decltype(FadeImpl::fadeOut)> FadeImpl::fadeOutFunc = {
 		{32, &FadeImpl::_fadeOut<int32_t>},
 };
 
+
+template<typename T>
+void FadeImpl::_fadeIn(FadeImpl &self, void* buf, int pos, int len) {
+	T *beginIt = reinterpret_cast<T *>(buf);
+	T *endIt = beginIt + (len/sizeof(T));
+
+	int offset = self.silenceLevel();
+
+	std::for_each(beginIt, endIt, [&self, offset, &pos](T &sample){
+		sample = (T)((((float)(sample - offset) * (float)pos)/(float)self.fadeInEndPos) + offset);
+		++pos;
+	});
+}
+
+template<typename T>
+void FadeImpl::_fadeOut(FadeImpl &self, void* buf, int pos, int len) {
+	T *beginIt = reinterpret_cast<T *>(buf);
+	T *endIt = beginIt + (len/sizeof(T));
+
+	auto n = self.getDataSize();
+	auto fadeLen = n - self.fadeOutStartPos;
+
+	int offset = self.silenceLevel();
+
+	std::for_each(beginIt, endIt, [n, fadeLen, offset, &pos](T &sample){
+		sample = (T)((((float)(sample - offset) * (float)(n - pos))/(float)(fadeLen)) + offset);
+		++pos;
+	});
+}
+
 FadeImpl::FadeImpl(
 		DecoderImpl *impl,
 		int fadeInSecs,

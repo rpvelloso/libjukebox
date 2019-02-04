@@ -39,33 +39,10 @@ private:
 	static std::unordered_map<short, decltype(fadeOut)> fadeOutFunc;
 
 	template<typename T>
-	static void _fadeIn(FadeImpl &self, void* buf, int pos, int len) {
-		T *beginIt = reinterpret_cast<T *>(buf);
-		T *endIt = beginIt + (len/sizeof(T));
-
-		int offset = self.silenceLevel();
-
-		std::for_each(beginIt, endIt, [&self, offset, &pos](T &sample){
-			sample = (T)((((float)(sample - offset) * (float)pos)/(float)self.fadeInEndPos) + offset);
-			++pos;
-		});
-	}
+	static void _fadeIn(FadeImpl &self, void* buf, int pos, int len);
 
 	template<typename T>
-	static void _fadeOut(FadeImpl &self, void* buf, int pos, int len) {
-		T *beginIt = reinterpret_cast<T *>(buf);
-		T *endIt = beginIt + (len/sizeof(T));
-
-		auto n = self.getDataSize();
-		auto fadeLen = n - self.fadeOutStartPos;
-
-		int offset = self.silenceLevel();
-
-		std::for_each(beginIt, endIt, [n, fadeLen, offset, &pos](T &sample){
-			sample = (T)((((float)(sample - offset) * (float)(n - pos))/(float)(fadeLen)) + offset);
-			++pos;
-		});
-	}
+	static void _fadeOut(FadeImpl &self, void* buf, int pos, int len);
 };
 
 } /* namespace jukebox */

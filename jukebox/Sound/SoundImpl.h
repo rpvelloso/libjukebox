@@ -31,14 +31,12 @@ public:
 	virtual int getVolume() const = 0;
 	virtual void setVolume(int) = 0;
 	virtual void loop(bool) = 0;
-	Decoder &getDecoder();
 	int getPosition() const;
-	void setTransformationCallback(std::function<void(void *, int, int)>);
 	virtual void setOnStopCallback(std::function<void(void)>);
+	Decoder &getDecoder();
 protected:
 	int position = 0;
 	std::unique_ptr<Decoder> decoder;
-	std::function<void (void *, int, int)> transformation;
 	std::function<void (void)> onStop;
 };
 

@@ -19,24 +19,19 @@ namespace jukebox {
 
 SoundImpl::SoundImpl(Decoder *decoder) :
 		decoder(decoder),
-		transformation([](void *, int, int){}),
 		onStop([](void){}) {
-}
-
-Decoder& SoundImpl::getDecoder() {
-	return *decoder;
 }
 
 int SoundImpl::getPosition() const {
 	return position;
 }
 
-void SoundImpl::setTransformationCallback(std::function<void(void *, int, int)> tr) {
-	transformation = tr;
-}
-
 void SoundImpl::setOnStopCallback(std::function<void(void)> os) {
 	onStop = os;
+}
+
+Decoder& SoundImpl::getDecoder() {
+	return *decoder;
 }
 
 } /* namespace jukebox */

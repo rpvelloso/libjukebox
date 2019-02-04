@@ -30,6 +30,11 @@ public:
 	short getBitsPerSample() const;
 	int getDataSize() const;
 	int silenceLevel() const;
+
+	template<typename T, typename ...Params> // T's base class must derive from DecoderImpl
+	void wrapDecoder(Params&&... params) { // decorates current decoder
+		impl.reset(new T(impl.release(), std::forward<Params>(params)...));
+	}
 private:
 	std::unique_ptr<DecoderImpl> impl;
 };

@@ -4,6 +4,7 @@
 
 #include "../Decoders/Decorators/FadeImpl.h"
 #include "../Decoders/Decorators/ReverbImpl.h"
+#include "jukebox/Sound/Decorators/FadeOnStopSoundImpl.h"
 #include "jukebox/FileFormats/MP3FileImpl.h"
 #include "jukebox/FileFormats/VorbisFileImpl.h"
 #include "jukebox/FileFormats/WaveFileImpl.h"
@@ -18,10 +19,13 @@ Sound makeSound(SoundFile &file) {
 	return Sound(makeSoundImpl(new Decoder(file.makeDecoder())));
 }
 
-/*Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs)
+Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs)
 {
-    return Sound(new FadeOnStopSoundImpl(makeSoundImpl(file), fadeOutSecs));
-}*/
+    return Sound(
+    	new FadeOnStopSoundImpl(
+    		makeSoundImpl(
+    			new Decoder(file.makeDecoder())), fadeOutSecs));
+}
 
 Sound makeFadedSound(SoundFile &file, int fadeInSecs, int fadeOutSecs)
 {

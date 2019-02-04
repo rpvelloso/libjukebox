@@ -25,20 +25,20 @@
 
 namespace jukebox {
 
-class FadeOnStopSoundImpl: public DecoderImpl {
+class FadeOnStopImpl: public DecoderImpl {
 public:
-	FadeOnStopSoundImpl(DecoderImpl *, int, int);
-	virtual ~FadeOnStopSoundImpl() = default;
+	FadeOnStopImpl(DecoderImpl *, int, int);
+	virtual ~FadeOnStopImpl() = default;
 	int getSamples(char *buf, int pos, int len) override;
 private:
 	std::unique_ptr<DecoderImpl> impl;
 	int fadeOutSecs, fadeOutStartPos;
 	bool fade = false;
-	std::function<void(FadeOnStopSoundImpl&, void *, int, int)> fadeOut;
+	std::function<void(FadeOnStopImpl&, void *, int, int)> fadeOut;
 	static std::unordered_map<short, decltype(fadeOut)> fadeOutFunc;
 
 	template<typename T>
-	static void _fadeOut(FadeOnStopSoundImpl& self, void *buf, int pos, int len) {
+	static void _fadeOut(FadeOnStopImpl& self, void *buf, int pos, int len) {
 		if (!self.fade)
 			return;
 

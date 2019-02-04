@@ -13,18 +13,19 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "FadeOnStopSoundImpl.h"
+#include "FadeOnStopImpl.h"
+
 #include "jukebox/FileFormats/SoundFileImpl.h"
 
 namespace jukebox {
 
-std::unordered_map<short, decltype(FadeOnStopSoundImpl::fadeOut)> FadeOnStopSoundImpl::fadeOutFunc = {
-		{8 , &FadeOnStopSoundImpl::_fadeOut<uint8_t>},
-		{16, &FadeOnStopSoundImpl::_fadeOut<int16_t>},
-		{32, &FadeOnStopSoundImpl::_fadeOut<int32_t>}
+std::unordered_map<short, decltype(FadeOnStopImpl::fadeOut)> FadeOnStopImpl::fadeOutFunc = {
+		{8 , &FadeOnStopImpl::_fadeOut<uint8_t>},
+		{16, &FadeOnStopImpl::_fadeOut<int16_t>},
+		{32, &FadeOnStopImpl::_fadeOut<int32_t>}
 };
 
-FadeOnStopSoundImpl::FadeOnStopSoundImpl(DecoderImpl *impl, int fadeOutSecs, int fadeOutStartPos) :
+FadeOnStopImpl::FadeOnStopImpl(DecoderImpl *impl, int fadeOutSecs, int fadeOutStartPos) :
 		DecoderImpl(impl->getFileImpl()),
 		impl(impl),
 		fadeOutSecs(fadeOutSecs),
@@ -50,7 +51,7 @@ FadeOnStopSoundImpl::FadeOnStopSoundImpl(DecoderImpl *impl, int fadeOutSecs, int
 		impl->setTransformationCallback(FadeOutOnStop(impl->getSoundFile(), fadeOutSecs, impl->getPosition()));
 }*/
 
-int FadeOnStopSoundImpl::getSamples(char* buf, int pos, int len) {
+int FadeOnStopImpl::getSamples(char* buf, int pos, int len) {
 	auto ret = impl->getSamples(buf, pos, len);
 
 	if (pos >= fadeOutStartPos)
