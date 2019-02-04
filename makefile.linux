@@ -6,7 +6,7 @@ LDFLAGS = -lasound -lpthread -lfluidsynth
 objects = ./jukebox/Sound/Sound.o ./jukebox/Sound/SoundImpl.o ./jukebox/Sound/Factory.o \
 ./jukebox/FileFormats/SoundFile.o ./jukebox/FileFormats/SoundFileImpl.o ./jukebox/FileFormats/WaveFileImpl.o ./jukebox/FileFormats/VorbisFileImpl.o \
 ./jukebox/FileFormats/MP3FileImpl.o ./jukebox/FileFormats/MIDIFileImpl.o ./jukebox/FileFormats/FLACFileImpl.o \
-./jukebox/Mixer/Mixer.o ./jukebox/Decoders/Decorators/FadeOnStopSoundImpl.o ./jukebox/Sound/Decorators/FadeImpl.o ./jukebox/Sound/Decorators/ReverbImpl.o \
+./jukebox/Mixer/Mixer.o ./jukebox/Decoders/Decorators/FadeOnStopSoundImpl.o ./jukebox/Decoders/Decorators/FadeImpl.o ./jukebox/Decoders/Decorators/ReverbImpl.o \
 ./jukebox/Decoders/Decoder.o ./jukebox/Decoders/DecoderImpl.o ./jukebox/Decoders/WavePCMDecoderImpl.o  ./jukebox/Decoders/WaveFloatDecoderImpl.o ./jukebox/Decoders/VorbisDecoderImpl.o ./jukebox/Decoders/MP3DecoderImpl.o \
 ./jukebox/Decoders/MIDIDecoderImpl.o ./jukebox/Decoders/FLACDecoderImpl.o \
 ./linux/Sound/AlsaHandle.o ./linux/Mixer/AlsaMixer.o
@@ -14,7 +14,7 @@ objects = ./jukebox/Sound/Sound.o ./jukebox/Sound/SoundImpl.o ./jukebox/Sound/Fa
 SRCS = ./jukebox/Sound/Sound.cpp ./jukebox/Sound/SoundImpl.cpp ./jukebox/Sound/Factory.cpp \
 ./jukebox/FileFormats/SoundFile.cpp ./jukebox/FileFormats/SoundFileImpl.cpp ./jukebox/FileFormats/WaveFileImpl.cpp ./jukebox/FileFormats/VorbisFileImpl.cpp \
 ./jukebox/FileFormats/MP3FileImpl.cpp ./jukebox/FileFormats/MIDIFileImpl.cpp ./jukebox/FileFormats/FLACFileImpl.cpp \
-./jukebox/Mixer/Mixer.cpp ./jukebox/Decoders/Decorators/FadeOnStopSoundImpl.cpp ./jukebox/Sound/Decorators/FadeImpl.cpp ./jukebox/Sound/Decorators/ReverbImpl.cpp \
+./jukebox/Mixer/Mixer.cpp ./jukebox/Decoders/Decorators/FadeOnStopSoundImpl.cpp ./jukebox/Decoders/Decorators/FadeImpl.cpp ./jukebox/Decoders/Decorators/ReverbImpl.cpp \
 ./jukebox/Decoders/Decoder.cpp ./jukebox/Decoders/DecoderImpl.cpp ./jukebox/Decoders/WavePCMDecoderImpl.cpp ./jukebox/Decoders/WaveFloatDecoderImpl.cpp ./jukebox/Decoders/VorbisDecoderImpl.cpp ./jukebox/Decoders/MP3DecoderImpl.cpp \
 ./jukebox/Decoders/MIDIDecoderImpl.cpp ./jukebox/Decoders/FLACDecoderImpl.cpp \
 ./linux/Sound/AlsaHandle.cpp ./linux/Mixer/AlsaMixer.cpp \
@@ -41,7 +41,7 @@ DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
 $(shell mkdir -p $(DEPDIR)/jukebox >/dev/null)
 $(shell mkdir -p $(DEPDIR)/jukebox/Sound >/dev/null)
-$(shell mkdir -p $(DEPDIR)/jukebox/Sound/Decorators >/dev/null)
+$(shell mkdir -p $(DEPDIR)/jukebox/Decoders/Decorators >/dev/null)
 $(shell mkdir -p $(DEPDIR)/jukebox/Decoders >/dev/null)      
 $(shell mkdir -p $(DEPDIR)/jukebox/FileFormats >/dev/null)
 $(shell mkdir -p $(DEPDIR)/jukebox/Mixer >/dev/null)
