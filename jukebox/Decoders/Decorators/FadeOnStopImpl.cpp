@@ -54,8 +54,10 @@ FadeOnStopImpl::FadeOnStopImpl(DecoderImpl *impl, int fadeOutSecs, int fadeOutSt
 int FadeOnStopImpl::getSamples(char* buf, int pos, int len) {
 	auto ret = impl->getSamples(buf, pos, len);
 
-	if (pos >= fadeOutStartPos)
-		fadeOut(*this, buf, pos, len);
+	if (ret > 0) {
+		if (pos >= fadeOutStartPos)
+			fadeOut(*this, buf, pos, len);
+	}
 
 	return ret;
 }

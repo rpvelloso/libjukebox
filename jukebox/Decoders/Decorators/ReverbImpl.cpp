@@ -77,7 +77,8 @@ ReverbImpl::ReverbImpl(DecoderImpl *impl, float delay, float decay, size_t numDe
 int ReverbImpl::getSamples(char* buf, int pos, int len) {
 	auto ret = impl->getSamples(buf, pos, len);
 
-	reverb(*this, buf, pos, len);
+	if (ret > 0)
+		reverb(*this, buf, pos, len);
 
 	return ret;
 }

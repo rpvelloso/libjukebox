@@ -26,6 +26,12 @@ int Decoder::getSamples(char* buf, int pos, int len) {
 	if (pos % impl->getBlockSize() != 0)
 		throw std::runtime_error("invalid stream position, should be block aligned.");
 
+	if (pos >= impl->getDataSize())
+		return -1;
+
+	if (pos + len > impl->getDataSize())
+		len = impl->getDataSize() - pos;
+
 	return impl->getSamples(buf, pos, len);
 }
 

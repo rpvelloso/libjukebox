@@ -90,17 +90,18 @@ FadeImpl::FadeImpl(
 int jukebox::FadeImpl::getSamples(char* buf, int pos, int len) {
 	auto ret = impl->getSamples(buf, pos, len);
 
-	auto dataSize = getDataSize();
+	if (ret > 0) {
+		auto dataSize = getDataSize();
 
-	if (pos + len > dataSize)
-		len = (dataSize - pos);
+		if (pos + len > dataSize)
+			len = (dataSize - pos);
 
-	if (pos < fadeInEndPos)
-		fadeIn(*this, buf, pos, len);
+		if (pos < fadeInEndPos)
+			fadeIn(*this, buf, pos, len);
 
-	if (pos >= fadeOutStartPos)
-		fadeOut(*this, buf, pos, len);
-
+		if (pos >= fadeOutStartPos)
+			fadeOut(*this, buf, pos, len);
+	}
 	return ret;
 }
 
