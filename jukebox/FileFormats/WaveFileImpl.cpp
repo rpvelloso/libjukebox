@@ -53,12 +53,12 @@ short WaveFileImpl::getBitsPerSample() const {
 	return waveFormatHeader.bitsPerSample;
 }
 
-std::unique_ptr<Decoder> WaveFileImpl::makeDecoder() {
+DecoderImpl *WaveFileImpl::makeDecoder() {
 	switch (waveFormatHeader.audioFormat) {
 	case 1:
-		return std::make_unique<Decoder>(new WavePCMDecoderImpl(*this));
+		return new WavePCMDecoderImpl(*this);
 	case 3:
-		return std::make_unique<Decoder>(new WaveFloatDecoderImpl(*this));
+		return new WaveFloatDecoderImpl(*this);
 	default:
 		throw std::runtime_error(
 			"invalid audio format: " +

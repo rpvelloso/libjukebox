@@ -31,7 +31,7 @@ public:
 	int getSampleRate() const override;
 	short getBitsPerSample() const override;
 	const std::string &getFilename() const override;
-	std::unique_ptr<Decoder> makeDecoder() override;
+	DecoderImpl *makeDecoder() override;
 	uint8_t *getFileBuffer();
 	int getFileSize();
 private:

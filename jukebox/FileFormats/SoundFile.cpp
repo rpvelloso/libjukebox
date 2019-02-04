@@ -57,7 +57,7 @@ void jukebox::SoundFile::truncAt(int pos) {
 	impl->truncAt(pos);
 }
 
-std::unique_ptr<Decoder> SoundFile::makeDecoder() {
+DecoderImpl *SoundFile::makeDecoder() {
 	return impl->makeDecoder();
 }
 

@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
 		 *  using previously loaded sound file */
 		auto sound = argc == 5?
 			jukebox::factory::makeReverbSound(soundFile, std::stof(argv[2]), std::stof(argv[3]), std::stoi(argv[4])):
-		jukebox::factory::makeFadeOnStopSound(soundFile, 3); // 3 seconds of fade out
+		jukebox::factory::makeFadedSound(soundFile, 1, 1); // 3 seconds of fade out
 		sound.loop(true); // set looping
 
 		jukebox::Mixer mixer;

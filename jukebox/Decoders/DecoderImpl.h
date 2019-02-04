@@ -31,7 +31,8 @@ public:
 	short getBitsPerSample() const;
 	int getDataSize() const;
 	int silenceLevel() const;
-private:
+	SoundFileImpl &getFileImpl() const;
+protected:
 	SoundFileImpl &fileImpl;
 	int blockSize;
 };

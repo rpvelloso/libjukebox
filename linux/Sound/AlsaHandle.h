@@ -32,7 +32,7 @@ extern void closeAlsaHandle(snd_pcm_t *);
 
 class AlsaHandle: public SoundImpl {
 public:
-	AlsaHandle(SoundFile &file);
+	AlsaHandle(Decoder *decoder);
 	void play() override;
 	void stop() override;
 	int getVolume() const override;
@@ -45,7 +45,6 @@ private:
 	std::atomic<bool> playing;
 	int vol = 100;
 	bool looping = false;
-	std::unique_ptr<Decoder> decoder;
 	std::function<void(AlsaHandle &self, void *, int , int )> applyVolume;
 	static std::unordered_map<short, decltype(applyVolume)> applyVolumeFunc;
 

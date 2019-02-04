@@ -59,7 +59,8 @@ public:
  short getBitsPerSample() const;
  int getDataSize() const;
  int silenceLevel() const;
-private:
+ SoundFileImpl &getFileImpl() const;
+protected:
  SoundFileImpl &fileImpl;
  int blockSize;
 };
@@ -69,7 +70,7 @@ namespace jukebox {
 
 class Decoder {
 public:
- Decoder(DecoderImpl * impl);
+ Decoder(DecoderImpl *impl);
  int getSamples(char *buf, int pos, int len);
  short getNumChannels() const;
  int getSampleRate() const;
@@ -91,7 +92,7 @@ public:
  virtual int getSampleRate() const = 0;
  virtual short getBitsPerSample() const = 0;
  virtual const std::string &getFilename() const = 0;
- virtual std::unique_ptr<Decoder> makeDecoder() = 0;
+ virtual DecoderImpl *makeDecoder() = 0;
  virtual int silenceLevel() const;
  virtual void truncAt(int pos);
  virtual int getDataSize() const;
@@ -112,7 +113,7 @@ public:
  const std::string &getFilename() const;
  double getDuration() const;
  void truncAt(int pos);
- std::unique_ptr<Decoder> makeDecoder();
+ DecoderImpl *makeDecoder();
  int silenceLevel() const;
 private:
  std::unique_ptr<SoundFileImpl> impl;
@@ -130,7 +131,7 @@ public:
  int getSampleRate() const override;
  short getBitsPerSample() const override;
  const std::string &getFilename() const override;
- std::unique_ptr<Decoder> makeDecoder() override;
+ DecoderImpl *makeDecoder() override;
  uint8_t *getFileBuffer();
  int getFileSize();
 private:
@@ -146,20 +147,20 @@ namespace jukebox {
 
 class SoundImpl {
 public:
- SoundImpl(SoundFile &file);
+ SoundImpl(Decoder *);
  virtual ~SoundImpl() = default;
  virtual void play() = 0;
  virtual void stop() = 0;
  virtual int getVolume() const = 0;
  virtual void setVolume(int) = 0;
  virtual void loop(bool) = 0;
- SoundFile &getSoundFile();
+ Decoder &getDecoder();
  int getPosition() const;
  void setTransformationCallback(std::function<void(void *, int, int)>);
  virtual void setOnStopCallback(std::function<void(void)>);
 protected:
  int position = 0;
- SoundFile &soundFile;
+ std::unique_ptr<Decoder> decoder;
  std::function<void (void *, int, int)> transformation;
  std::function<void (void)> onStop;
 };
@@ -188,24 +189,12 @@ private:
 
 }
 namespace jukebox {
-
-class SoundTransformation {
-public:
- SoundTransformation(SoundFile &soundFile) : soundFile(soundFile) {};
- virtual ~SoundTransformation() = default;
- virtual void operator()(void *, int, int) = 0;
-protected:
- SoundFile &soundFile;
-};
-
-}
-namespace jukebox {
 namespace factory {
 
 Sound makeSound(SoundFile &file);
-SoundImpl *makeSoundImpl(SoundFile& file);
+SoundImpl *makeSoundImpl(Decoder *decoder);
 
-Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs);
+
 Sound makeFadedSound(SoundFile &file, int fadeInSecs, int fadeOutSecs);
 Sound makeReverbSound(SoundFile &file, float delay = 0.2, float decay = 0.5, int numDelays = 2);
 

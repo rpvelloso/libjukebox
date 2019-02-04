@@ -53,8 +53,8 @@ const std::string& MIDIFileImpl::getFilename() const {
 	return filename;
 }
 
-std::unique_ptr<Decoder> MIDIFileImpl::makeDecoder() {
-	return std::make_unique<Decoder>(new MIDIDecoderImpl(*this));
+DecoderImpl *MIDIFileImpl::makeDecoder() {
+	return new MIDIDecoderImpl(*this);
 }
 
 void MIDIFileImpl::load(std::istream& inp) {

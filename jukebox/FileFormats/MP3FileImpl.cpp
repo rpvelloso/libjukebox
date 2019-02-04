@@ -103,8 +103,8 @@ void MP3FileImpl::load(std::istream& inp) {
 	}
 }
 
-std::unique_ptr<Decoder> MP3FileImpl::makeDecoder() {
-	return std::make_unique<Decoder>(new MP3DecoderImpl(*this));
+DecoderImpl *MP3FileImpl::makeDecoder() {
+	return new MP3DecoderImpl(*this);
 }
 
 uint8_t* MP3FileImpl::getFileBuffer() {

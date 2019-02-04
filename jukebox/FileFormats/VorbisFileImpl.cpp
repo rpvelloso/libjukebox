@@ -69,8 +69,8 @@ void VorbisFileImpl::load(std::istream& inp) {
 	dataSize = stb_vorbis_stream_length_in_samples(vorbisHandler.get()) * numChannels * 2;
 }
 
-std::unique_ptr<Decoder> VorbisFileImpl::makeDecoder() {
-	return std::make_unique<Decoder>(new VorbisDecoderImpl(*this));
+DecoderImpl *VorbisFileImpl::makeDecoder() {
+	return new VorbisDecoderImpl(*this);
 }
 
 short VorbisFileImpl::getNumChannels() const {

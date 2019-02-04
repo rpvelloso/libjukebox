@@ -16,22 +16,33 @@
 #ifndef JUKEBOX_SOUND_REVERBSOUNDIMPL_H_
 #define JUKEBOX_SOUND_REVERBSOUNDIMPL_H_
 
-#include "../SoundImpl.h"
+#include <memory>
+#include <functional>
+#include <algorithm>
+#include <unordered_map>
+#include <vector>
+#include "../DecoderImpl.h"
 
 namespace jukebox {
 
-class ReverbSoundImpl: public SoundImpl {
+class ReverbSoundImpl: public DecoderImpl {
 public:
-	ReverbSoundImpl(SoundImpl *, float delay, float decay, int numDelays);
+	ReverbSoundImpl(DecoderImpl *impl, float delay, float decay, size_t numDelays);
 	virtual ~ReverbSoundImpl() = default;
-	void play() override;
-	void stop() override;
-	int getVolume() const override;
-	void setVolume(int) override;
-	void loop(bool) override;
-	void setOnStopCallback(std::function<void(void)>) override;
+	int getSamples(char *buf, int pos, int len) override;
 private:
-	std::unique_ptr<SoundImpl> impl;
+	std::unique_ptr<DecoderImpl> impl;
+	float delay, decay;
+	size_t numDelays;
+
+	std::vector<std::vector<float> > delayBuffer;
+	std::vector<size_t> bufPos;
+
+	std::function<void(ReverbSoundImpl &, void *, int, int)> reverb;
+	static std::unordered_map<short, decltype(reverb)> reverbFunc;
+
+	template<typename T>
+	static void _reverb(ReverbSoundImpl &self, void *buf, int pos, int len);
 };
 
 } /* namespace jukebox */

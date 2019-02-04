@@ -72,10 +72,9 @@ void closeAlsaHandle(snd_pcm_t *handle) {
 
 // AlsaHandle
 
-AlsaHandle::AlsaHandle(SoundFile &file) :
-	SoundImpl(file),
-	handlePtr(nullptr, closeAlsaHandle),
-	decoder(file.makeDecoder()) {
+AlsaHandle::AlsaHandle(Decoder *decoder) :
+	SoundImpl(decoder),
+	handlePtr(nullptr, closeAlsaHandle) {
 
 	snd_pcm_t *handle;
 	auto res = snd_pcm_open(&handle, ALSA_DEVICE, SND_PCM_STREAM_PLAYBACK, 0);
@@ -109,7 +108,6 @@ void AlsaHandle::play() {
 				auto bytes = decoder->getSamples(reinterpret_cast<char *>(volBuf.get()), position, frames*frameSize);
 
 				if (bytes > 0) {
-					transformation(volBuf.get(), position, bytes);
 					applyVolume(*this, volBuf.get(), position, bytes);
 
 					auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), bytes / frameSize);
@@ -196,12 +194,8 @@ void AlsaHandle::setVolume(int vol) {
 
 namespace factory {
 
-SoundImpl *makeSoundImpl(SoundFile &file) {
-	return new AlsaHandle(file);
-}
-
-Sound makeSound(SoundFile& file) {
-	return Sound(new AlsaHandle(file));
+SoundImpl *makeSoundImpl(Decoder *decoder) {
+	return new AlsaHandle(decoder);
 }
 
 }

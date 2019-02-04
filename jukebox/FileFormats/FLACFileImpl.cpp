@@ -59,8 +59,8 @@ const std::string& FLACFileImpl::getFilename() const {
 	return filename;
 }
 
-std::unique_ptr<Decoder> FLACFileImpl::makeDecoder() {
-	return std::make_unique<Decoder>(new FLACDecoderImpl(*this));
+DecoderImpl *FLACFileImpl::makeDecoder() {
+	return new FLACDecoderImpl(*this);
 }
 
 uint8_t* FLACFileImpl::getFileBuffer() {

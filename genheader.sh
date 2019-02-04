@@ -9,7 +9,6 @@ headers=(
 	'jukebox/FileFormats/MIDIFileImpl.h'
 	'jukebox/Sound/SoundImpl.h'
 	'jukebox/Sound/Sound.h'
-	'jukebox/Sound/SoundTransformation.h'
 	'jukebox/Sound/Factory.h'
 	'jukebox/FileFormats/MIDIFactory.h'
 	'jukebox/Mixer/Factory.h'

@@ -1,9 +1,9 @@
 #include "Factory.h"
 #include <exception>
 #include <algorithm>
-#include "jukebox/Sound/Decorators/FadedSoundImpl.h"
-#include "jukebox/Sound/Decorators/FadeOnStopSoundImpl.h"
-#include "jukebox/Sound/Decorators/ReverbSoundImpl.h"
+#include "jukebox/Decoders/Decorators/FadedSoundImpl.h"
+//#include "jukebox/Decoders/Decorators/FadeOnStopSoundImpl.h"
+#include "jukebox/Decoders/Decorators/ReverbSoundImpl.h"
 #include "jukebox/FileFormats/MP3FileImpl.h"
 #include "jukebox/FileFormats/VorbisFileImpl.h"
 #include "jukebox/FileFormats/WaveFileImpl.h"
@@ -12,21 +12,31 @@
 namespace jukebox {
 namespace factory {
 
-// makeSound() and makeSoundImpl() are defined by the respective win/linux implementations
+// makeSoundImpl() is defined by the respective win/linux implementations
 
-Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs)
+Sound makeSound(SoundFile &file) {
+	return Sound(makeSoundImpl(new Decoder(file.makeDecoder())));
+}
+
+/*Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs)
 {
     return Sound(new FadeOnStopSoundImpl(makeSoundImpl(file), fadeOutSecs));
-}
+}*/
 
 Sound makeFadedSound(SoundFile &file, int fadeInSecs, int fadeOutSecs)
 {
-    return Sound(new FadedSoundImpl(makeSoundImpl(file), fadeInSecs, fadeOutSecs));
+    return Sound(
+    	makeSoundImpl(
+    		new Decoder(
+    			new FadedSoundImpl(file.makeDecoder(), fadeInSecs, fadeOutSecs))));
 }
 
 Sound makeReverbSound(SoundFile &file, float delay, float decay, int numDelays)
 {
-    return Sound(new ReverbSoundImpl(makeSoundImpl(file), delay, decay, numDelays));
+    return Sound(
+    	makeSoundImpl(
+    		new Decoder(
+    			new ReverbSoundImpl(file.makeDecoder(), delay, decay, numDelays))));
 }
 
 // TODO: add more extensions and/or a way to autodetect the file format

@@ -65,7 +65,7 @@ public:
 	short getBitsPerSample() const override;
 	const std::string &getFilename() const override;
 	int read(char *buf, int pos, int len);
-	std::unique_ptr<Decoder> makeDecoder();
+	DecoderImpl *makeDecoder();
 	uint16_t getAudioFormat() const;
 private:
 	std::fstream fileStream;

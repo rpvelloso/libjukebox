@@ -47,4 +47,9 @@ int DecoderImpl::silenceLevel() const {
 	return fileImpl.silenceLevel();
 }
 
+SoundFileImpl& DecoderImpl::getFileImpl() const {
+	return fileImpl;
+}
+
+
 }

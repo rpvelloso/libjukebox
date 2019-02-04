@@ -32,7 +32,7 @@ public:
 	const std::string &getFilename() const;
 	double getDuration() const;
 	void truncAt(int pos);
-	std::unique_ptr<Decoder> makeDecoder();
+	DecoderImpl *makeDecoder();
 	int silenceLevel() const;
 private:
 	std::unique_ptr<SoundFileImpl> impl;

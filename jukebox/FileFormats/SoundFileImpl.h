@@ -29,7 +29,7 @@ public:
 	virtual int getSampleRate() const = 0;
 	virtual short getBitsPerSample() const = 0;
 	virtual const std::string &getFilename() const = 0;
-	virtual std::unique_ptr<Decoder> makeDecoder() = 0;
+	virtual DecoderImpl *makeDecoder() = 0;
 	virtual int silenceLevel() const;
 	virtual void truncAt(int pos);
 	virtual int getDataSize() const;

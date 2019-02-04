@@ -121,7 +121,6 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 		throw std::runtime_error("failed Lock");
 
 	size_t len = decoder->getSamples((char *)bufAddr, position, bufLen);
-	transformation((uint8_t *)bufAddr, position, (int)bufLen);
 
 	position += len;
 	if (len < bufLen)
@@ -288,13 +287,10 @@ void DirectSoundBuffer::rewind() {
 
 namespace factory {
 
-Sound makeSound(SoundFile& file) {
-	return Sound(new DirectSoundBuffer(file.makeDecoder()));
+SoundImpl *makeSoundImpl(Decoder *decoder) {
+	return new DirectSoundBuffer(decoder);
 }
 
-SoundImpl *makeSoundImpl(SoundFile& file) {
-	return new DirectSoundBuffer(file.makeDecoder());
-}
 }
 
 } /* namespace jukebox */

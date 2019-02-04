@@ -23,7 +23,7 @@ namespace jukebox {
 
 class Decoder {
 public:
-	Decoder(DecoderImpl * impl);
+	Decoder(DecoderImpl *impl);
 	int getSamples(char *buf, int pos, int len);
 	short getNumChannels() const;
 	int getSampleRate() const;
