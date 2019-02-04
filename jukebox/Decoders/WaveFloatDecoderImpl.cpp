@@ -25,8 +25,6 @@ WaveFloatDecoderImpl::WaveFloatDecoderImpl(WaveFileImpl& fileImpl) :
 }
 
 int WaveFloatDecoderImpl::getSamples(char* buf, int pos, int len) {
-	std::unique_ptr<float []> floatBuf(new float[len/sizeof(float)]);
-
 	int ret = fileImpl.read(buf, pos, len);
 	float *inp = (float *)buf;
 	int32_t *outp = (int32_t *)buf;
