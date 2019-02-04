@@ -25,10 +25,10 @@
 
 namespace jukebox {
 
-class ReverbSoundImpl: public DecoderImpl {
+class ReverbImpl: public DecoderImpl {
 public:
-	ReverbSoundImpl(DecoderImpl *impl, float delay, float decay, size_t numDelays);
-	virtual ~ReverbSoundImpl() = default;
+	ReverbImpl(DecoderImpl *impl, float delay, float decay, size_t numDelays);
+	virtual ~ReverbImpl() = default;
 	int getSamples(char *buf, int pos, int len) override;
 private:
 	std::unique_ptr<DecoderImpl> impl;
@@ -38,11 +38,11 @@ private:
 	std::vector<std::vector<float> > delayBuffer;
 	std::vector<size_t> bufPos;
 
-	std::function<void(ReverbSoundImpl &, void *, int, int)> reverb;
+	std::function<void(ReverbImpl &, void *, int, int)> reverb;
 	static std::unordered_map<short, decltype(reverb)> reverbFunc;
 
 	template<typename T>
-	static void _reverb(ReverbSoundImpl &self, void *buf, int pos, int len);
+	static void _reverb(ReverbImpl &self, void *buf, int pos, int len);
 };
 
 } /* namespace jukebox */

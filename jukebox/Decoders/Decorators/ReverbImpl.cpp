@@ -13,19 +13,20 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "ReverbImpl.h"
+
 #include <iostream>
-#include "ReverbSoundImpl.h"
 
 namespace jukebox {
 
-std::unordered_map<short, decltype(ReverbSoundImpl::reverb)> ReverbSoundImpl::reverbFunc = {
-		{ 8, ReverbSoundImpl::_reverb<uint8_t>},
-		{16, ReverbSoundImpl::_reverb<int16_t>},
-		{32, ReverbSoundImpl::_reverb<int32_t>}
+std::unordered_map<short, decltype(ReverbImpl::reverb)> ReverbImpl::reverbFunc = {
+		{ 8, ReverbImpl::_reverb<uint8_t>},
+		{16, ReverbImpl::_reverb<int16_t>},
+		{32, ReverbImpl::_reverb<int32_t>}
 };
 
 template<typename T>
-void ReverbSoundImpl::_reverb(ReverbSoundImpl &self, void *buf, int pos, int len) {
+void ReverbImpl::_reverb(ReverbImpl &self, void *buf, int pos, int len) {
 	T *beginIt = reinterpret_cast<T *>(buf);
 	T *endIt = beginIt + (len/sizeof(T));
 	auto offset = self.silenceLevel();
@@ -51,7 +52,7 @@ void ReverbSoundImpl::_reverb(ReverbSoundImpl &self, void *buf, int pos, int len
 	}
 };
 
-ReverbSoundImpl::ReverbSoundImpl(DecoderImpl *impl, float delay, float decay, size_t numDelays) :
+ReverbImpl::ReverbImpl(DecoderImpl *impl, float delay, float decay, size_t numDelays) :
 		DecoderImpl(impl->getFileImpl()),
 		impl(impl),
 		delay(delay),
@@ -73,7 +74,7 @@ ReverbSoundImpl::ReverbSoundImpl(DecoderImpl *impl, float delay, float decay, si
 	}
 }
 
-int ReverbSoundImpl::getSamples(char* buf, int pos, int len) {
+int ReverbImpl::getSamples(char* buf, int pos, int len) {
 	auto ret = impl->getSamples(buf, pos, len);
 
 	reverb(*this, buf, pos, len);

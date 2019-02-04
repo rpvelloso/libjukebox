@@ -1,9 +1,9 @@
 #include "Factory.h"
 #include <exception>
 #include <algorithm>
-#include "jukebox/Decoders/Decorators/FadedSoundImpl.h"
-//#include "jukebox/Decoders/Decorators/FadeOnStopSoundImpl.h"
-#include "jukebox/Decoders/Decorators/ReverbSoundImpl.h"
+
+#include "../Decoders/Decorators/FadeImpl.h"
+#include "../Decoders/Decorators/ReverbImpl.h"
 #include "jukebox/FileFormats/MP3FileImpl.h"
 #include "jukebox/FileFormats/VorbisFileImpl.h"
 #include "jukebox/FileFormats/WaveFileImpl.h"
@@ -28,7 +28,7 @@ Sound makeFadedSound(SoundFile &file, int fadeInSecs, int fadeOutSecs)
     return Sound(
     	makeSoundImpl(
     		new Decoder(
-    			new FadedSoundImpl(file.makeDecoder(), fadeInSecs, fadeOutSecs))));
+    			new FadeImpl(file.makeDecoder(), fadeInSecs, fadeOutSecs))));
 }
 
 Sound makeReverbSound(SoundFile &file, float delay, float decay, int numDelays)
@@ -36,7 +36,7 @@ Sound makeReverbSound(SoundFile &file, float delay, float decay, int numDelays)
     return Sound(
     	makeSoundImpl(
     		new Decoder(
-    			new ReverbSoundImpl(file.makeDecoder(), delay, decay, numDelays))));
+    			new ReverbImpl(file.makeDecoder(), delay, decay, numDelays))));
 }
 
 // TODO: add more extensions and/or a way to autodetect the file format

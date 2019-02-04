@@ -24,22 +24,22 @@
 
 namespace jukebox {
 
-class FadedSoundImpl: public DecoderImpl {
+class FadeImpl: public DecoderImpl {
 public:
-	FadedSoundImpl(DecoderImpl *, int, int);
-	virtual ~FadedSoundImpl() = default;
+	FadeImpl(DecoderImpl *, int, int);
+	virtual ~FadeImpl() = default;
 	int getSamples(char *buf, int pos, int len) override;
 private:
 	std::unique_ptr<DecoderImpl> impl;
 	int fadeInSecs, fadeOutSecs;
 	int fadeInEndPos, fadeOutStartPos;
-	std::function<void(FadedSoundImpl&, void *, int, int)> fadeIn;
-	std::function<void(FadedSoundImpl&, void *, int, int)> fadeOut;
+	std::function<void(FadeImpl&, void *, int, int)> fadeIn;
+	std::function<void(FadeImpl&, void *, int, int)> fadeOut;
 	static std::unordered_map<short, decltype(fadeIn)> fadeInFunc;
 	static std::unordered_map<short, decltype(fadeOut)> fadeOutFunc;
 
 	template<typename T>
-	static void _fadeIn(FadedSoundImpl &self, void* buf, int pos, int len) {
+	static void _fadeIn(FadeImpl &self, void* buf, int pos, int len) {
 		T *beginIt = reinterpret_cast<T *>(buf);
 		T *endIt = beginIt + (len/sizeof(T));
 
@@ -52,7 +52,7 @@ private:
 	}
 
 	template<typename T>
-	static void _fadeOut(FadedSoundImpl &self, void* buf, int pos, int len) {
+	static void _fadeOut(FadeImpl &self, void* buf, int pos, int len) {
 		T *beginIt = reinterpret_cast<T *>(buf);
 		T *endIt = beginIt + (len/sizeof(T));
 

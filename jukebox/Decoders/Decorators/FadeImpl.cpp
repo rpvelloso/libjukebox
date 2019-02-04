@@ -13,22 +13,22 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "FadedSoundImpl.h"
+#include "FadeImpl.h"
 
 namespace jukebox {
 
-std::unordered_map<short, decltype(FadedSoundImpl::fadeIn)> FadedSoundImpl::fadeInFunc = {
-		{ 8, &FadedSoundImpl::_fadeIn<uint8_t>},
-		{16, &FadedSoundImpl::_fadeIn<int16_t>},
-		{32, &FadedSoundImpl::_fadeIn<int32_t>},
+std::unordered_map<short, decltype(FadeImpl::fadeIn)> FadeImpl::fadeInFunc = {
+		{ 8, &FadeImpl::_fadeIn<uint8_t>},
+		{16, &FadeImpl::_fadeIn<int16_t>},
+		{32, &FadeImpl::_fadeIn<int32_t>},
 };
-std::unordered_map<short, decltype(FadedSoundImpl::fadeOut)> FadedSoundImpl::fadeOutFunc = {
-		{ 8, &FadedSoundImpl::_fadeOut<uint8_t>},
-		{16, &FadedSoundImpl::_fadeOut<int16_t>},
-		{32, &FadedSoundImpl::_fadeOut<int32_t>},
+std::unordered_map<short, decltype(FadeImpl::fadeOut)> FadeImpl::fadeOutFunc = {
+		{ 8, &FadeImpl::_fadeOut<uint8_t>},
+		{16, &FadeImpl::_fadeOut<int16_t>},
+		{32, &FadeImpl::_fadeOut<int32_t>},
 };
 
-FadedSoundImpl::FadedSoundImpl(
+FadeImpl::FadeImpl(
 		DecoderImpl *impl,
 		int fadeInSecs,
 		int fadeOutSecs) :
@@ -57,7 +57,7 @@ FadedSoundImpl::FadedSoundImpl(
 	fadeOut = fadeOutFunc[getBitsPerSample()];
 }
 
-int jukebox::FadedSoundImpl::getSamples(char* buf, int pos, int len) {
+int jukebox::FadeImpl::getSamples(char* buf, int pos, int len) {
 	auto ret = impl->getSamples(buf, pos, len);
 
 	auto dataSize = getDataSize();
