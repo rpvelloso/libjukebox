@@ -36,7 +36,6 @@ public:
 	int silenceLevel() const;
 private:
 	std::unique_ptr<SoundFileImpl> impl;
-	int blockSize;
 };
 
 } /* namespace jukebox */

@@ -76,7 +76,6 @@ private:
 	WaveFactHeader waveFactHeader;
 	WavePEAKHeader wavePEAKHeader;
 	WaveDataHeader waveDataHeader;
-	int headerSize = 0;
 	std::mutex readMutex;
 
 	void load();

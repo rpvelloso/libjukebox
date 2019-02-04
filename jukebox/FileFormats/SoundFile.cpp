@@ -21,8 +21,7 @@
 namespace jukebox {
 
 SoundFile::SoundFile(SoundFileImpl *impl) :
-		impl(impl),
-		blockSize(impl->getNumChannels() * impl->getBitsPerSample()/8) {
+		impl(impl) {
 };
 
 short SoundFile::getNumChannels() const {

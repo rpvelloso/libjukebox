@@ -105,7 +105,6 @@ public:
  int silenceLevel() const;
 private:
  std::unique_ptr<SoundFileImpl> impl;
- int blockSize;
 };
 
 }
@@ -197,7 +196,7 @@ SoundImpl *makeSoundImpl(SoundFile& file);
 
 Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs);
 Sound makeFadedSound(SoundFile &file, int fadeInSecs, int fadeOutSecs);
-Sound makeReverbSound(SoundFile &file, float delay = 0.5, float decay = 0.5, int numDelays = 2);
+Sound makeReverbSound(SoundFile &file, float delay = 0.2, float decay = 0.5, int numDelays = 2);
 
 SoundFile loadFile(const std::string &filename);
 

@@ -118,8 +118,8 @@ void WaveFileImpl::load() {
 		if (nextHeaderMarker == "PEAK") {
 			std::copy(nextHdrPtr, nextHdrPtr + sizeof(WavePEAKHeader), (char *)&wavePEAKHeader);
 			nextHdrPtr += sizeof(WavePEAKHeader);
+			nextHeaderMarker.assign(nextHdrPtr, nextHdrPtr + 4);
 		}
-		nextHeaderMarker.assign(nextHdrPtr, nextHdrPtr + 4);
 	}
 
 	if (nextHeaderMarker == "data")
@@ -127,23 +127,13 @@ void WaveFileImpl::load() {
 	else
 		throw std::runtime_error("error loading " + filename + ". bad data header");
 
-	nextHdrPtr += sizeof(WaveDataHeader);
-
 	if (waveDataHeader.chunkSize <= 0)
 		throw std::runtime_error("error loading " + filename + ". invalid data size");
 	if (waveDataHeader.chunkSize > MAX_WAVE_SIZE)
 		throw std::runtime_error("error loading " + filename + ". data size is too big");
 
 	dataSize = waveDataHeader.chunkSize;
-
 	inputStream.seekg(-dataSize, std::ios::end);
-
-	/*if (waveFormatHeader.audioFormat == 3) {// WAVE_FORMAT_IEEE_FLOAT
-		waveFormatHeader.bitsPerSample = 16;
-		dataSize /= 2; // 4 bytes float converted to 2 byte PCM
-	}*/
-
-	headerSize = nextHdrPtr - headerBuf.get();
 }
 
 uint16_t WaveFileImpl::getAudioFormat() const {
@@ -159,7 +149,7 @@ int WaveFileImpl::read(char *buf, int pos, int len) {
 
 	inputStream.clear();
 	if (pos < getDataSize() && pos >= 0 && len > 0 && buf != nullptr) {
-		inputStream.seekg(headerSize + pos, std::ios::beg);
+		inputStream.seekg(-(dataSize-pos), std::ios::end);
 		inputStream.read(buf, len);
 		return inputStream.gcount();
 	}

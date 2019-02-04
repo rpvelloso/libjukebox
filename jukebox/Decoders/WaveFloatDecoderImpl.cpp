@@ -25,13 +25,13 @@ WaveFloatDecoderImpl::WaveFloatDecoderImpl(WaveFileImpl& fileImpl) :
 }
 
 int WaveFloatDecoderImpl::getSamples(char* buf, int pos, int len) {
-	std::unique_ptr<float []> floatBuf(new float[len]);
+	std::unique_ptr<float []> floatBuf(new float[len/sizeof(float)]);
 
-	int ret = fileImpl.read((char *)(floatBuf.get()), pos, len);
-	for (size_t i = 0; i < ret/sizeof(float); ++i) {
-		int32_t sample = floatBuf[i]*(float)std::numeric_limits<int32_t>::max();
-		std::copy((char *)&sample, (char *)&sample + sizeof(float), &buf[i*sizeof(float)]);
-	}
+	int ret = fileImpl.read(buf, pos, len);
+	float *inp = (float *)buf;
+	int32_t *outp = (int32_t *)buf;
+	for (size_t i = 0; i < ret/sizeof(float); ++i)
+		outp[i] = inp[i]*(float)std::numeric_limits<int32_t>::max();
 
 	return ret;
 }
