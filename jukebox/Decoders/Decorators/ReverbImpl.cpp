@@ -59,23 +59,30 @@ ReverbImpl::ReverbImpl(DecoderImpl *impl, float delay, float decay, size_t numDe
 		decay(decay),
 		numDelays(numDelays),
 		delayBuffer(numDelays),
-		bufPos(numDelays) {
+		bufPos(numDelays, 0) {
 
 	reverb = reverbFunc[getBitsPerSample()];
 
-	float delayInterval = 1.0/numDelays;
+	float delayInterval = 1.0/(float)numDelays;
 	for (auto &delayLine: delayBuffer) {
 		delayLine.resize(
 			delay * delayInterval *
 			(float)(getSampleRate() *
 			(getBitsPerSample() >> 3) *
-			getNumChannels()));
-		delayInterval += 1.0/numDelays;
+			getNumChannels()), 0);
+		delayInterval += 1.0/(float)numDelays;
 	}
 }
 
 int ReverbImpl::getSamples(char* buf, int pos, int len) {
 	auto ret = impl->getSamples(buf, pos, len);
+
+	if (pos == 0) { // clear delay buffers when playing begins
+		for (auto &bp: bufPos)
+			bp = 0;
+		for (auto &delayLine: delayBuffer)
+			std::fill(delayLine.begin(), delayLine.end(), 0);
+	}
 
 	if (ret > 0)
 		reverb(*this, buf, pos, len);
