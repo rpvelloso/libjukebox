@@ -18,6 +18,7 @@
 #include <unordered_map>
 #include "AlsaHandle.h"
 #include "jukebox/Sound/Sound.h"
+#include "jukebox/Decoders/Decorators/SampleResolutionImpl.h"
 
 #ifndef ALSA_DEVICE
 #define ALSA_DEVICE "sysdefault"
@@ -195,7 +196,11 @@ void AlsaHandle::setVolume(int vol) {
 namespace factory {
 
 SoundImpl *makeSoundImpl(Decoder *decoder) {
-	return new AlsaHandle(decoder);
+	if (decoder->getBitsPerSample() == 32) {
+		decoder->wrapDecoder<SampleResolutionImpl>(16);
+		return new AlsaHandle(decoder);
+	} else
+		return new AlsaHandle(decoder);
 }
 
 }
