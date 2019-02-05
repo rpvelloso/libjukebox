@@ -4,6 +4,7 @@
 
 #include "../Decoders/Decorators/FadeImpl.h"
 #include "../Decoders/Decorators/ReverbImpl.h"
+#include "../Decoders/Decorators/SampleResolutionImpl.h"
 #include "jukebox/Sound/Decorators/FadeOnStopSoundImpl.h"
 #include "jukebox/FileFormats/MP3FileImpl.h"
 #include "jukebox/FileFormats/VorbisFileImpl.h"

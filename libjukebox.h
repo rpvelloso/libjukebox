@@ -53,12 +53,12 @@ public:
  DecoderImpl(SoundFileImpl &fileImpl);
  virtual ~DecoderImpl() = default;
  virtual int getSamples(char *buf, int pos, int len) = 0;
- int getBlockSize() const;
- short getNumChannels() const;
- int getSampleRate() const;
- short getBitsPerSample() const;
- int getDataSize() const;
- int silenceLevel() const;
+ virtual int getBlockSize() const;
+ virtual short getNumChannels() const;
+ virtual int getSampleRate() const;
+ virtual short getBitsPerSample() const;
+ virtual int getDataSize() const;
+ virtual int silenceLevel() const;
  SoundFileImpl &getFileImpl() const;
 protected:
  SoundFileImpl &fileImpl;
