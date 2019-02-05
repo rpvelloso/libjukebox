@@ -196,9 +196,6 @@ void AlsaHandle::setVolume(int vol) {
 namespace factory {
 
 SoundImpl *makeSoundImpl(Decoder *decoder) {
-	if (decoder->getBitsPerSample() == 32)
-		decoder->wrapDecoder<SampleResolutionImpl>(16);
-
 	return new AlsaHandle(decoder);
 }
 
