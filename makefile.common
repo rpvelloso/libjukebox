@@ -1,5 +1,6 @@
 objects = \
 	./jukebox/Sound/Sound.o ./jukebox/Sound/SoundImpl.o ./jukebox/Sound/Factory.o \
+	./jukebox/Sound/FileWriterSoundImpl.o \
 	./jukebox/FileFormats/SoundFile.o ./jukebox/FileFormats/SoundFileImpl.o \
 	./jukebox/FileFormats/WaveFileImpl.o ./jukebox/FileFormats/VorbisFileImpl.o \
 	./jukebox/FileFormats/MP3FileImpl.o ./jukebox/FileFormats/MIDIFileImpl.o \
@@ -15,6 +16,7 @@ objects = \
 
 SRCS = \
 	./jukebox/Sound/Sound.cpp ./jukebox/Sound/SoundImpl.cpp ./jukebox/Sound/Factory.cpp \
+	./jukebox/Sound/FileWriterSoundImpl.cpp \
 	./jukebox/FileFormats/SoundFile.cpp ./jukebox/FileFormats/SoundFileImpl.cpp \
 	./jukebox/FileFormats/WaveFileImpl.cpp ./jukebox/FileFormats/VorbisFileImpl.cpp \
 	./jukebox/FileFormats/MP3FileImpl.cpp ./jukebox/FileFormats/MIDIFileImpl.cpp ./jukebox/FileFormats/FLACFileImpl.cpp \

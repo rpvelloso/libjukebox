@@ -9,11 +9,12 @@ Plataform independent (windows/linux) C++ audio playback library (uses DirectSou
 - FLAC (using [dr_flac](https://github.com/mackron/dr_libs));
 - Extensible architecture allows implementation of other formats, transparently.
 
-# Effects
+# Effects and features
 - Fade in/out;
 - Fade on stop;
 - Simple reverberation (multiple delay lines with decay parameter);
 - Distortion (tanh);
+- File writer driver output;
 - Extensible architecture allows implementation of custom effects.
 
 # Building
