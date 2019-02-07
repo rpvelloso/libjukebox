@@ -28,3 +28,44 @@ SRCS = \
 	./jukebox/Decoders/WaveFloatDecoderImpl.cpp ./jukebox/Decoders/VorbisDecoderImpl.cpp \
 	./jukebox/Decoders/MP3DecoderImpl.cpp ./jukebox/Decoders/MIDIDecoderImpl.cpp ./jukebox/Decoders/FLACDecoderImpl.cpp \
 	./jukebox_test/demo/test.cpp ./jukebox_test/demo/play.cpp ./jukebox_test/demo/loop.cpp
+
+DEPDIR := .d
+$(shell mkdir -p $(DEPDIR) >/dev/null)
+$(shell mkdir -p $(DEPDIR)/jukebox >/dev/null)
+$(shell mkdir -p $(DEPDIR)/jukebox/Sound >/dev/null)
+$(shell mkdir -p $(DEPDIR)/jukebox/Decoders/Decorators >/dev/null)
+$(shell mkdir -p $(DEPDIR)/jukebox/Sound/Decorators >/dev/null)
+$(shell mkdir -p $(DEPDIR)/jukebox/Decoders >/dev/null)      
+$(shell mkdir -p $(DEPDIR)/jukebox/FileFormats >/dev/null)
+$(shell mkdir -p $(DEPDIR)/jukebox/Mixer >/dev/null)
+$(shell mkdir -p $(DEPDIR)/jukebox_test >/dev/null)
+$(shell mkdir -p $(DEPDIR)/jukebox_test/demo >/dev/null)
+$(shell mkdir -p $(DEPDIR)/win >/dev/null)
+$(shell mkdir -p $(DEPDIR)/win/Mixer >/dev/null)
+$(shell mkdir -p $(DEPDIR)/win/Sound >/dev/null)
+DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
+
+COMPILE.c = $(CC) $(DEPFLAGS) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+COMPILE.cc = $(CXX) $(DEPFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
+POSTCOMPILE = @mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d && touch $@
+
+%.o	:	%.c
+%.o	:	%.c $(DEPDIR)/%.d
+	$(COMPILE.c) $(OUTPUT_OPTION) $<
+	$(POSTCOMPILE)
+
+%.o	:	%.cc
+%.o	:	%.cc $(DEPDIR)/%.d
+	$(COMPILE.cc) $(OUTPUT_OPTION) $<
+	$(POSTCOMPILE)
+
+%.o	:	%.cxx
+%.o	:	%.cxx $(DEPDIR)/%.d
+	$(COMPILE.cc) $(OUTPUT_OPTION) $<
+	$(POSTCOMPILE)
+
+$(DEPDIR)/%.d: ;
+.PRECIOUS: $(DEPDIR)/%.d
+
+include $(wildcard $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS))))
+	
