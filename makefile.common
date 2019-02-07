@@ -40,9 +40,6 @@ $(shell mkdir -p $(DEPDIR)/jukebox/FileFormats >/dev/null)
 $(shell mkdir -p $(DEPDIR)/jukebox/Mixer >/dev/null)
 $(shell mkdir -p $(DEPDIR)/jukebox_test >/dev/null)
 $(shell mkdir -p $(DEPDIR)/jukebox_test/demo >/dev/null)
-$(shell mkdir -p $(DEPDIR)/win >/dev/null)
-$(shell mkdir -p $(DEPDIR)/win/Mixer >/dev/null)
-$(shell mkdir -p $(DEPDIR)/win/Sound >/dev/null)
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 
 COMPILE.c = $(CC) $(DEPFLAGS) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c

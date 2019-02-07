@@ -25,3 +25,8 @@ genheader	:
 	./genheader.sh
 clean		:
 	rm -rf $(DEPDIR) $(objects) ./jukebox_test/demo/*.o $(BINS)
+
+$(shell mkdir -p $(DEPDIR)/linux >/dev/null)
+$(shell mkdir -p $(DEPDIR)/linux/Mixer >/dev/null)
+$(shell mkdir -p $(DEPDIR)/linux/Sound >/dev/null)
+	

@@ -25,4 +25,7 @@ genheader	:
 clean		:
 	rm -rf $(DEPDIR) $(objects) ./jukebox_test/demo/*.o $(BINS)
 
+$(shell mkdir -p $(DEPDIR)/win >/dev/null)
+$(shell mkdir -p $(DEPDIR)/win/Mixer >/dev/null)
+$(shell mkdir -p $(DEPDIR)/win/Sound >/dev/null)
 	
