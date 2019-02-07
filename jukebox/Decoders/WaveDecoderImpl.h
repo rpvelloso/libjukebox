@@ -13,23 +13,27 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef JUKEBOX_DECODERS_WAVEPCMDECODERIMPL_H_
-#define JUKEBOX_DECODERS_WAVEPCMDECODERIMPL_H_
+#ifndef JUKEBOX_DECODERS_WAVEDECODERIMPL_H_
+#define JUKEBOX_DECODERS_WAVEDECODERIMPL_H_
 
 #include "jukebox/FileFormats/WaveFileImpl.h"
 #include "DecoderImpl.h"
 
 namespace jukebox {
 
-class WavePCMDecoderImpl: public DecoderImpl {
+class WaveDecoderImpl: public DecoderImpl {
 public:
-	WavePCMDecoderImpl(WaveFileImpl &fileImpl);
-	virtual ~WavePCMDecoderImpl() = default;
+	WaveDecoderImpl(WaveFileImpl &fileImpl);
+	virtual ~WaveDecoderImpl() = default;
+	short getBitsPerSample() const override;
 	int getSamples(char *buf, int pos, int len) override;
 private:
 	WaveFileImpl &fileImpl;
+	int frameSize;
+
+	std::unique_ptr<drwav, decltype(&closeWav)> wavHandler;
 };
 
 } /* namespace jukebox */
 
-#endif /* JUKEBOX_DECODERS_WAVEPCMDECODERIMPL_H_ */
+#endif /* JUKEBOX_DECODERS_WAVEDECODERIMPL_H_ */

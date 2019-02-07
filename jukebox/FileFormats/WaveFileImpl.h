@@ -24,61 +24,34 @@
 
 #include "SoundFileImpl.h"
 #include "jukebox/Decoders/Decoder.h"
+#include "jukebox/Decoders/dr_wav/dr_wav.h"
+
 
 namespace jukebox {
 
+extern void closeWav(drwav *f);
+
 class WaveFileImpl : public SoundFileImpl {
-	struct WaveRIFFWAVEfmtHeader {
-		char chunkID[4];
-		uint32_t chunkSize;
-		char format[4];
-		char subChunkID[4];
-		uint32_t subChunkSize;
-	};
-	struct WaveFormatHeader {
-		uint16_t audioFormat;
-		uint16_t numChannels;
-		uint32_t sampleRate;
-		uint32_t byteRate;
-		uint16_t blockAlign;
-		uint16_t bitsPerSample;
-	};
-	struct WaveFactHeader {
-		char chunkID[4];
-		uint32_t chunkSize;
-		uint32_t numSamples;
-	};
-	struct WavePEAKHeader {
-		char chunkID[4];
-		char filler[20];
-	};
-	struct WaveDataHeader {
-		char chunkID[4];
-		uint32_t chunkSize;
-	};
 public:
 	WaveFileImpl(const std::string &filename);
-	WaveFileImpl(std::istream &inp, const std::string &filename = ":stream:");
+	WaveFileImpl(std::istream &inp);
 	virtual ~WaveFileImpl() = default;
 	short getNumChannels() const override;
 	int getSampleRate() const override;
 	short getBitsPerSample() const override;
 	const std::string &getFilename() const override;
-	int read(char *buf, int pos, int len);
-	DecoderImpl *makeDecoder();
-	uint16_t getAudioFormat() const;
+	DecoderImpl *makeDecoder() override;
+	uint8_t *getFileBuffer();
+	int getFileSize() const;
 private:
-	std::fstream fileStream;
-	std::istream inputStream;
+	short numChannels = 0;
+	int sampleRate = 0;
+	int fileSize = 0;
+	short bitsPerSample = 0;
+	std::unique_ptr<uint8_t []> fileBuffer;
 	std::string filename;
-	WaveRIFFWAVEfmtHeader waveRIFFWAVEfmtHeader;
-	WaveFormatHeader waveFormatHeader;
-	WaveFactHeader waveFactHeader;
-	WavePEAKHeader wavePEAKHeader;
-	WaveDataHeader waveDataHeader;
-	std::mutex readMutex;
 
-	void load();
+	void load(std::istream &inp);
 };
 
 }
