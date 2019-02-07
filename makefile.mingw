@@ -7,7 +7,6 @@ LDFLAGS = -ldxguid -ldsound -lwinmm -lfluidsynth -L/local/lib
 include makefile.common
  
 objects += ./win/Sound/DirectSoundBuffer.o ./win/Mixer/WindowsMixer.o
-
 SRCS += ./win/Sound/DirectSoundBuffer.cpp ./win/Mixer/WindowsMixer.cpp
 
 all							:	$(BINS)
@@ -24,6 +23,6 @@ all							:	$(BINS)
 genheader	:
 	./genheader.sh
 clean		:
-	rm -rf $(DEPDIR) $(objects) ./jukebox_test/demo/*.o  $(BINS)
+	rm -rf $(DEPDIR) $(objects) ./jukebox_test/demo/*.o $(BINS)
 
 	
