@@ -13,8 +13,8 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef JUKEBOX_SOUND_FADEONSTOPSOUNDIMPL_H_
-#define JUKEBOX_SOUND_FADEONSTOPSOUNDIMPL_H_
+#ifndef JUKEBOX_SOUND_FADEONSTOPIMPL_H_
+#define JUKEBOX_SOUND_FADEONSTOPIMPL_H_
 
 #include <functional>
 #include <memory>
@@ -38,25 +38,9 @@ private:
 	static std::unordered_map<short, decltype(fadeOut)> fadeOutFunc;
 
 	template<typename T>
-	static void _fadeOut(FadeOnStopImpl& self, void *buf, int pos, int len) {
-		if (!self.fade)
-			return;
-
-		T *beginIt = reinterpret_cast<T *>(buf);
-		T *endIt = beginIt + (len/sizeof(T));
-
-		auto n = self.getDataSize();
-		auto fadeLen = n - self.fadeOutStartPos;
-
-		int offset = self.silenceLevel();
-
-		std::for_each(beginIt, endIt, [n, fadeLen, offset, &pos](T &sample){
-			sample = (T)((((float)(sample - offset) * (float)(n - pos))/(float)(fadeLen)) + offset);
-			++pos;
-		});
-	};
+	static void _fadeOut(FadeOnStopImpl& self, void *buf, int pos, int len);
 };
 
 } /* namespace jukebox */
 
-#endif /* JUKEBOX_SOUND_FADEONSTOPSOUNDIMPL_H_ */
+#endif /* JUKEBOX_SOUND_FADEONSTOPIMPL_H_ */

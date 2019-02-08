@@ -19,6 +19,25 @@
 
 namespace jukebox {
 
+template<typename T>
+void FadeOnStopImpl::_fadeOut(FadeOnStopImpl& self, void *buf, int pos, int len) {
+	if (!self.fade)
+		return;
+
+	T *beginIt = reinterpret_cast<T *>(buf);
+	T *endIt = beginIt + (len/sizeof(T));
+
+	auto n = self.getDataSize();
+	auto fadeLen = n - self.fadeOutStartPos;
+
+	int offset = self.silenceLevel();
+
+	std::for_each(beginIt, endIt, [n, fadeLen, offset, &pos](T &sample){
+		sample = (T)((((float)(sample - offset) * (float)(n - pos))/(float)(fadeLen)) + offset);
+		++pos;
+	});
+};
+
 std::unordered_map<short, decltype(FadeOnStopImpl::fadeOut)> FadeOnStopImpl::fadeOutFunc = {
 		{8 , &FadeOnStopImpl::_fadeOut<uint8_t>},
 		{16, &FadeOnStopImpl::_fadeOut<int16_t>},

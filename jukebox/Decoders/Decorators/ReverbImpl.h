@@ -13,8 +13,8 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef JUKEBOX_SOUND_REVERBSOUNDIMPL_H_
-#define JUKEBOX_SOUND_REVERBSOUNDIMPL_H_
+#ifndef JUKEBOX_SOUND_REVERBIMPL_H_
+#define JUKEBOX_SOUND_REVERBIMPL_H_
 
 #include <memory>
 #include <functional>
@@ -47,4 +47,4 @@ private:
 
 } /* namespace jukebox */
 
-#endif /* JUKEBOX_SOUND_REVERBSOUNDIMPL_H_ */
+#endif /* JUKEBOX_SOUND_REVERBIMPL_H_ */
