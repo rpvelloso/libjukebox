@@ -12,7 +12,8 @@ objects = \
 	./jukebox/Decoders/Decorators/ReverbImpl.o ./jukebox/Decoders/Decorators/SampleResolutionImpl.o \
 	./jukebox/Decoders/Decoder.o ./jukebox/Decoders/DecoderImpl.o ./jukebox/Decoders/WaveDecoderImpl.o  \
 	./jukebox/Decoders/VorbisDecoderImpl.o \
-	./jukebox/Decoders/MP3DecoderImpl.o ./jukebox/Decoders/MIDIDecoderImpl.o ./jukebox/Decoders/FLACDecoderImpl.o
+	./jukebox/Decoders/MP3DecoderImpl.o ./jukebox/Decoders/MIDIDecoderImpl.o ./jukebox/Decoders/FLACDecoderImpl.o \
+	./jukebox/Sound/SoundBuilder.o
 
 SRCS = \
 	./jukebox/Sound/Sound.cpp ./jukebox/Sound/SoundImpl.cpp ./jukebox/Sound/Factory.cpp \
@@ -27,7 +28,8 @@ SRCS = \
 	./jukebox/Decoders/Decoder.cpp ./jukebox/Decoders/DecoderImpl.cpp ./jukebox/Decoders/WaveDecoderImpl.cpp \
 	./jukebox/Decoders/VorbisDecoderImpl.cpp \
 	./jukebox/Decoders/MP3DecoderImpl.cpp ./jukebox/Decoders/MIDIDecoderImpl.cpp ./jukebox/Decoders/FLACDecoderImpl.cpp \
-	./jukebox_test/demo/test.cpp ./jukebox_test/demo/play.cpp ./jukebox_test/demo/loop.cpp
+	./jukebox_test/demo/test.cpp ./jukebox_test/demo/play.cpp ./jukebox_test/demo/loop.cpp \
+	./jukebox/Sound/SoundBuilder.cpp
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)

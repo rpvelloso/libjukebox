@@ -12,6 +12,7 @@ headers=(
 	'jukebox/Sound/Factory.h'
 	'jukebox/FileFormats/MIDIFactory.h'
 	'jukebox/Mixer/Factory.h'
+	'jukebox/Sound/SoundBuilder.h'
 )
 
 rm -rf tmp.h tmp2.h libjukebox.h

@@ -22,7 +22,10 @@
 
 namespace jukebox {
 
+class SoundBuilder;
+
 class Sound {
+friend class SoundBuilder;
 public:
 	Sound(SoundImpl *impl);
 	void play();

@@ -79,8 +79,9 @@ public:
  int silenceLevel() const;
 
  template<typename T, typename ...Params>
- void wrapDecoder(Params&&... params) {
+ Decoder &wrapDecoder(Params&&... params) {
   impl.reset(new T(impl.release(), std::forward<Params>(params)...));
+        return *this;
  }
 private:
  std::unique_ptr<DecoderImpl> impl;
@@ -171,7 +172,10 @@ protected:
 }
 namespace jukebox {
 
+class SoundBuilder;
+
 class Sound {
+friend class SoundBuilder;
 public:
  Sound(SoundImpl *impl);
  void play();
@@ -234,6 +238,21 @@ namespace jukebox {
 namespace factory {
  extern MixerImpl &makeMixerImpl();
 }
+
+}
+namespace jukebox {
+
+class SoundBuilder {
+public:
+ SoundBuilder(Sound &sound);
+ SoundBuilder &reverb(float delay, float decay, size_t numDelays);
+ SoundBuilder &distortion(float gain);
+ SoundBuilder &fade(int fadeInSecs, int fadeOutSecs);
+ SoundBuilder &resolution(int bitsPerSample);
+ SoundBuilder &fadeOnStop(int fadeOutSecs);
+private:
+ Sound &sound;
+};
 
 }
 
