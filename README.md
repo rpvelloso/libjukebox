@@ -66,8 +66,11 @@ int main(int argc, char **argv) {
 
 		/* create a sound (decorated with fade-on-stop functionality)
 		 *  using previously loaded sound file */
-		auto sound = jukebox::factory::makeFadeOnStopSound(soundFile, 3); // 3 seconds of fade out
-		sound.loop(true); // set looping
+		auto sound = jukebox::factory::makeSound(soundFile);
+		jukebox::factory::SoundBuilder soundBuilder(sound);
+		soundBuilder
+			.fadeOnStop(3)
+			.loop(true);
 
 		jukebox::Mixer mixer;
 		mixer.setVolume(100); // max global volume
