@@ -199,6 +199,7 @@ namespace jukebox {
 namespace factory {
 
 Sound makeSound(SoundFile &file);
+Sound makeSoundOutputToFile(SoundFile &file, std::string filename);
 SoundImpl *makeSoundImpl(Decoder *decoder);
 
 Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs);
@@ -250,6 +251,8 @@ public:
  SoundBuilder &fade(int fadeInSecs, int fadeOutSecs);
  SoundBuilder &resolution(int bitsPerSample);
  SoundBuilder &fadeOnStop(int fadeOutSecs);
+ SoundBuilder &loop(bool l);
+ SoundBuilder &setVolume(int vol);
 private:
  Sound &sound;
 };

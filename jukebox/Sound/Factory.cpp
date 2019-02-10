@@ -2,12 +2,8 @@
 #include <exception>
 #include <algorithm>
 
-#include "FileWriterSoundImpl.h"
-#include "../Decoders/Decorators/FadeImpl.h"
-#include "../Decoders/Decorators/ReverbImpl.h"
-#include "../Decoders/Decorators/SampleResolutionImpl.h"
-#include "../Decoders/Decorators/DistortionImpl.h"
-#include "jukebox/Sound/Decorators/FadeOnStopSoundImpl.h"
+#include "jukebox/Sound/SoundBuilder.h"
+#include "jukebox/Sound/FileWriterSoundImpl.h"
 #include "jukebox/FileFormats/MP3FileImpl.h"
 #include "jukebox/FileFormats/VorbisFileImpl.h"
 #include "jukebox/FileFormats/WaveFileImpl.h"
@@ -22,28 +18,35 @@ Sound makeSound(SoundFile &file) {
 	return Sound(makeSoundImpl(new Decoder(file.makeDecoder())));
 }
 
+Sound makeSoundOutputToFile(SoundFile &file, std::string filename) {
+	return Sound(new FileWriterSoundImpl(new Decoder(file.makeDecoder()), filename));
+}
+
 Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs)
 {
-    return Sound(
-    	new FadeOnStopSoundImpl(
-    		makeSoundImpl(
-    			new Decoder(file.makeDecoder())), fadeOutSecs));
+	auto sound = makeSound(file);
+	SoundBuilder builder(sound);
+
+	builder.fadeOnStop(fadeOutSecs);
+	return sound;
 }
 
 Sound makeFadedSound(SoundFile &file, int fadeInSecs, int fadeOutSecs)
 {
-    return Sound(
-    	makeSoundImpl(
-    		new Decoder(
-    			new FadeImpl(file.makeDecoder(), fadeInSecs, fadeOutSecs))));
+	auto sound = makeSound(file);
+	SoundBuilder builder(sound);
+
+	builder.fade(fadeInSecs, fadeOutSecs);
+	return sound;
 }
 
 Sound makeReverbSound(SoundFile &file, float delay, float decay, int numDelays)
 {
-    return Sound(
-    	makeSoundImpl(
-    		new Decoder(
-    			new ReverbImpl(file.makeDecoder(), delay, decay, numDelays))));
+	auto sound = makeSound(file);
+	SoundBuilder builder(sound);
+
+	builder.reverb(delay, decay, numDelays);
+    return sound;
 }
 
 // TODO: add more extensions and/or a way to autodetect the file format

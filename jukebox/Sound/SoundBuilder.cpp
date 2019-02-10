@@ -53,4 +53,14 @@ SoundBuilder& SoundBuilder::fadeOnStop(int fadeOutSecs) {
 	return *this;
 }
 
+SoundBuilder& SoundBuilder::loop(bool l) {
+	sound.loop(l);
+	return *this;
+}
+
+SoundBuilder& SoundBuilder::setVolume(int vol) {
+	sound.setVolume(vol);
+	return *this;
+}
+
 } /* namespace jukebox */

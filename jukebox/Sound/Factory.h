@@ -26,6 +26,7 @@ namespace jukebox {
 namespace factory {
 
 Sound makeSound(SoundFile &file);
+Sound makeSoundOutputToFile(SoundFile &file, std::string filename);
 SoundImpl *makeSoundImpl(Decoder *decoder);
 
 Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs);

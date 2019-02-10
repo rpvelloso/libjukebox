@@ -28,6 +28,8 @@ public:
 	SoundBuilder &fade(int fadeInSecs, int fadeOutSecs);
 	SoundBuilder &resolution(int bitsPerSample);
 	SoundBuilder &fadeOnStop(int fadeOutSecs);
+	SoundBuilder &loop(bool l);
+	SoundBuilder &setVolume(int vol);
 private:
 	Sound &sound;
 };
