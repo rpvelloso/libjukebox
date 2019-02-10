@@ -23,7 +23,7 @@
 #include "jukebox/Sound/Decorators/FadeOnStopSoundImpl.h"
 
 namespace jukebox {
-
+namespace factory {
 SoundBuilder::SoundBuilder(Sound &sound) :
 		sound(sound) {
 }
@@ -62,5 +62,5 @@ SoundBuilder& SoundBuilder::setVolume(int vol) {
 	sound.setVolume(vol);
 	return *this;
 }
-
+} /* namespace factory */
 } /* namespace jukebox */

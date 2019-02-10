@@ -22,33 +22,6 @@ Sound makeSoundOutputToFile(SoundFile &file, std::string filename) {
 	return Sound(new FileWriterSoundImpl(new Decoder(file.makeDecoder()), filename));
 }
 
-Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs)
-{
-	auto sound = makeSound(file);
-	SoundBuilder builder(sound);
-
-	builder.fadeOnStop(fadeOutSecs);
-	return sound;
-}
-
-Sound makeFadedSound(SoundFile &file, int fadeInSecs, int fadeOutSecs)
-{
-	auto sound = makeSound(file);
-	SoundBuilder builder(sound);
-
-	builder.fade(fadeInSecs, fadeOutSecs);
-	return sound;
-}
-
-Sound makeReverbSound(SoundFile &file, float delay, float decay, int numDelays)
-{
-	auto sound = makeSound(file);
-	SoundBuilder builder(sound);
-
-	builder.reverb(delay, decay, numDelays);
-    return sound;
-}
-
 // TODO: add more extensions and/or a way to autodetect the file format
 SoundFile loadFile(const std::string &filename)
 {

@@ -22,10 +22,12 @@
 
 namespace jukebox {
 
-class SoundBuilder;
+namespace factory {
+	class SoundBuilder;
+}
 
 class Sound {
-friend class SoundBuilder;
+friend class factory::SoundBuilder;
 public:
 	Sound(SoundImpl *impl);
 	void play();

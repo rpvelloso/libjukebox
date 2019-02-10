@@ -47,7 +47,6 @@ inline void DistortionImpl::_distortion(void* buf, int len, int offset, float ga
 	for (auto sample = beginIt; sample != endIt; ++sample) {
 		float signedSample = (float)(*sample - offset) / (float)std::numeric_limits<T>::max();
 
-		signedSample += 0.05f;
 		signedSample = std::tanh(gain*signedSample)/std::tanh(gain);
 
 		*sample = (signedSample * (float)std::numeric_limits<T>::max()) + offset;

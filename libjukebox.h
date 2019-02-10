@@ -172,10 +172,12 @@ protected:
 }
 namespace jukebox {
 
-class SoundBuilder;
+namespace factory {
+ class SoundBuilder;
+}
 
 class Sound {
-friend class SoundBuilder;
+friend class factory::SoundBuilder;
 public:
  Sound(SoundImpl *impl);
  void play();
@@ -201,10 +203,6 @@ namespace factory {
 Sound makeSound(SoundFile &file);
 Sound makeSoundOutputToFile(SoundFile &file, std::string filename);
 SoundImpl *makeSoundImpl(Decoder *decoder);
-
-Sound makeFadeOnStopSound(SoundFile &file, int fadeOutSecs);
-Sound makeFadedSound(SoundFile &file, int fadeInSecs, int fadeOutSecs);
-Sound makeReverbSound(SoundFile &file, float delay = 0.2, float decay = 0.5, int numDelays = 2);
 
 SoundFile loadFile(const std::string &filename);
 
@@ -242,7 +240,7 @@ namespace factory {
 
 }
 namespace jukebox {
-
+namespace factory {
 class SoundBuilder {
 public:
  SoundBuilder(Sound &sound);
@@ -256,7 +254,7 @@ public:
 private:
  Sound &sound;
 };
-
+}
 }
 
 #endif // #define _LIBJUKEBOX_H

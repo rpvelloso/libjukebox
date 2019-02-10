@@ -19,7 +19,7 @@
 #include "jukebox/Sound/Sound.h"
 
 namespace jukebox {
-
+namespace factory {
 class SoundBuilder {
 public:
 	SoundBuilder(Sound &sound);
@@ -33,7 +33,7 @@ public:
 private:
 	Sound &sound;
 };
-
+} /* namepsace factory */
 } /* namespace jukebox */
 
 #endif /* JUKEBOX_SOUND_SOUNDBUILDER_H_ */
