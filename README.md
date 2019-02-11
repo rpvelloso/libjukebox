@@ -38,6 +38,25 @@ sound.play(); // start playing
 std::cout << "hit enter to exit..." << std::endl;
 std::cin.get();
 ```
+
+# Combining effects
+```cpp
+auto soundFile = jukebox::factory::loadFile("audio.mp3"); // open file
+auto sound = jukebox::factory::makeSound(soundFile); // create sound
+jukebox::factory::SoundBuilder soundBuilder(sound); // soundBuilder allows combining effects
+
+soundBuilder
+	.fade(2, 2) // 2 seconds fade in & out
+	.loop(true) // looping
+	.setVolume(100) // 100% volume
+	.distortion(50) // gain = 50
+	.reverb(0.01, 0.8, 3); // robot voice (delay, decay, # delays)
+	  
+sound.play(); // start playing
+std::cout << "hit enter to exit..." << std::endl;
+std::cin.get();
+```
+
 # Example
 ```cpp
 #include <iostream>
