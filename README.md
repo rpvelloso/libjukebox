@@ -69,12 +69,13 @@ int main(int argc, char **argv) {
 		auto sound = jukebox::factory::makeSound(soundFile);
 		jukebox::factory::SoundBuilder soundBuilder(sound);
 		soundBuilder
-			.fadeOnStop(3)
-			.loop(true);
+			.fadeOnStop(3) // 3 seconds fade out on stop
+			.loop(true) // looping
+			.setVolume(100); // 100% volume 
 
 		jukebox::Mixer mixer;
 		mixer.setVolume(100); // max global volume
-		sound.setVolume(100); // max sound volume
+
 		sound.play(); // start playing
 
 		std::cout << "hit enter to fade out..." << std::endl;

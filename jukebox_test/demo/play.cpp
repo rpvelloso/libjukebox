@@ -55,11 +55,12 @@ int main(int argc, char **argv) {
 
 		soundBuilder
 			.fadeOnStop(3)
-			.loop(true);
+			.loop(true)
+			.setVolume(100);
 
 		jukebox::Mixer mixer;
 		mixer.setVolume(100); // max global volume
-		sound.setVolume(100); // max sound volume
+
 		sound.setOnStopCallback([](){std::cout << "parou!!!" << std::endl;});
 		sound.play(); // start playing
 
