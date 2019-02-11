@@ -79,7 +79,7 @@ void WaveFileImpl::load(std::istream &inp) {
 	numChannels = wavHandler->channels;
 	sampleRate = wavHandler->sampleRate;
 	bitsPerSample = wavHandler->bitsPerSample;
-	dataSize = (wavHandler->totalPCMFrameCount * (bitsPerSample >> 3)) ;
+	dataSize = (wavHandler->totalPCMFrameCount * (bitsPerSample >> 3) * numChannels) ;
 }
 
 const std::string &WaveFileImpl::getFilename() const {
