@@ -52,9 +52,10 @@ int main(int argc, char **argv) {
 				.reverb(delay, decay, numDelays)
 				.distortion(gain);
 		}
-		soundBuilder.fadeOnStop(3);
 
-		sound.loop(true); // set looping
+		soundBuilder
+			.fadeOnStop(3)
+			.loop(true);
 
 		jukebox::Mixer mixer;
 		mixer.setVolume(100); // max global volume
