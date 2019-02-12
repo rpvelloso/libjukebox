@@ -23,7 +23,8 @@ jukebox::MP3DecoderImpl::MP3DecoderImpl(MP3FileImpl& fileImpl) :
 	DecoderImpl(fileImpl),
 	fileImpl(fileImpl),
 	fileBuffer(fileImpl.getFileBuffer()),
-	fileSize(fileImpl.getFileSize()) {
+	fileSize(fileImpl.getFileSize()),
+	bytesPerSample(fileImpl.getBitsPerSample() >> 3){
 
 }
 
@@ -35,15 +36,14 @@ int jukebox::MP3DecoderImpl::getSamples(char* buf, int pos, int len) {
 
 	while ((len > bytesRead) && (samples > 0)) {
 		if (pcmPos < samples) {
-			int siz = std::min(samples - pcmPos, (len - bytesRead) / 2);
-			memcpy(&buf[bytesRead], &pcm[pcmPos], siz * 2);
+			int siz = std::min(samples - pcmPos, (len - bytesRead) / bytesPerSample);
+			memcpy(&buf[bytesRead], &pcm[pcmPos], siz * bytesPerSample);
 			pcmPos += siz;
-			bytesRead += (siz * 2);
+			bytesRead += (siz * bytesPerSample);
 		}
 
 		if (pcmPos >= samples) {
 			pcmPos = 0;
-			//std::cout << offset << std::endl;
 			samples = mp3dec_decode_frame(&mp3d, fileBuffer + offset, fileSize - offset, pcm, &info)*info.channels;
 			offset += info.frame_bytes;
 		}
@@ -76,8 +76,7 @@ void MP3DecoderImpl::positionMP3Stream(int pos) {
 			offset = frameOffset;
 			samples = mp3dec_decode_frame(&mp3d, fileBuffer + frameOffset, fileSize - frameOffset, pcm, &info)*info.channels;
 		}
-		pcmPos = (pos - (frameEndPos - ((samples*2)-1))) / 2;
-		//std::cout << pos << " " << frameOffset << " " << pcmPos << " " <<  samples << std::endl;
+		pcmPos = (pos - (frameEndPos - ((samples*bytesPerSample)-1))) / bytesPerSample;
 	}
 }
 

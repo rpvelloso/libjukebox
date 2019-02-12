@@ -34,6 +34,7 @@ private:
 	int offset = 0;
 	uint8_t *fileBuffer;
 	int fileSize;
+	int bytesPerSample;
 	mp3dec_t mp3d;
 	mp3dec_frame_info_t info;
 
