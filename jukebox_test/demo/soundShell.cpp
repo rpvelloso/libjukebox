@@ -30,6 +30,10 @@ jukebox::SoundFile loadSoundFile(const std::string &filename) {
 }
 
 void bind(sol::state &lua) {
+	lua.new_usertype<jukebox::Mixer>("Mixer",
+		"getVolume", &jukebox::Mixer::getVolume,
+		"setVolume", &jukebox::Mixer::setVolume);
+
 	lua.new_usertype<jukebox::SoundFile>("SoundFile",
 		"getNumChannels", &jukebox::SoundFile::getNumChannels,
 		"getSampleRate", &jukebox::SoundFile::getSampleRate,
@@ -57,6 +61,7 @@ void bind(sol::state &lua) {
 
 	lua["loadSoundFile"] = &loadSoundFile;
 	lua["makeSound"] = &jukebox::factory::makeSound;
+	lua["makeSoundOutputToFile"] = &jukebox::factory::makeSoundOutputToFile;
 }
 
 int main(int argc, char **argv) {
