@@ -151,3 +151,4 @@ jukebox::SoundFile loadSoundFile(const std::string &filename) {
 - Soundfont: http://schristiancollins.com/generaluser.php
 - MIDI file parser: https://github.com/craigsapp/midifile
 - FLAC & WAVE decoder: https://github.com/mackron/dr_libs
+- Sol - C++ Lua Wrapper: https://github.com/ThePhD/sol2
