@@ -1,7 +1,7 @@
 CC = gcc
 CXXFLAGS = -Wall -O3 -ggdb -std=c++1y -fPIC -I. -I./win/ -I/local/include
 CFLAGS = -Wall -O3 -ggdb
-BINS = ./bin/libjukebox.dll ./bin/test.exe ./bin/play.exe ./bin/loop.exe
+BINS = ./bin/libjukebox.dll ./bin/test.exe ./bin/play.exe ./bin/loop.exe ./bin/soundShell.exe
 LDFLAGS = -ldxguid -ldsound -lwinmm -lfluidsynth -L/local/lib
 
 include makefile.common
@@ -18,6 +18,8 @@ all							:	$(BINS)
 	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/play.o -Lbin -ljukebox -o ./bin/play.exe
 ./bin/loop.exe				:	genheader ./jukebox_test/demo/loop.o ./bin/libjukebox.dll
 	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/loop.o -Lbin -ljukebox -o ./bin/loop.exe
+./bin/soundShell.exe		:	genheader ./jukebox_test/demo/soundShell.o ./bin/libjukebox.dll
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/soundShell.o -L/local/lib -Lbin -ljukebox -llua -o ./bin/soundShell.exe
 
 .PHONY		:	clean	genheader
 genheader	:
