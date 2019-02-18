@@ -1,5 +1,5 @@
 # libjukebox
-Plataform independent (windows/linux) C++ audio playback library (uses DirectSound under Windows and Alsa under Linux).
+Platform independent (windows/linux) C++ audio playback library (uses DirectSound under Windows and Alsa under Linux).
 
 # Supported file formats:
 - WAVE (using [dr_wav](https://github.com/mackron/dr_libs));
