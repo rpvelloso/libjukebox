@@ -23,8 +23,8 @@
 #include "SoundFile.h"
 #include "MP3FileImpl.h"
 
-#define MINIMP3_IMPLEMENTATION
-#include "jukebox/Decoders/minimp3/minimp3.h"
+#define DR_MP3_IMPLEMENTATION
+#include "jukebox/Decoders/dr_mp3/dr_mp3.h"
 
 namespace jukebox {
 
@@ -55,7 +55,7 @@ int MP3FileImpl::getSampleRate() const {
 }
 
 short MP3FileImpl::getBitsPerSample() const {
-	return 16;
+	return bitsPerSample;
 }
 
 const std::string& MP3FileImpl::getFilename() const {
@@ -71,36 +71,12 @@ void MP3FileImpl::load(std::istream& inp) {
 	fileBuffer.reset(new unsigned char[fileSize]);
 	inp.read((char *)fileBuffer.get(), fileSize);
 
-	mp3dec_t mp3d;
-	mp3dec_init(&mp3d);
-
-	int mp3_bytes = fileSize;
-	uint8_t * buff = fileBuffer.get();
-	int frameStart = 0;
-	while (true) {
-		int frame_size;
-		auto i = mp3d_find_frame(buff, mp3_bytes, &(mp3d.free_format_bytes), &frame_size);
-		if (!frame_size || i + frame_size > mp3_bytes)
-			break;
-		else {
-			mp3_bytes -= (i + frame_size);
-			buff += i;
-		    numChannels = HDR_IS_MONO(buff) ? 1 : 2;
-		    sampleRate = hdr_sample_rate_hz(buff);
-			int frameSamples = hdr_frame_samples(buff) * numChannels*2;
-
-		    if (frameSamples > 0) { // build frame index, used to seek
-				//std::cout << (uint64_t)(buff - mp3.get()) << ": " << frameStart << ", " << (frameStart + frameSamples - 1) << std::endl;
-				frameIndex.push_back(std::make_pair((frameStart + frameSamples - 1), buff - fileBuffer.get()));
-				frameStart += frameSamples;
-
-			    dataSize += frameSamples;
-		    }
-
-		    buff += frame_size;
-
-		}
-	}
+	drmp3 mp3;
+	drmp3_init_memory(&mp3, (char *)fileBuffer.get(), fileSize, nullptr);
+	numChannels = mp3.channels;
+	sampleRate = mp3.mp3FrameSampleRate;
+	dataSize = drmp3_get_pcm_frame_count(&mp3) * numChannels * (bitsPerSample >> 3) * mp3.mp3FrameSampleRate / mp3.sampleRate;
+	drmp3_uninit(&mp3);
 }
 
 DecoderImpl *MP3FileImpl::makeDecoder() {
@@ -114,9 +90,4 @@ uint8_t* MP3FileImpl::getFileBuffer() {
 int MP3FileImpl::getFileSize() const {
 	return fileSize;
 }
-
-std::vector<std::pair<long, long>> &MP3FileImpl::getIndex() {
-	return frameIndex;
-}
-
 } /* namespace jukebox */

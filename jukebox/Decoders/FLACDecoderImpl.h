@@ -29,7 +29,6 @@ public:
 	int getSamples(char *buf, int pos, int len) override;
 private:
 	FLACFileImpl &fileImpl;
-	int numChannels;
 	short bytesPerSample;
 	short frameSize;
 	std::unique_ptr<drflac, decltype(&closeFlac)> flacHandler;

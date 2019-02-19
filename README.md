@@ -4,7 +4,7 @@ Platform independent (windows/linux) C++ audio playback library (uses DirectSoun
 # Supported file formats:
 - WAVE (using [dr_wav](https://github.com/mackron/dr_libs));
 - FLAC (using [dr_flac](https://github.com/mackron/dr_libs));
-- MP3 (using [minimp3](https://github.com/lieff/minimp3));
+- MP3 (using [dr_mp3](https://github.com/mackron/dr_libs));
 - Ogg Vorbis (using [stb_vorbis](https://github.com/nothings/stb));
 - MIDI (using [FluiSynth](https://github.com/FluidSynth/fluidsynth) + [MidiFile](https://github.com/craigsapp/midifile));
 - Extensible architecture allows implementation of other formats, transparently.
@@ -145,10 +145,10 @@ jukebox::SoundFile loadSoundFile(const std::string &filename) {
 ```
 # Credits
 
-- MP3 decoder: https://github.com/lieff/minimp3
 - Ogg Vorbis decoder: https://github.com/nothings/stb
 - FluidSynth MIDI synthesizer: https://github.com/FluidSynth/fluidsynth
 - Soundfont: http://schristiancollins.com/generaluser.php
 - MIDI file parser: https://github.com/craigsapp/midifile
-- FLAC & WAVE decoder: https://github.com/mackron/dr_libs
+- MP3 decoder: https://github.com/lieff/minimp3
+- MP3, FLAC & WAVE decoder: https://github.com/mackron/dr_libs
 - Sol - C++ Lua Wrapper: https://github.com/ThePhD/sol2

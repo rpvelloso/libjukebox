@@ -22,9 +22,8 @@ namespace jukebox {
 FLACDecoderImpl::FLACDecoderImpl(FLACFileImpl& fileImpl) :
 	DecoderImpl(fileImpl),
 	fileImpl(fileImpl),
-	numChannels(fileImpl.getNumChannels()),
 	bytesPerSample(fileImpl.getBitsPerSample() >> 3),
-	frameSize(numChannels * bytesPerSample),
+	frameSize(fileImpl.getNumChannels() * bytesPerSample),
 	flacHandler(nullptr, closeFlac) {
 
 	flacHandler.reset(drflac_open_memory(fileImpl.getFileBuffer(), fileImpl.getFileSize()));
@@ -43,12 +42,12 @@ int FLACDecoderImpl::getSamples(char* buf, int pos, int len) {
 		return drflac_read_pcm_frames_s32(
 			flacHandler.get(),
 			numFrames,
-			(int *)buf) * frameSize;
+			(int32_t *)buf) * frameSize;
 
 	return drflac_read_pcm_frames_s16(
 		flacHandler.get(),
 		numFrames,
-		(short *)buf) * frameSize;
+		(int16_t *)buf) * frameSize;
 }
 
 }

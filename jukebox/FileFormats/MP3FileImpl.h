@@ -36,15 +36,14 @@ public:
 	DecoderImpl *makeDecoder() override;
 	uint8_t *getFileBuffer();
 	int getFileSize() const;
-	std::vector<std::pair<long, long>> &getIndex();
 private:
 	std::string filename;
 	int sampleRate;
 	short numChannels;
+	short bitsPerSample = 16;
 	std::unique_ptr<uint8_t> fileBuffer;
 	int fileSize = 0;
 
-	std::vector<std::pair<long, long> > frameIndex; // <endPos, FramePos>
 	void load(std::istream& inp);
 };
 

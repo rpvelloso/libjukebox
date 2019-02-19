@@ -13,71 +13,39 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
+#include <iostream>
 #include <algorithm>
+#include <limits>
 #include "MP3DecoderImpl.h"
 
 namespace jukebox {
 
-jukebox::MP3DecoderImpl::MP3DecoderImpl(MP3FileImpl& fileImpl) :
+MP3DecoderImpl::MP3DecoderImpl(MP3FileImpl& fileImpl) :
 	DecoderImpl(fileImpl),
 	fileImpl(fileImpl),
-	fileBuffer(fileImpl.getFileBuffer()),
-	fileSize(fileImpl.getFileSize()),
-	bytesPerSample(fileImpl.getBitsPerSample() >> 3){
+	frameSize(fileImpl.getNumChannels() * (fileImpl.getBitsPerSample() >> 3)) {
 
-}
-
-int jukebox::MP3DecoderImpl::getSamples(char* buf, int pos, int len) {
-	int bytesRead = 0;
-
-	if (pos == 0)
-		reset();
-
-	while ((len > bytesRead) && (samples > 0)) {
-		if (pcmPos < samples) {
-			int siz = std::min(samples - pcmPos, (len - bytesRead) / bytesPerSample);
-			memcpy(&buf[bytesRead], &pcm[pcmPos], siz * bytesPerSample);
-			pcmPos += siz;
-			bytesRead += (siz * bytesPerSample);
-		}
-
-		if (pcmPos >= samples) {
-			pcmPos = 0;
-			samples = mp3dec_decode_frame(&mp3d, fileBuffer + offset, fileSize - offset, pcm, &info)*info.channels;
-			offset += info.frame_bytes;
-		}
-	}
-
-	return bytesRead;
-}
-
-void MP3DecoderImpl::reset() {
-	pcmPos = 0;
-	mp3dec_init(&mp3d);
-	samples = mp3dec_decode_frame(&mp3d, fileBuffer, fileSize, pcm, &info)*info.channels;
-	offset = info.frame_bytes;
-}
-
-void MP3DecoderImpl::positionMP3Stream(int pos) {
-	class comp {
-	public:
-		bool operator()(const std::pair<int,int> &a, const std::pair<int,int> &b) const { return a.first < b.first;};
+	drmp3_config config = {
+		(uint32_t)fileImpl.getNumChannels(),
+		(uint32_t)fileImpl.getSampleRate()
 	};
 
-	auto &frameIndex = fileImpl.getIndex();
-	auto frameIt = std::lower_bound(frameIndex.begin(), frameIndex.end(), std::make_pair(pos, 0), comp());
+	if (!drmp3_init_memory(&mp3, fileImpl.getFileBuffer(), fileImpl.getFileSize(), &config))
+		throw new std::runtime_error("error decoding file " + fileImpl.getFilename());
+}
 
-	if (frameIt != frameIndex.end()) {
-		auto frameEndPos = frameIt->first;
-		auto frameOffset = frameIt->second;
+MP3DecoderImpl::~MP3DecoderImpl() {
+	drmp3_uninit(&mp3);
+}
 
-		if (frameOffset != offset) {
-			offset = frameOffset;
-			samples = mp3dec_decode_frame(&mp3d, fileBuffer + frameOffset, fileSize - frameOffset, pcm, &info)*info.channels;
-		}
-		pcmPos = (pos - (frameEndPos - ((samples*bytesPerSample)-1))) / bytesPerSample;
-	}
+int MP3DecoderImpl::getSamples(char* buf, int pos, int len) {
+	size_t numFrames = len/frameSize;
+	std::unique_ptr<float []> floatBuf(new float[numFrames*fileImpl.getNumChannels()]);
+	auto ret = drmp3_read_pcm_frames_f32(&mp3, numFrames, floatBuf.get());
+	auto sampleOut = (int16_t *)buf;
+	for (size_t i = 0; i < numFrames*fileImpl.getNumChannels(); ++i, ++sampleOut)
+		*sampleOut = floatBuf[i] * std::numeric_limits<int16_t>::max();
+	return ret * frameSize;
 }
 
 } /* namespace jukebox */
