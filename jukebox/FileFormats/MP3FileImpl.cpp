@@ -32,15 +32,16 @@ MP3FileImpl::MP3FileImpl(const std::string &filename) :
 	SoundFileImpl(),
 	filename(filename) {
 
-	auto inp = std::fstream(this->filename, std::ios::binary|std::ios::in);
-	load(inp);
+	this->inp = new std::fstream(this->filename, std::ios::binary|std::ios::in);
+	load();
 }
 
 MP3FileImpl::MP3FileImpl(std::istream& inp) :
 	SoundFileImpl(),
 	filename(":stream:") {
 
-	load(inp);
+	this->inp = &inp;
+	load();
 }
 
 MP3FileImpl::~MP3FileImpl() {
@@ -62,7 +63,8 @@ const std::string& MP3FileImpl::getFilename() const {
 	return filename;
 }
 
-void MP3FileImpl::load(std::istream& inp) {
+void MP3FileImpl::load() {
+	auto &inp = *(this->inp);
 	auto fileStart = inp.tellg();
 	inp.seekg(0, std::ios::end);
 	fileSize = inp.tellg() - fileStart;
@@ -70,12 +72,17 @@ void MP3FileImpl::load(std::istream& inp) {
 
 	fileBuffer.reset(new unsigned char[fileSize]);
 	inp.read((char *)fileBuffer.get(), fileSize);
+	inp.seekg(fileStart, std::ios::beg);
 
 	drmp3 mp3;
-	drmp3_init_memory(&mp3, (char *)fileBuffer.get(), fileSize, nullptr);
+	if (!drmp3_init(&mp3, (drmp3_read_proc)&dr_libs_read_callback, (drmp3_seek_proc)&dr_libs_seek_callback, (void *)this->inp, nullptr))
+		throw new std::runtime_error("error opening file " + filename);
+	//drmp3_init_memory(&mp3, (char *)fileBuffer.get(), fileSize, nullptr);
 	numChannels = mp3.channels;
 	sampleRate = mp3.mp3FrameSampleRate;
-	dataSize = drmp3_get_pcm_frame_count(&mp3) * numChannels * (bitsPerSample >> 3) * mp3.mp3FrameSampleRate / mp3.sampleRate;
+	dataSize = drmp3_get_pcm_frame_count(&mp3);
+	std::cerr << "ds: " << dataSize << std::endl;
+	dataSize *= numChannels * (bitsPerSample >> 3) * mp3.mp3FrameSampleRate / mp3.sampleRate;
 	drmp3_uninit(&mp3);
 }
 

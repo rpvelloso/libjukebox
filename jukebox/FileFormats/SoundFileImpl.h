@@ -21,6 +21,9 @@
 
 namespace jukebox {
 
+extern size_t dr_libs_read_callback(void *stream, void *outBuf, size_t len);
+extern uint32_t dr_libs_seek_callback(void *stream, int offset, int origin);
+
 class SoundFileImpl {
 public:
 	SoundFileImpl() = default;

@@ -13,6 +13,7 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <istream>
 #include "SoundFileImpl.h"
 
 namespace jukebox {
@@ -27,6 +28,17 @@ int SoundFileImpl::getDataSize() const {
 
 int jukebox::SoundFileImpl::silenceLevel() const {
 	return getBitsPerSample() == 8?128:0;
+}
+
+size_t dr_libs_read_callback(void *stream, void *outBuf, size_t len) {
+	auto inp = (std::istream *)stream;
+	return inp->read((char *)outBuf, len).gcount();
+}
+
+uint32_t dr_libs_seek_callback(void *stream, int offset, int origin) { // seek origin: 0=start; 1=current
+	auto inp = (std::istream *)stream;
+	inp->seekg(offset, origin==0?std::ios::beg:std::ios::cur);
+	return true;
 }
 
 }

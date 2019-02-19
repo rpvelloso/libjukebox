@@ -43,8 +43,9 @@ private:
 	short bitsPerSample = 16;
 	std::unique_ptr<uint8_t> fileBuffer;
 	int fileSize = 0;
+	std::istream* inp = nullptr;
 
-	void load(std::istream& inp);
+	void load();
 };
 
 } /* namespace jukebox */
