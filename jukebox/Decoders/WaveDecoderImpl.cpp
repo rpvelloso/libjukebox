@@ -25,12 +25,7 @@ WaveDecoderImpl::WaveDecoderImpl(WaveFileImpl& fileImpl) :
 		DecoderImpl(fileImpl),
 		fileImpl(fileImpl),
 		frameSize(fileImpl.getNumChannels() * (fileImpl.getBitsPerSample() >> 3)),
-		wavHandler(nullptr, closeWav) {
-
-	wavHandler.reset(drwav_open_memory(fileImpl.getFileBuffer(), fileImpl.getFileSize()));
-
-	if (wavHandler.get() == nullptr)
-		throw std::runtime_error("drwav_open_memory error");
+		wavHandler(fileImpl.createHandler(), closeWav) {
 }
 
 short WaveDecoderImpl::getBitsPerSample() const {

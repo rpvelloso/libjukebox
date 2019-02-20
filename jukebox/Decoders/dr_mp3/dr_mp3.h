@@ -3032,7 +3032,7 @@ drmp3_bool32 drmp3_seek_to_pcm_frame__seek_table(drmp3* pMP3, drmp3_uint64 frame
     drmp3_seek_point seekPoint;
 
     // If there is no prior seekpoint it means the target PCM frame comes before the first seek point. Just assume a seekpoint at the start of the file in this case.
-    drmp3_uint32 priorSeekPointIndex;
+    drmp3_uint32 priorSeekPointIndex=0;
     if (drmp3_find_closest_seek_point(pMP3, frameIndex, &priorSeekPointIndex)) {
         seekPoint = pMP3->pSeekPoints[priorSeekPointIndex];
     } else {

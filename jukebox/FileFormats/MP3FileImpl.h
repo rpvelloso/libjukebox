@@ -20,30 +20,33 @@
 #include <memory>
 #include <vector>
 #include "SoundFileImpl.h"
+#include "FileLoader.h"
 #include "jukebox/Decoders/Decoder.h"
+#include "jukebox/Decoders/dr_mp3/dr_mp3.h"
 
 namespace jukebox {
+
+extern void closeMP3(drmp3 *);
 
 class MP3FileImpl : public SoundFileImpl {
 public:
 	MP3FileImpl(const std::string &filename);
 	MP3FileImpl(std::istream& inp);
-	virtual ~MP3FileImpl();
+	virtual ~MP3FileImpl() = default;
 	short getNumChannels() const override;
 	int getSampleRate() const override;
 	short getBitsPerSample() const override;
 	const std::string &getFilename() const override;
 	DecoderImpl *makeDecoder() override;
-	uint8_t *getFileBuffer();
-	int getFileSize() const;
+	drmp3 *createHandler();
 private:
 	std::string filename;
-	int sampleRate;
-	short numChannels;
+	int sampleRate = 0;
+	short numChannels = 0;
 	short bitsPerSample = 16;
-	std::unique_ptr<uint8_t> fileBuffer;
-	int fileSize = 0;
-	std::istream* inp = nullptr;
+	std::unique_ptr<std::istream> streamBuffer;
+	std::istream &inp;
+	std::unique_ptr<FileLoader> fileLoader;
 
 	void load();
 };

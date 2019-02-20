@@ -24,12 +24,7 @@ FLACDecoderImpl::FLACDecoderImpl(FLACFileImpl& fileImpl) :
 	fileImpl(fileImpl),
 	bytesPerSample(fileImpl.getBitsPerSample() >> 3),
 	frameSize(fileImpl.getNumChannels() * bytesPerSample),
-	flacHandler(nullptr, closeFlac) {
-
-	flacHandler.reset(drflac_open_memory(fileImpl.getFileBuffer(), fileImpl.getFileSize()));
-
-	if (flacHandler.get() == nullptr)
-		throw std::runtime_error("drflac_open_memory error");
+	flacHandler(fileImpl.createHandler(), closeFlac) {
 }
 
 int FLACDecoderImpl::getSamples(char* buf, int pos, int len) {

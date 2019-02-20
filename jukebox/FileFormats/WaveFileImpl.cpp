@@ -24,6 +24,41 @@
 
 namespace jukebox {
 
+class WaveFileMemoryLoader : public MemoryFileLoader {
+public:
+	WaveFileMemoryLoader(SoundFileImpl &fileImpl, std::istream& inp) : MemoryFileLoader(fileImpl, inp) {}
+	virtual ~WaveFileMemoryLoader() = default;
+
+	void *createHandler() override {
+		auto ret = drwav_open_memory(memoryBuffer.get(), fileSize);
+		if (ret == nullptr)
+			throw new std::runtime_error("error creating WAV decoder handler from memory");
+
+		return ret;
+	};
+};
+
+class WaveFileStreamLoader : public FileLoader {
+public:
+	WaveFileStreamLoader(SoundFileImpl &fileImpl, std::istream& inp) : FileLoader(fileImpl, inp) {}
+	virtual ~WaveFileStreamLoader() = default;
+
+	void *createHandler() override {
+		inp.clear();
+		inp.seekg(0, std::ios::beg);
+
+		auto ret = drwav_open(
+				(drwav_read_proc)dr_libs_read_callback,
+				(drwav_seek_proc)dr_libs_seek_callback,
+				(void *)&inp);
+
+		if (ret == nullptr)
+			throw new std::runtime_error("error creating WAV decoder handler from stream");
+
+		return ret;
+	};
+};
+
 void closeWav(drwav *f) {
 	if (f)
 		drwav_close(f);
@@ -32,17 +67,19 @@ void closeWav(drwav *f) {
 
 WaveFileImpl::WaveFileImpl(const std::string& filename) :
 	SoundFileImpl(),
-	filename(filename) {
+	filename(filename),
+	streamBuffer(new std::fstream(this->filename, std::ios::binary|std::ios::in)),
+	inp(*streamBuffer) {
 
-	auto inp = std::fstream(this->filename, std::ios::binary|std::ios::in);
-	load(inp);
+	load();
 }
 
 WaveFileImpl::WaveFileImpl(std::istream &inp) :
 	SoundFileImpl(),
-	filename(":stream:") {
+	filename(":stream:"),
+	inp(inp) {
 
-	load(inp);
+	load();
 }
 
 short WaveFileImpl::getNumChannels() const {
@@ -57,41 +94,26 @@ short WaveFileImpl::getBitsPerSample() const {
 	return bitsPerSample;
 }
 
+const std::string &WaveFileImpl::getFilename() const {
+	return filename;
+}
+
 DecoderImpl *WaveFileImpl::makeDecoder() {
 	return new WaveDecoderImpl(*this);
 }
 
-void WaveFileImpl::load(std::istream &inp) {
-	auto fileStart = inp.tellg();
-	inp.seekg(0, std::ios::end);
-	fileSize = inp.tellg() - fileStart;
-	inp.seekg(fileStart, std::ios::beg);
+drwav* WaveFileImpl::createHandler() {
+	return (drwav *)fileLoader->createHandler();
+}
 
-	fileBuffer.reset(new uint8_t[fileSize]);
-	inp.read((char *)fileBuffer.get(), fileSize);
-
-	std::unique_ptr<drwav, decltype(&closeWav)> wavHandler(
-		drwav_open_memory(fileBuffer.get(), fileSize), closeWav);
-
-	if (wavHandler.get() == nullptr)
-		throw std::runtime_error("drwav_open_memory error");
+void WaveFileImpl::load() {
+	fileLoader.reset(new WaveFileStreamLoader(*this, inp));
+	std::unique_ptr<drwav, decltype(&closeWav)> wavHandler(createHandler(), closeWav);
 
 	numChannels = wavHandler->channels;
 	sampleRate = wavHandler->sampleRate;
 	bitsPerSample = wavHandler->bitsPerSample;
 	dataSize = (wavHandler->totalPCMFrameCount * (bitsPerSample >> 3) * numChannels) ;
-}
-
-const std::string &WaveFileImpl::getFilename() const {
-	return filename;
-}
-
-uint8_t* WaveFileImpl::getFileBuffer() {
-	return fileBuffer.get();
-}
-
-int WaveFileImpl::getFileSize() const {
-	return fileSize;
 }
 
 }

@@ -23,25 +23,16 @@ namespace jukebox {
 MP3DecoderImpl::MP3DecoderImpl(MP3FileImpl& fileImpl) :
 	DecoderImpl(fileImpl),
 	fileImpl(fileImpl),
-	frameSize(fileImpl.getNumChannels() * (fileImpl.getBitsPerSample() >> 3)) {
-
-	drmp3_config config = {
-		(uint32_t)fileImpl.getNumChannels(),
-		(uint32_t)fileImpl.getSampleRate()
-	};
-
-	if (!drmp3_init_memory(&mp3, fileImpl.getFileBuffer(), fileImpl.getFileSize(), &config))
-		throw new std::runtime_error("error decoding file " + fileImpl.getFilename());
-}
-
-MP3DecoderImpl::~MP3DecoderImpl() {
-	drmp3_uninit(&mp3);
+	frameSize(fileImpl.getNumChannels() * (fileImpl.getBitsPerSample() >> 3)),
+	mp3(fileImpl.createHandler(), closeMP3) {
 }
 
 int MP3DecoderImpl::getSamples(char* buf, int pos, int len) {
+	drmp3_seek_to_pcm_frame(mp3.get(), pos / frameSize);
+
 	size_t numFrames = len/frameSize;
 	std::unique_ptr<float []> floatBuf(new float[numFrames*fileImpl.getNumChannels()]);
-	auto ret = drmp3_read_pcm_frames_f32(&mp3, numFrames, floatBuf.get());
+	auto ret = drmp3_read_pcm_frames_f32(mp3.get(), numFrames, floatBuf.get());
 	auto sampleOut = (int16_t *)buf;
 	for (size_t i = 0; i < numFrames*fileImpl.getNumChannels(); ++i, ++sampleOut)
 		*sampleOut = floatBuf[i] * std::numeric_limits<int16_t>::max();

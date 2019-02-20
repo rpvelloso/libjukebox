@@ -1,4 +1,4 @@
-local filename = './jukebox_test/data/congratulations.wav'
+local filename = './jukebox_test/data/three-two-one-go-deep-voice.wav'
 io.write('loading sound file...\n\n')
 local soundFile = loadSoundFile(filename)
 io.write('Filename: ', soundFile:getFilename(), '\n')
@@ -16,13 +16,17 @@ io.write('configuring sound object...\n')
 local soundBuilder = SoundBuilder.new(sound)
 
 soundBuilder
-  :reverb(0.01, 0.5, 2)
   :distortion(5)
 
 io.write('setting global volume...\n')
 local mixer = Mixer.new()
 mixer:setVolume(100)
 
-io.write('playing sound, press enter to exit...\n')
+io.write('playing sound, press enter for robot voice...\n')
 sound:play()
+io.read()
+
+soundBuilder -- applying effects during playback works too
+  :reverb(0.01, 0.5, 2)
+io.write('press enter to exit...\n')
 io.read()

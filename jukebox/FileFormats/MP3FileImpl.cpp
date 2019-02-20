@@ -28,23 +28,87 @@
 
 namespace jukebox {
 
+/* Memory loaders are useful for playing the same sound multiple times
+ * and simultaneously. Their main use case is for small sound effects
+ * (explosions, shots, etc)
+ */
+class MP3FileMemoryLoader : public MemoryFileLoader {
+public:
+	MP3FileMemoryLoader(SoundFileImpl &fileImpl, std::istream& inp) : MemoryFileLoader(fileImpl, inp) {}
+	virtual ~MP3FileMemoryLoader() = default;
+
+	void *createHandler() override {
+		drmp3_config config = {
+			(uint32_t)fileImpl.getNumChannels(),
+			(uint32_t)fileImpl.getSampleRate()
+		};
+
+		std::unique_ptr<drmp3> ret(new drmp3);
+
+		if (!drmp3_init_memory(ret.get(), (char *)memoryBuffer.get(), fileSize, &config))
+			throw new std::runtime_error("error creating MP3 decoder handler from memory");
+
+		return ret.release();
+	};
+};
+
+/* Stream Loader is useful for large files, when it is not
+ * practical to keep the entire encoded sound in memory.
+ * The main use case is for background music. It is not possible
+ * to play the same sound object simultaneously from a stream (you
+ * need to create another sound object from the same file in order
+ * to do this)
+ */
+class MP3FileStreamLoader : public FileLoader {
+public:
+	MP3FileStreamLoader(SoundFileImpl &fileImpl, std::istream& inp) : FileLoader(fileImpl, inp) {}
+	virtual ~MP3FileStreamLoader() = default;
+
+	void *createHandler() override {
+		drmp3_config config = {
+			(uint32_t)fileImpl.getNumChannels(),
+			(uint32_t)fileImpl.getSampleRate()
+		};
+
+		inp.clear();
+		inp.seekg(0, std::ios::beg);
+
+		std::unique_ptr<drmp3> ret(new drmp3);
+		if (!drmp3_init(
+				ret.get(),
+				(drmp3_read_proc)dr_libs_read_callback,
+				(drmp3_seek_proc)dr_libs_seek_callback,
+				(void *)&inp,
+				&config)) {
+			throw new std::runtime_error("error creating MP3 decoder handler from stream");
+		}
+
+		return ret.release();
+	};
+};
+
+void closeMP3(drmp3 *f) {
+	if (f) {
+		drmp3_uninit(f);
+		delete f; // dr_mp3 does not free the handler
+	}
+}
+
 MP3FileImpl::MP3FileImpl(const std::string &filename) :
 	SoundFileImpl(),
-	filename(filename) {
+	filename(filename),
+	streamBuffer(new std::fstream(filename, std::ios::binary|std::ios::in)),
+	inp(*streamBuffer) {
 
-	this->inp = new std::fstream(this->filename, std::ios::binary|std::ios::in);
 	load();
 }
 
 MP3FileImpl::MP3FileImpl(std::istream& inp) :
 	SoundFileImpl(),
-	filename(":stream:") {
+	filename(":stream:"),
+	inp(inp) {
 
-	this->inp = &inp;
 	load();
-}
-
-MP3FileImpl::~MP3FileImpl() {
 }
 
 short MP3FileImpl::getNumChannels() const {
@@ -64,37 +128,24 @@ const std::string& MP3FileImpl::getFilename() const {
 }
 
 void MP3FileImpl::load() {
-	auto &inp = *(this->inp);
-	auto fileStart = inp.tellg();
-	inp.seekg(0, std::ios::end);
-	fileSize = inp.tellg() - fileStart;
-	inp.seekg(fileStart, std::ios::beg);
+	fileLoader.reset(new MP3FileMemoryLoader(*this, inp));
+	std::unique_ptr<drmp3, decltype(&closeMP3)> mp3(createHandler(), closeMP3);
 
-	fileBuffer.reset(new unsigned char[fileSize]);
-	inp.read((char *)fileBuffer.get(), fileSize);
-	inp.seekg(fileStart, std::ios::beg);
-
-	drmp3 mp3;
-	if (!drmp3_init(&mp3, (drmp3_read_proc)&dr_libs_read_callback, (drmp3_seek_proc)&dr_libs_seek_callback, (void *)this->inp, nullptr))
-		throw new std::runtime_error("error opening file " + filename);
-	//drmp3_init_memory(&mp3, (char *)fileBuffer.get(), fileSize, nullptr);
-	numChannels = mp3.channels;
-	sampleRate = mp3.mp3FrameSampleRate;
-	dataSize = drmp3_get_pcm_frame_count(&mp3);
-	std::cerr << "ds: " << dataSize << std::endl;
-	dataSize *= numChannels * (bitsPerSample >> 3) * mp3.mp3FrameSampleRate / mp3.sampleRate;
-	drmp3_uninit(&mp3);
+	numChannels = mp3->channels;
+	sampleRate = mp3->mp3FrameSampleRate;
+	dataSize =
+		drmp3_get_pcm_frame_count(mp3.get()) *
+		numChannels *
+		(bitsPerSample >> 3) *
+		mp3->mp3FrameSampleRate / mp3->sampleRate;
 }
 
 DecoderImpl *MP3FileImpl::makeDecoder() {
 	return new MP3DecoderImpl(*this);
 }
 
-uint8_t* MP3FileImpl::getFileBuffer() {
-	return fileBuffer.get();
+drmp3 *MP3FileImpl::createHandler() {
+	return (drmp3 *)fileLoader->createHandler();
 }
 
-int MP3FileImpl::getFileSize() const {
-	return fileSize;
-}
 } /* namespace jukebox */

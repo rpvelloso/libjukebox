@@ -24,6 +24,41 @@
 
 namespace jukebox {
 
+class FLACFileMemoryLoader : public MemoryFileLoader {
+public:
+	FLACFileMemoryLoader(SoundFileImpl &fileImpl, std::istream& inp) : MemoryFileLoader(fileImpl, inp) {}
+	virtual ~FLACFileMemoryLoader() = default;
+
+	void *createHandler() override {
+		auto ret = drflac_open_memory(memoryBuffer.get(), fileSize);
+		if (ret == nullptr)
+			throw new std::runtime_error("error creating FLAC decoder handler from memory");
+
+		return ret;
+	};
+};
+
+class FLACFileStreamLoader : public FileLoader {
+public:
+	FLACFileStreamLoader(SoundFileImpl &fileImpl, std::istream& inp) : FileLoader(fileImpl, inp) {}
+	virtual ~FLACFileStreamLoader() = default;
+
+	void *createHandler() override {
+		inp.clear();
+		inp.seekg(0, std::ios::beg);
+
+		auto ret = drflac_open(
+				(drflac_read_proc)dr_libs_read_callback,
+				(drflac_seek_proc)dr_libs_seek_callback,
+				(void *)&inp);
+
+		if (ret == nullptr)
+			throw new std::runtime_error("error creating FLAC decoder handler from stream");
+
+		return ret;
+	};
+};
+
 void closeFlac(drflac *f) {
 	if (f)
 		drflac_close(f);
@@ -31,16 +66,18 @@ void closeFlac(drflac *f) {
 
 FLACFileImpl::FLACFileImpl(const std::string& filename) :
 	SoundFileImpl(),
-	filename(filename) {
+	filename(filename),
+	streamBuffer(new std::fstream(this->filename, std::ios::binary|std::ios::in)),
+	inp(*streamBuffer) {
 
-	auto inp = std::fstream(this->filename, std::ios::binary|std::ios::in);
-	load(inp);
+	load();
 }
 
 FLACFileImpl::FLACFileImpl(std::istream& inp) :	SoundFileImpl(),
-	filename(":stream:") {
+	filename(":stream:"),
+	inp(inp) {
 
-	load(inp);
+	load();
 }
 
 short FLACFileImpl::getNumChannels() const {
@@ -63,28 +100,13 @@ DecoderImpl *FLACFileImpl::makeDecoder() {
 	return new FLACDecoderImpl(*this);
 }
 
-uint8_t* FLACFileImpl::getFileBuffer() {
-	return fileBuffer.get();
+drflac *FLACFileImpl::createHandler() {
+	return (drflac *)fileLoader->createHandler();
 }
 
-int FLACFileImpl::getFileSize() const {
-	return fileSize;
-}
-
-void FLACFileImpl::load(std::istream& inp) {
-	auto fileStart = inp.tellg();
-	inp.seekg(0, std::ios::end);
-	fileSize = inp.tellg() - fileStart;
-	inp.seekg(fileStart, std::ios::beg);
-
-	fileBuffer.reset(new unsigned char[fileSize]);
-	inp.read((char *)fileBuffer.get(), fileSize);
-
-	std::unique_ptr<drflac, decltype(&closeFlac)> flacHandler(
-			drflac_open_memory(fileBuffer.get(), fileSize), closeFlac);
-
-	if (flacHandler.get() == nullptr)
-		throw std::runtime_error("drflac_open_memory error");
+void FLACFileImpl::load() {
+	fileLoader.reset(new FLACFileMemoryLoader(*this, inp));
+	std::unique_ptr<drflac, decltype(&closeFlac)> flacHandler(createHandler(), closeFlac);
 
 	numChannels = flacHandler->channels;
 	sampleRate = flacHandler->sampleRate;

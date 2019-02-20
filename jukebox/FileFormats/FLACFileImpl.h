@@ -17,8 +17,9 @@
 #define JUKEBOX_FILEFORMATS_FLACFILEIMPL_H_
 
 #include <memory>
-#include "jukebox/Decoders/Decoder.h"
 #include "SoundFileImpl.h"
+#include "FileLoader.h"
+#include "jukebox/Decoders/Decoder.h"
 #include "jukebox/Decoders/dr_flac/dr_flac.h"
 
 namespace jukebox {
@@ -29,22 +30,23 @@ class FLACFileImpl : public SoundFileImpl {
 public:
 	FLACFileImpl(const std::string &filename);
 	FLACFileImpl(std::istream &inp);
+	virtual ~FLACFileImpl() = default;
 	short getNumChannels() const override;
 	int getSampleRate() const override;
 	short getBitsPerSample() const override;
 	const std::string &getFilename() const override;
 	DecoderImpl *makeDecoder() override;
-	uint8_t *getFileBuffer();
-	int getFileSize() const;
+	drflac *createHandler();
 private:
 	short numChannels = 0;
 	int sampleRate = 0;
-	int fileSize = 0;
 	short bitsPerSample = 0;
-	std::unique_ptr<uint8_t []> fileBuffer;
 	std::string filename;
+	std::unique_ptr<std::istream> streamBuffer;
+	std::istream &inp;
+	std::unique_ptr<FileLoader> fileLoader;
 
-	void load(std::istream &inp);
+	void load();
 };
 
 } /* namespace jukebox */

@@ -25,12 +25,12 @@ namespace jukebox {
 class MP3DecoderImpl: public DecoderImpl {
 public:
 	MP3DecoderImpl(MP3FileImpl &fileImpl);
-	virtual ~MP3DecoderImpl();
+	virtual ~MP3DecoderImpl() = default;
 	int getSamples(char *buf, int pos, int len) override;
 private:
 	MP3FileImpl &fileImpl;
 	int frameSize;
-	drmp3 mp3;
+	std::unique_ptr<drmp3, decltype(&closeMP3)> mp3;
 };
 
 } /* namespace jukebox */

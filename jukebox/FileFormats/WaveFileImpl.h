@@ -23,6 +23,7 @@
 #include <mutex>
 
 #include "SoundFileImpl.h"
+#include "FileLoader.h"
 #include "jukebox/Decoders/Decoder.h"
 #include "jukebox/Decoders/dr_wav/dr_wav.h"
 
@@ -41,17 +42,18 @@ public:
 	short getBitsPerSample() const override;
 	const std::string &getFilename() const override;
 	DecoderImpl *makeDecoder() override;
-	uint8_t *getFileBuffer();
-	int getFileSize() const;
+	drwav *createHandler();
 private:
 	short numChannels = 0;
 	int sampleRate = 0;
 	int fileSize = 0;
 	short bitsPerSample = 0;
-	std::unique_ptr<uint8_t []> fileBuffer;
 	std::string filename;
+	std::unique_ptr<std::istream> streamBuffer;
+	std::istream &inp;
+	std::unique_ptr<FileLoader> fileLoader;
 
-	void load(std::istream &inp);
+	void load();
 };
 
 }
