@@ -28,8 +28,8 @@ extern void closeFlac(drflac *);
 
 class FLACFileImpl : public SoundFileImpl {
 public:
-	FLACFileImpl(const std::string &filename);
-	FLACFileImpl(std::istream &inp);
+	FLACFileImpl(const std::string &filename, bool);
+	FLACFileImpl(std::istream &inp, bool);
 	virtual ~FLACFileImpl() = default;
 	short getNumChannels() const override;
 	int getSampleRate() const override;

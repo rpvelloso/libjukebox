@@ -17,8 +17,9 @@
 #define LIBJUKEBOX_VORBISFILE_2017_12_23_H_
 
 #include <memory>
-#include "jukebox/Decoders/Decoder.h"
 #include "SoundFileImpl.h"
+#include "FileLoader.h"
+#include "jukebox/Decoders/Decoder.h"
 
 typedef struct stb_vorbis stb_vorbis;
 
@@ -28,23 +29,25 @@ extern void closeVorbis(stb_vorbis *);
 
 class VorbisFileImpl : public SoundFileImpl {
 public:
-	VorbisFileImpl(const std::string &filename);
-	VorbisFileImpl(std::istream &inp);
+	VorbisFileImpl(const std::string &filename, bool);
+	VorbisFileImpl(std::istream &inp, bool);
+	virtual ~VorbisFileImpl() = default;
 	short getNumChannels() const override;
 	int getSampleRate() const override;
 	short getBitsPerSample() const override;
 	const std::string &getFilename() const override;
 	DecoderImpl *makeDecoder() override;
-	uint8_t *getFileBuffer();
-	int getFileSize() const;
+	stb_vorbis *createHandler();
 private:
 	short numChannels = 0;
 	int sampleRate = 0;
 	int fileSize = 0;
-	std::unique_ptr<uint8_t []> fileBuffer;
 	std::string filename;
+	std::unique_ptr<std::istream> streamBuffer;
+	std::istream &inp;
+	std::unique_ptr<FileLoader> fileLoader;
 
-	void load(std::istream &inp);
+	void load();
 };
 
 } /* namespace jukebox */

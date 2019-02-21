@@ -13,22 +13,19 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
+#include <fstream>
 #include "VorbisDecoderImpl.h"
 #include "jukebox/Decoders/stb_vorbis/stb_vorbis.c"
 
 namespace jukebox {
 
+
 VorbisDecoderImpl::VorbisDecoderImpl(VorbisFileImpl& fileImpl) :
 	DecoderImpl(fileImpl),
 	fileImpl(fileImpl),
 	numChannels(fileImpl.getNumChannels()),
-	vorbisHandler(nullptr, closeVorbis) {
-
-	int err;
-	vorbisHandler.reset(stb_vorbis_open_memory(fileImpl.getFileBuffer(), fileImpl.getFileSize(), &err, nullptr));
-
-	if (vorbisHandler.get() == nullptr)
-		throw std::runtime_error("stb_vorbis_open_memory error: " + std::to_string(err));
+	vorbisHandler(fileImpl.createHandler(), closeVorbis) {
 }
 
 int VorbisDecoderImpl::getSamples(char* buf, int pos, int len) {

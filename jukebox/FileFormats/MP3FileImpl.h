@@ -30,8 +30,8 @@ extern void closeMP3(drmp3 *);
 
 class MP3FileImpl : public SoundFileImpl {
 public:
-	MP3FileImpl(const std::string &filename);
-	MP3FileImpl(std::istream& inp);
+	MP3FileImpl(const std::string &filename, bool);
+	MP3FileImpl(std::istream& inp, bool);
 	virtual ~MP3FileImpl() = default;
 	short getNumChannels() const override;
 	int getSampleRate() const override;

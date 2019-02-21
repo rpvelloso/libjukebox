@@ -34,8 +34,8 @@ extern void closeWav(drwav *f);
 
 class WaveFileImpl : public SoundFileImpl {
 public:
-	WaveFileImpl(const std::string &filename);
-	WaveFileImpl(std::istream &inp);
+	WaveFileImpl(const std::string &filename, bool);
+	WaveFileImpl(std::istream &inp, bool);
 	virtual ~WaveFileImpl() = default;
 	short getNumChannels() const override;
 	int getSampleRate() const override;

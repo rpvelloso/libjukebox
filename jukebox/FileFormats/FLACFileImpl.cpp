@@ -64,18 +64,24 @@ void closeFlac(drflac *f) {
 		drflac_close(f);
 }
 
-FLACFileImpl::FLACFileImpl(const std::string& filename) :
+FLACFileImpl::FLACFileImpl(const std::string& filename, bool onMemory) :
 	SoundFileImpl(),
 	filename(filename),
 	streamBuffer(new std::fstream(this->filename, std::ios::binary|std::ios::in)),
-	inp(*streamBuffer) {
+	inp(*streamBuffer),
+	fileLoader(onMemory?
+		(FileLoader *)new FLACFileMemoryLoader(*this, inp):
+		(FileLoader *)new FLACFileStreamLoader(*this, inp)) {
 
 	load();
 }
 
-FLACFileImpl::FLACFileImpl(std::istream& inp) :	SoundFileImpl(),
+FLACFileImpl::FLACFileImpl(std::istream& inp, bool onMemory) : SoundFileImpl(),
 	filename(":stream:"),
-	inp(inp) {
+	inp(inp),
+	fileLoader(onMemory?
+		(FileLoader *)new FLACFileMemoryLoader(*this, inp):
+		(FileLoader *)new FLACFileStreamLoader(*this, inp)) {
 
 	load();
 }
@@ -105,7 +111,6 @@ drflac *FLACFileImpl::createHandler() {
 }
 
 void FLACFileImpl::load() {
-	fileLoader.reset(new FLACFileMemoryLoader(*this, inp));
 	std::unique_ptr<drflac, decltype(&closeFlac)> flacHandler(createHandler(), closeFlac);
 
 	numChannels = flacHandler->channels;

@@ -23,7 +23,7 @@ Sound makeSoundOutputToFile(SoundFile &file, std::string filename) {
 }
 
 // TODO: add more extensions and/or a way to autodetect the file format
-SoundFile loadFile(const std::string &filename)
+SoundFile loadFile(const std::string &filename, bool onMemory)
 {
     auto fileExtension = [](std::string const & filename) {
         auto p = filename.rfind('.');
@@ -33,53 +33,53 @@ SoundFile loadFile(const std::string &filename)
     };
 
     auto ext = fileExtension(filename);
-    if (ext == "ogg") return loadVorbisFile(filename);
-    if (ext == "mp3") return loadMP3File(filename);
-    if (ext == "flac") return loadFLACFile(filename);
+    if (ext == "ogg") return loadVorbisFile(filename, onMemory);
+    if (ext == "mp3") return loadMP3File(filename, onMemory);
+    if (ext == "flac") return loadFLACFile(filename, onMemory);
     // if (ext == "mid") return loadMIDIFile(filename);
-    if (ext == "wav") return loadWaveFile(filename);
+    if (ext == "wav") return loadWaveFile(filename, onMemory);
 
     throw std::runtime_error("error loading " + filename + ". invalid extension " + ext);
 }
 
-SoundFile loadWaveFile(const std::string &filename)
+SoundFile loadWaveFile(const std::string &filename, bool onMemory)
 {
-    return SoundFile(new WaveFileImpl(filename));
+    return SoundFile(new WaveFileImpl(filename, onMemory));
 }
 
-SoundFile loadWaveStream(std::istream &inp)
+SoundFile loadWaveStream(std::istream &inp, bool onMemory)
 {
-    return SoundFile(new WaveFileImpl(inp));
+    return SoundFile(new WaveFileImpl(inp, onMemory));
 }
 
-SoundFile loadVorbisFile(const std::string &filename)
+SoundFile loadVorbisFile(const std::string &filename, bool onMemory)
 {
-    return SoundFile(new VorbisFileImpl(filename));
+    return SoundFile(new VorbisFileImpl(filename, onMemory));
 }
 
-SoundFile loadVorbisStream(std::istream &inp)
+SoundFile loadVorbisStream(std::istream &inp, bool onMemory)
 {
-    return SoundFile(new VorbisFileImpl(inp));
+    return SoundFile(new VorbisFileImpl(inp, onMemory));
 }
 
-SoundFile loadMP3File(const std::string &filename)
+SoundFile loadMP3File(const std::string &filename, bool onMemory)
 {
-    return SoundFile(new MP3FileImpl(filename));
+    return SoundFile(new MP3FileImpl(filename, onMemory));
 }
 
-SoundFile loadMP3Stream(std::istream &inp)
+SoundFile loadMP3Stream(std::istream &inp, bool onMemory)
 {
-    return SoundFile(new MP3FileImpl(inp));
+    return SoundFile(new MP3FileImpl(inp, onMemory));
 }
 
-SoundFile loadFLACFile(const std::string &filename)
+SoundFile loadFLACFile(const std::string &filename, bool onMemory)
 {
-    return SoundFile(new FLACFileImpl(filename));
+    return SoundFile(new FLACFileImpl(filename, onMemory));
 }
 
-SoundFile loadFLACStream(std::istream &inp)
+SoundFile loadFLACStream(std::istream &inp, bool onMemory)
 {
-    return SoundFile(new FLACFileImpl(inp));
+    return SoundFile(new FLACFileImpl(inp, onMemory));
 }
 
 }

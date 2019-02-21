@@ -65,19 +65,25 @@ void closeWav(drwav *f) {
 }
 
 
-WaveFileImpl::WaveFileImpl(const std::string& filename) :
+WaveFileImpl::WaveFileImpl(const std::string& filename, bool onMemory) :
 	SoundFileImpl(),
 	filename(filename),
 	streamBuffer(new std::fstream(this->filename, std::ios::binary|std::ios::in)),
-	inp(*streamBuffer) {
+	inp(*streamBuffer),
+	fileLoader(onMemory?
+		(FileLoader *)new WaveFileMemoryLoader(*this, inp):
+		(FileLoader *)new WaveFileStreamLoader(*this, inp)) {
 
 	load();
 }
 
-WaveFileImpl::WaveFileImpl(std::istream &inp) :
+WaveFileImpl::WaveFileImpl(std::istream &inp, bool onMemory) :
 	SoundFileImpl(),
 	filename(":stream:"),
-	inp(inp) {
+	inp(inp),
+	fileLoader(onMemory?
+		(FileLoader *)new WaveFileMemoryLoader(*this, inp):
+		(FileLoader *)new WaveFileStreamLoader(*this, inp)) {
 
 	load();
 }
@@ -107,7 +113,6 @@ drwav* WaveFileImpl::createHandler() {
 }
 
 void WaveFileImpl::load() {
-	fileLoader.reset(new WaveFileStreamLoader(*this, inp));
 	std::unique_ptr<drwav, decltype(&closeWav)> wavHandler(createHandler(), closeWav);
 
 	numChannels = wavHandler->channels;

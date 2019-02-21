@@ -207,16 +207,16 @@ Sound makeSound(SoundFile &file);
 Sound makeSoundOutputToFile(SoundFile &file, std::string filename);
 SoundImpl *makeSoundImpl(Decoder *decoder);
 
-SoundFile loadFile(const std::string &filename);
+SoundFile loadFile(const std::string &filename, bool onMemory = false);
 
-SoundFile loadWaveFile(const std::string &filename);
-SoundFile loadWaveStream(std::istream &inp);
-SoundFile loadVorbisFile(const std::string &filename);
-SoundFile loadVorbisStream(std::istream &inp);
-SoundFile loadMP3File(const std::string &filename);
-SoundFile loadMP3Stream(std::istream &inp);
-SoundFile loadFLACFile(const std::string &filename);
-SoundFile loadFLACStream(std::istream &inp);
+SoundFile loadWaveFile(const std::string &filename, bool onMemory = false);
+SoundFile loadWaveStream(std::istream &inp, bool onMemory = false);
+SoundFile loadVorbisFile(const std::string &filename, bool onMemory = false);
+SoundFile loadVorbisStream(std::istream &inp, bool onMemory = false);
+SoundFile loadMP3File(const std::string &filename, bool onMemory = false);
+SoundFile loadMP3Stream(std::istream &inp, bool onMemory = false);
+SoundFile loadFLACFile(const std::string &filename, bool onMemory = false);
+SoundFile loadFLACStream(std::istream &inp, bool onMemory = false);
 
 }
 }

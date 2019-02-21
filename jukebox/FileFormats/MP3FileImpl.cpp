@@ -94,19 +94,25 @@ void closeMP3(drmp3 *f) {
 	}
 }
 
-MP3FileImpl::MP3FileImpl(const std::string &filename) :
+MP3FileImpl::MP3FileImpl(const std::string &filename, bool onMemory) :
 	SoundFileImpl(),
 	filename(filename),
 	streamBuffer(new std::fstream(filename, std::ios::binary|std::ios::in)),
-	inp(*streamBuffer) {
+	inp(*streamBuffer),
+	fileLoader(onMemory?
+		(FileLoader *)new MP3FileMemoryLoader(*this, inp):
+		(FileLoader *)new MP3FileStreamLoader(*this, inp)) {
 
 	load();
 }
 
-MP3FileImpl::MP3FileImpl(std::istream& inp) :
+MP3FileImpl::MP3FileImpl(std::istream& inp, bool onMemory) :
 	SoundFileImpl(),
 	filename(":stream:"),
-	inp(inp) {
+	inp(inp),
+	fileLoader(onMemory?
+		(FileLoader *)new MP3FileMemoryLoader(*this, inp):
+		(FileLoader *)new MP3FileStreamLoader(*this, inp)) {
 
 	load();
 }
@@ -128,7 +134,6 @@ const std::string& MP3FileImpl::getFilename() const {
 }
 
 void MP3FileImpl::load() {
-	fileLoader.reset(new MP3FileMemoryLoader(*this, inp));
 	std::unique_ptr<drmp3, decltype(&closeMP3)> mp3(createHandler(), closeMP3);
 
 	numChannels = mp3->channels;
