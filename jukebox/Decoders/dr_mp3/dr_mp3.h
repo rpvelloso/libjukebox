@@ -1,5 +1,5 @@
 // MP3 audio decoder. Public domain. See "unlicense" statement at the end of this file.
-// dr_mp3 - v0.4.1 - 2018-12-30
+// dr_mp3 - v0.4.2 - 2018-xx-xx
 //
 // David Reid - mackron@gmail.com
 //
@@ -3007,6 +3007,8 @@ drmp3_bool32 drmp3_find_closest_seek_point(drmp3* pMP3, drmp3_uint64 frameIndex,
 {
     drmp3_assert(pSeekPointIndex != NULL);
 
+    *pSeekPointIndex = 0;
+
     if (frameIndex < pMP3->pSeekPoints[0].pcmFrameIndex) {
         return DRMP3_FALSE;
     }
@@ -3032,7 +3034,7 @@ drmp3_bool32 drmp3_seek_to_pcm_frame__seek_table(drmp3* pMP3, drmp3_uint64 frame
     drmp3_seek_point seekPoint;
 
     // If there is no prior seekpoint it means the target PCM frame comes before the first seek point. Just assume a seekpoint at the start of the file in this case.
-    drmp3_uint32 priorSeekPointIndex=0;
+    drmp3_uint32 priorSeekPointIndex;
     if (drmp3_find_closest_seek_point(pMP3, frameIndex, &priorSeekPointIndex)) {
         seekPoint = pMP3->pSeekPoints[priorSeekPointIndex];
     } else {
@@ -3449,6 +3451,9 @@ void drmp3_free(void* p)
 
 // REVISION HISTORY
 // ================
+//
+// v0.4.2 - 2018-xx-xx
+//   - Fix a warning.
 //
 // v0.4.1 - 2018-12-30
 //   - Fix a warning.
