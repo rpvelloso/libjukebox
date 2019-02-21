@@ -6,7 +6,6 @@ headers=(
 	'jukebox/Decoders/Decoder.h'
 	'jukebox/FileFormats/SoundFileImpl.h'
 	'jukebox/FileFormats/SoundFile.h'
-	'jukebox/FileFormats/MIDIFileImpl.h'
 	'jukebox/Sound/SoundImpl.h'
 	'jukebox/Sound/Sound.h'
 	'jukebox/Sound/Factory.h'

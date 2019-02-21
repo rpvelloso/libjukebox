@@ -30,7 +30,7 @@ public:
 	virtual ~FLACFileMemoryLoader() = default;
 
 	void *createHandler() override {
-		auto ret = drflac_open_memory(memoryBuffer.get(), fileSize);
+		auto ret = drflac_open_memory(memoryBuffer.get(), memoryBufferSize);
 		if (ret == nullptr)
 			throw new std::runtime_error("error creating FLAC decoder handler from memory");
 

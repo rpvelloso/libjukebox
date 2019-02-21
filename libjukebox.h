@@ -131,29 +131,6 @@ private:
 }
 namespace jukebox {
 
-class MIDIFileImpl: public SoundFileImpl {
-public:
- MIDIFileImpl(const std::string &filename);
- MIDIFileImpl(std::istream& inp);
- virtual ~MIDIFileImpl() = default;
- short getNumChannels() const override;
- int getSampleRate() const override;
- short getBitsPerSample() const override;
- const std::string &getFilename() const override;
- DecoderImpl *makeDecoder() override;
- uint8_t *getFileBuffer();
- int getFileSize();
-private:
- std::string filename;
- int fileSize = 0;
- std::unique_ptr<uint8_t> fileBuffer;
-
- void load(std::istream& inp);
-};
-
-}
-namespace jukebox {
-
 class SoundImpl {
 public:
  SoundImpl(Decoder *);
@@ -220,19 +197,11 @@ SoundFile loadFLACStream(std::istream &inp, bool onMemory = false);
 
 }
 }
-
-
-
 namespace jukebox {
 namespace factory {
 
-    inline SoundFile loadMIDIFile(const std::string &filename) {
-        return SoundFile(new MIDIFileImpl(filename));
-    }
-
-    inline SoundFile loadMIDIStream(std::istream &inp) {
-        return SoundFile(new MIDIFileImpl(inp));
-    }
+    extern SoundFile loadMIDIFile(const std::string &filename);
+    extern SoundFile loadMIDIStream(std::istream &inp);
 }
 }
 namespace jukebox {

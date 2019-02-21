@@ -45,7 +45,7 @@ public:
 
 		std::unique_ptr<drmp3> ret(new drmp3);
 
-		if (!drmp3_init_memory(ret.get(), (char *)memoryBuffer.get(), fileSize, &config))
+		if (!drmp3_init_memory(ret.get(), (char *)memoryBuffer.get(), memoryBufferSize, &config))
 			throw new std::runtime_error("error creating MP3 decoder handler from memory");
 
 		return ret.release();

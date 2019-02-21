@@ -39,19 +39,21 @@ public:
 		FileLoader(fileImpl, inp)	{
 		auto fileStart = inp.tellg();
 		inp.seekg(0, std::ios::end);
-		fileSize = inp.tellg() - fileStart;
+		memoryBufferSize = inp.tellg() - fileStart;
 		inp.seekg(fileStart, std::ios::beg);
 
-		memoryBuffer.reset(new uint8_t[fileSize]);
-		inp.read((char *)memoryBuffer.get(), fileSize);
+		memoryBuffer.reset(new uint8_t[memoryBufferSize]);
+		inp.read((char *)memoryBuffer.get(), memoryBufferSize);
 		inp.seekg(fileStart, std::ios::beg);
 	};
 
 	virtual ~MemoryFileLoader() = default;
 
+	uint8_t *getMemoryBuffer() {return memoryBuffer.get();}
+	int getBufferSize() {return memoryBufferSize;}
 protected:
 	std::unique_ptr<uint8_t []> memoryBuffer;
-	int fileSize = 0;
+	int memoryBufferSize = 0;
 };
 
 }

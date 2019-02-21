@@ -99,7 +99,7 @@ int MIDIDecoderImpl::getSamples(char* buf, int pos, int len) {
 void MIDIDecoderImpl::reset() {
 	fluid_player_stop(player.get());
 	player.reset(new_fluid_player(synth.get()));
-	fluid_player_add_mem(player.get(), fileImpl.getFileBuffer(), fileImpl.getFileSize());
+	fluid_player_add_mem(player.get(), fileImpl.getMemoryBuffer(), fileImpl.getBufferSize());
     fluid_player_play(player.get());
 }
 

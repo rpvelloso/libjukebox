@@ -22,6 +22,16 @@
 
 namespace jukebox {
 
+class MIDIFileMemoryLoader : public MemoryFileLoader {
+public:
+	MIDIFileMemoryLoader(SoundFileImpl &fileImpl, std::istream& inp) : MemoryFileLoader(fileImpl, inp) {}
+	virtual ~MIDIFileMemoryLoader() = default;
+
+	void *createHandler() override {
+		return nullptr;
+	};
+};
+
 MIDIFileImpl::MIDIFileImpl(const std::string &filename) :
 	SoundFileImpl(),
 	filename(filename) {
@@ -58,15 +68,8 @@ DecoderImpl *MIDIFileImpl::makeDecoder() {
 }
 
 void MIDIFileImpl::load(std::istream& inp) {
-	auto fileStart = inp.tellg();
-	inp.seekg(0, std::ios::end);
-	fileSize = inp.tellg() - fileStart;
-	inp.seekg(fileStart, std::ios::beg);
+	fileLoader.reset(new MIDIFileMemoryLoader(*this, inp));
 
-	fileBuffer.reset(new unsigned char[fileSize]);
-	inp.read((char *)fileBuffer.get(), fileSize);
-
-	inp.seekg(0, std::ios::beg);
 	smf::MidiFile midiFile(inp);
 	midiFile.sortTracks();
 
@@ -74,22 +77,12 @@ void MIDIFileImpl::load(std::istream& inp) {
 			getSampleRate()*getNumChannels()*(getBitsPerSample()/8);
 }
 
-uint8_t* MIDIFileImpl::getFileBuffer() {
-	return fileBuffer.get();
+uint8_t* MIDIFileImpl::getMemoryBuffer() {
+	return fileLoader->getMemoryBuffer();
 }
 
-int MIDIFileImpl::getFileSize() {
-	return fileSize;
+int MIDIFileImpl::getBufferSize() {
+	return fileLoader->getBufferSize();
 }
-
-namespace factory {
-SoundFile loadMIDIFile(const std::string &filename) {
-	return SoundFile(new MIDIFileImpl(filename));
-}
-
-SoundFile loadMIDIStream(std::istream &inp) {
-	return SoundFile(new MIDIFileImpl(inp));
-}
-};
 
 } /* namespace jukebox */

@@ -30,7 +30,7 @@ public:
 	virtual ~WaveFileMemoryLoader() = default;
 
 	void *createHandler() override {
-		auto ret = drwav_open_memory(memoryBuffer.get(), fileSize);
+		auto ret = drwav_open_memory(memoryBuffer.get(), memoryBufferSize);
 		if (ret == nullptr)
 			throw new std::runtime_error("error creating WAV decoder handler from memory");
 

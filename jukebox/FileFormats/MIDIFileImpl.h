@@ -19,6 +19,7 @@
 #include <memory>
 #include <string>
 #include "SoundFileImpl.h"
+#include "FileLoader.h"
 
 namespace jukebox {
 
@@ -32,12 +33,11 @@ public:
 	short getBitsPerSample() const override;
 	const std::string &getFilename() const override;
 	DecoderImpl *makeDecoder() override;
-	uint8_t *getFileBuffer();
-	int getFileSize();
+	uint8_t *getMemoryBuffer();
+	int getBufferSize();
 private:
 	std::string filename;
-	int fileSize = 0;
-	std::unique_ptr<uint8_t> fileBuffer;
+	std::unique_ptr<MemoryFileLoader> fileLoader;
 
 	void load(std::istream& inp);
 };

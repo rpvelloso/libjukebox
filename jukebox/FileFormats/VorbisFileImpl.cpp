@@ -33,7 +33,7 @@ public:
 
 	void *createHandler() override {
 		int err;
-		auto ret = stb_vorbis_open_memory(memoryBuffer.get(), fileSize, &err, nullptr);
+		auto ret = stb_vorbis_open_memory(memoryBuffer.get(), memoryBufferSize, &err, nullptr);
 		if (ret == nullptr)
 			throw new std::runtime_error("error creating Vorbis decoder handler from memory");
 		return (void *)ret;
