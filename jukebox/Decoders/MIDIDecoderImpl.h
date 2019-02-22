@@ -16,7 +16,9 @@
 #ifndef JUKEBOX_DECODERS_MIDIDECODERIMPL_H_
 #define JUKEBOX_DECODERS_MIDIDECODERIMPL_H_
 
-#include <fluidsynth.h>
+extern "C" {
+#include "fluidsynth/fs.h"
+}
 #include "DecoderImpl.h"
 
 namespace jukebox {
