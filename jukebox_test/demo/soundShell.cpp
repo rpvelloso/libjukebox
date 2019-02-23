@@ -50,8 +50,8 @@ void bind(sol::state &lua) {
 		"setVolume", &jukebox::factory::SoundBuilder::setVolume);
 
 	lua.new_usertype<jukebox::MIDIConfigurator>("MIDIConfigurator",
-			"setSoundFont", &jukebox::MIDIConfigurator::setSoundFont,
-			"getSoundFont", &jukebox::MIDIConfigurator::getSoundFont);
+		"setSoundFont", &jukebox::MIDIConfigurator::setSoundFont,
+		"getSoundFont", &jukebox::MIDIConfigurator::getSoundFont);
 
 	lua["loadSoundFile"] = &jukebox::factory::loadFile;
 	lua["midiConfig"] = &jukebox::MIDIConfigurator::getInstance();
