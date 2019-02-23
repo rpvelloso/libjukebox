@@ -1,4 +1,7 @@
-local filename = './jukebox_test/data/three-two-one-go-deep-voice.wav'
+local filename = './jukebox_test/data/AxelF.mid' -- three-two-one-go-deep-voice.wav'
+
+--midiConfig:setSoundFont('./jukebox_test/data/GXSCC_gm_033.sf2')
+
 io.write('loading sound file...\n\n')
 local soundFile = loadSoundFile(filename)
 io.write('Filename: ', soundFile:getFilename(), '\n')

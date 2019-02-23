@@ -21,6 +21,7 @@
 #include "../Decoders/Decorators/SampleResolutionImpl.h"
 #include "../Decoders/Decorators/DistortionImpl.h"
 #include "jukebox/Sound/Decorators/FadeOnStopSoundImpl.h"
+#include "../Decoders/MIDIDecoderImpl.h"
 
 namespace jukebox {
 namespace factory {
@@ -62,5 +63,6 @@ SoundBuilder& SoundBuilder::setVolume(int vol) {
 	sound.setVolume(vol);
 	return *this;
 }
+
 } /* namespace factory */
 } /* namespace jukebox */

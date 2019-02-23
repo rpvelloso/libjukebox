@@ -90,6 +90,23 @@ private:
 }
 namespace jukebox {
 
+class MIDIConfigurator {
+public:
+ MIDIConfigurator(MIDIConfigurator &) = delete;
+ void operator =(MIDIConfigurator &) = delete;
+
+ const std::string &getSoundFont() const;
+ void setSoundFont(const std::string &sfPath);
+ static MIDIConfigurator &getInstance();
+private:
+ std::string soundFontPath;
+ static std::unique_ptr<MIDIConfigurator> instance;
+ MIDIConfigurator();
+};
+
+}
+namespace jukebox {
+
 extern size_t dr_libs_read_callback(void *stream, void *outBuf, size_t len);
 extern uint32_t dr_libs_seek_callback(void *stream, int offset, int origin);
 

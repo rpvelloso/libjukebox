@@ -16,6 +16,7 @@
 #include <cstring>
 #include "jukebox/FileFormats/MIDIFileImpl.h"
 #include "MIDIDecoderImpl.h"
+#include "MIDIConfigurator.h"
 
 namespace jukebox {
 
@@ -44,18 +45,26 @@ void dummy_fluid_log_function(int level, char *	message,void * data){}
  * GXSCC_gm_033.sf2 - 126kb 8 bit style o/ -> https://musical-artifacts.com/artifacts/9
  * */
 
-class FluidSynthInitialization {
-friend class MIDIDecoderImpl;
-public:
-	static const std::string &getSoundFontFilename() {
-		static std::string soundFont = "./jukebox_test/data/GeneralUser GS v1.471.sf2";
-		return soundFont;
-	}
-private:
-	FluidSynthInitialization() {
-		fluid_set_log_function(FLUID_WARN, dummy_fluid_log_function, nullptr);
-	};
-};
+const std::string &MIDIConfigurator::getSoundFont() const {
+	return soundFontPath;
+}
+
+void MIDIConfigurator::setSoundFont(const std::string &sfPath) {
+	soundFontPath = sfPath;
+}
+
+MIDIConfigurator &MIDIConfigurator::getInstance() {
+	if (instance.get() == nullptr)
+		instance.reset(new MIDIConfigurator());
+	return *instance;
+}
+
+MIDIConfigurator::MIDIConfigurator() :
+		soundFontPath("./jukebox_test/data/GeneralUser GS v1.471.sf2") {
+	fluid_set_log_function(FLUID_WARN, dummy_fluid_log_function, nullptr);
+}
+
+std::unique_ptr<MIDIConfigurator> MIDIConfigurator::instance(nullptr);
 
 
 MIDIDecoderImpl::MIDIDecoderImpl(MIDIFileImpl& fileImpl) :
@@ -65,12 +74,13 @@ MIDIDecoderImpl::MIDIDecoderImpl(MIDIFileImpl& fileImpl) :
 		synth(new_fluid_synth(settings.get()), freeFluidSynthSynth),
 		player(new_fluid_player(synth.get()), freeFluidSynthPlayer) {
 
-	static FluidSynthInitialization libfluidInit;
+	auto &midiConfig = MIDIConfigurator::getInstance();
 
 	if (fluid_synth_get_sfont(synth.get(), 0) == nullptr) {
-		auto soundFont = libfluidInit.getSoundFontFilename();
-		if (fluid_is_soundfont(soundFont.c_str()))
+		auto soundFont = midiConfig.getSoundFont();
+		if (fluid_is_soundfont(soundFont.c_str())) {
 			fluid_synth_sfload(synth.get(), soundFont.c_str(), 1);
+		}
 		else
 			throw std::invalid_argument(soundFont + " is not a sound font file.");
 	}

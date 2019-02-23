@@ -49,7 +49,12 @@ void bind(sol::state &lua) {
 		"loop", &jukebox::factory::SoundBuilder::loop,
 		"setVolume", &jukebox::factory::SoundBuilder::setVolume);
 
+	lua.new_usertype<jukebox::MIDIConfigurator>("MIDIConfigurator",
+			"setSoundFont", &jukebox::MIDIConfigurator::setSoundFont,
+			"getSoundFont", &jukebox::MIDIConfigurator::getSoundFont);
+
 	lua["loadSoundFile"] = &jukebox::factory::loadFile;
+	lua["midiConfig"] = &jukebox::MIDIConfigurator::getInstance();
 	lua["makeSound"] = &jukebox::factory::makeSound;
 	lua["makeSoundOutputToFile"] = &jukebox::factory::makeSoundOutputToFile;
 }

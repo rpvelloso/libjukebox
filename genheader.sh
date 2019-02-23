@@ -4,12 +4,12 @@ headers=(
 	'jukebox/Mixer/Mixer.h'
 	'jukebox/Decoders/DecoderImpl.h'
 	'jukebox/Decoders/Decoder.h'
+	'jukebox/Decoders/MIDIConfigurator.h'
 	'jukebox/FileFormats/SoundFileImpl.h'
 	'jukebox/FileFormats/SoundFile.h'
 	'jukebox/Sound/SoundImpl.h'
 	'jukebox/Sound/Sound.h'
 	'jukebox/Sound/Factory.h'
-	'jukebox/FileFormats/MIDIFactory.h'
 	'jukebox/Mixer/Factory.h'
 	'jukebox/Sound/SoundBuilder.h'
 )
