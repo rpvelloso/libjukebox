@@ -25,10 +25,7 @@ make -f makefile.mingw
 This will compile the library (.so or .dll) and examples in 'bin/' directory. 
 All you'll need to use is the header libjukebox.h and the library to link against your own project.
 
-Before building this library, if you want MIDI support, follow the instructions 
-for installing [FluidSynth](https://github.com/FluidSynth/fluidsynth/wiki/BuildingWithCMake).
-
-(TODO: building without MIDI file support...)
+To provide MIDI support we are using [FluidSynth](https://github.com/FluidSynth/fluidsynth/wiki/BuildingWithCMake), but you don't need to install nor build another library prior to building libjukebox because FluidSynth already comes embedded into it (i.e., there is no external dependency with it).
 
 # Simple Usage
 ```cpp
@@ -66,7 +63,6 @@ std::cin.get();
 
 // forward declarations
 void printFileInfo(const jukebox::SoundFile &file);
-jukebox::SoundFile loadSoundFile(const std::string &filename);
 
 int main(int argc, char **argv) {
 	if( argc < 2 ) {
@@ -78,7 +74,7 @@ int main(int argc, char **argv) {
 
 	try {
 		// load a sound file
-		auto soundFile = loadSoundFile(filename);
+		auto soundFile = jukebox::factory::loadFile(filename);
 
 		// print file info
 		printFileInfo(soundFile);
@@ -132,17 +128,8 @@ void printFileInfo(const jukebox::SoundFile &file) {
 	std::cout << file.getDataSize() << " bytes" << std::endl;
 	std::cout << formatDuration(file.getDuration()) << " sec(s)" << std::endl << std::endl;
 }
-
-jukebox::SoundFile loadSoundFile(const std::string &filename) {
-	auto extension = filename.substr(filename.find_last_of('.'));
-	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
-
-	if (extension == ".mid")
-		return jukebox::factory::loadMIDIFile(filename);
-	else
-		return jukebox::factory::loadFile(filename);
-}
 ```
+
 # Credits
 
 - Ogg Vorbis decoder: https://github.com/nothings/stb
