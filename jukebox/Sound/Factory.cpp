@@ -8,6 +8,7 @@
 #include "jukebox/FileFormats/VorbisFileImpl.h"
 #include "jukebox/FileFormats/WaveFileImpl.h"
 #include "jukebox/FileFormats/FLACFileImpl.h"
+#include "jukebox/FileFormats/MIDIFileImpl.h"
 
 namespace jukebox {
 namespace factory {
@@ -36,7 +37,7 @@ SoundFile loadFile(const std::string &filename, bool onMemory)
     if (ext == "ogg") return loadVorbisFile(filename, onMemory);
     if (ext == "mp3") return loadMP3File(filename, onMemory);
     if (ext == "flac") return loadFLACFile(filename, onMemory);
-    // if (ext == "mid") return loadMIDIFile(filename);
+    if (ext == "mid") return loadMIDIFile(filename);
     if (ext == "wav") return loadWaveFile(filename, onMemory);
 
     throw std::runtime_error("error loading " + filename + ". invalid extension " + ext);
@@ -80,6 +81,14 @@ SoundFile loadFLACFile(const std::string &filename, bool onMemory)
 SoundFile loadFLACStream(std::istream &inp, bool onMemory)
 {
     return SoundFile(new FLACFileImpl(inp, onMemory));
+}
+
+SoundFile loadMIDIFile(const std::string &filename) {
+    return SoundFile(new MIDIFileImpl(filename));
+}
+
+SoundFile loadMIDIStream(std::istream &inp) {
+    return SoundFile(new MIDIFileImpl(inp));
 }
 
 }

@@ -18,10 +18,6 @@
 #include <algorithm>
 #include "libjukebox.h"
 
-// forward declarations
-void printFileInfo(const jukebox::SoundFile &file);
-jukebox::SoundFile loadSoundFile(const std::string &filename);
-
 int main(int argc, char **argv) {
 	if( argc < 3 ) {
 		std::cout << "you need to supply two audio (wav/ogg/mp3/mid/flac) files as arguments" << std::endl;
@@ -34,8 +30,8 @@ int main(int argc, char **argv) {
 	std::vector<jukebox::SoundFile> soundFiles;
 	std::vector<jukebox::Sound> sounds;
 
-	soundFiles.emplace_back(loadSoundFile(filename1));
-	soundFiles.emplace_back(loadSoundFile(filename2));
+	soundFiles.emplace_back(jukebox::factory::loadFile(filename1));
+	soundFiles.emplace_back(jukebox::factory::loadFile(filename2));
 	sounds.emplace_back(jukebox::factory::makeSound(soundFiles.front()));
 	sounds.emplace_back(jukebox::factory::makeSound(soundFiles.back()));
 
@@ -58,14 +54,4 @@ int main(int argc, char **argv) {
 	sounds.front().stop();
 	sounds.back().clearOnStopCallback();
 	sounds.back().stop();
-}
-
-jukebox::SoundFile loadSoundFile(const std::string &filename) {
-	auto extension = filename.substr(filename.find_last_of('.'));
-	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
-
-	if (extension == ".mid")
-		return jukebox::factory::loadMIDIFile(filename);
-	else
-		return jukebox::factory::loadFile(filename);
 }

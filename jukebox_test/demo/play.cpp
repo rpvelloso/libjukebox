@@ -20,7 +20,6 @@
 
 // forward declarations
 void printFileInfo(const jukebox::SoundFile &file);
-jukebox::SoundFile loadSoundFile(const std::string &filename);
 
 int main(int argc, char **argv) {
 	if( argc < 2 ) {
@@ -32,7 +31,7 @@ int main(int argc, char **argv) {
 
 	try {
 		// load a sound file
-		auto soundFile = loadSoundFile(filename);
+		auto soundFile = jukebox::factory::loadFile(filename);
 
 		// print file info
 		printFileInfo(soundFile);
@@ -98,14 +97,4 @@ void printFileInfo(const jukebox::SoundFile &file) {
 	std::cout << file.getSampleRate() << " Hz" << std::endl;
 	std::cout << file.getDataSize() << " bytes" << std::endl;
 	std::cout << formatDuration(file.getDuration()) << " sec(s)" << std::endl << std::endl;
-}
-
-jukebox::SoundFile loadSoundFile(const std::string &filename) {
-	auto extension = filename.substr(filename.find_last_of('.'));
-	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
-
-	if (extension == ".mid")
-		return jukebox::factory::loadMIDIFile(filename);
-	else
-		return jukebox::factory::loadFile(filename);
 }

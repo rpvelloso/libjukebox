@@ -194,14 +194,9 @@ SoundFile loadMP3File(const std::string &filename, bool onMemory = false);
 SoundFile loadMP3Stream(std::istream &inp, bool onMemory = false);
 SoundFile loadFLACFile(const std::string &filename, bool onMemory = false);
 SoundFile loadFLACStream(std::istream &inp, bool onMemory = false);
+SoundFile loadMIDIFile(const std::string &filename);
+SoundFile loadMIDIStream(std::istream &inp);
 
-}
-}
-namespace jukebox {
-namespace factory {
-
-    extern SoundFile loadMIDIFile(const std::string &filename);
-    extern SoundFile loadMIDIStream(std::istream &inp);
 }
 }
 namespace jukebox {

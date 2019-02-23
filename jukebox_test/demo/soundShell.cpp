@@ -19,16 +19,6 @@
 #include "libjukebox.h"
 #include "sol.hpp"
 
-jukebox::SoundFile loadSoundFile(const std::string &filename) {
-	auto extension = filename.substr(filename.find_last_of('.'));
-	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
-
-	if (extension == ".mid")
-		return jukebox::factory::loadMIDIFile(filename);
-	else
-		return jukebox::factory::loadFile(filename);
-}
-
 void bind(sol::state &lua) {
 	lua.new_usertype<jukebox::Mixer>("Mixer",
 		"getVolume", &jukebox::Mixer::getVolume,
@@ -59,7 +49,7 @@ void bind(sol::state &lua) {
 		"loop", &jukebox::factory::SoundBuilder::loop,
 		"setVolume", &jukebox::factory::SoundBuilder::setVolume);
 
-	lua["loadSoundFile"] = &loadSoundFile;
+	lua["loadSoundFile"] = &jukebox::factory::loadFile;
 	lua["makeSound"] = &jukebox::factory::makeSound;
 	lua["makeSoundOutputToFile"] = &jukebox::factory::makeSoundOutputToFile;
 }
