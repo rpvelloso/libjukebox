@@ -50,6 +50,7 @@ COMPILE.cc = $(CXX) $(DEPFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 POSTCOMPILE = @mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d && touch $@
 
 %.o	:	%.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 %.o	:	%.c $(DEPDIR)/%.d
 	$(COMPILE.c) $(OUTPUT_OPTION) $<
 	$(POSTCOMPILE)

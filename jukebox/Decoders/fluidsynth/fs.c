@@ -2002,11 +2002,8 @@ FLUIDSYNTH_API char* fluid_version_str(void);
 #include <limits.h>
 #include <pthread.h>
 #include <omp.h>
-#include <io.h>
 #include <signal.h>
 #include <stdint.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>	/* Provides also socklen_t */
 #include <unistd.h> /* STDIN_FILENO */
 /* FluidSynth - A Software Synthesizer
  *
@@ -2137,6 +2134,8 @@ typedef uint64_t fluid_phase_t;
 #include <pthread.h>
 #include <stdint.h>
 
+#define TRUE 1
+#define FALSE 0
 #define G_LITTLE_ENDIAN 1234
 #define G_BIG_ENDIAN    4321
 #define G_BYTE_ORDER G_LITTLE_ENDIAN
