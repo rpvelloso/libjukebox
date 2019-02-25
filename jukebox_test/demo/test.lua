@@ -1,6 +1,6 @@
 local filename = './jukebox_test/data/AxelF.mid' -- three-two-one-go-deep-voice.wav'
 
---midiConfig:setSoundFont('./jukebox_test/data/GXSCC_gm_033.sf2')
+midiConfig:setSoundFont('./jukebox_test/data/GXSCC_gm_033.sf2')
 
 io.write('loading sound file...\n\n')
 local soundFile = loadSoundFile(filename)
@@ -12,7 +12,7 @@ io.write('DataSize: ', soundFile:getDataSize(), '\n')
 io.write('Duration: ', soundFile:getDuration(), '\n\n')
 
 io.write('creating sound object...\n')
-local sound = makeSound(soundFile)
+local sound = makeSoundOutputToFile(soundFile, 'out.wav')
 
 
 io.write('configuring sound object...\n')

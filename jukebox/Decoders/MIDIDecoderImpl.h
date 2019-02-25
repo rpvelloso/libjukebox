@@ -39,7 +39,7 @@ private:
     std::unique_ptr<fluid_settings_t, decltype(&freeFluidSynthSettings)> settings;
     std::unique_ptr<fluid_synth_t, decltype(&freeFluidSynthSynth)> synth;
     std::unique_ptr<fluid_player_t, decltype(&freeFluidSynthPlayer)> player;
-
+    int soundFontID = -1;
     void reset();
 };
 

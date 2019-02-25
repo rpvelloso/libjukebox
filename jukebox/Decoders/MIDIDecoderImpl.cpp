@@ -79,7 +79,7 @@ MIDIDecoderImpl::MIDIDecoderImpl(MIDIFileImpl& fileImpl) :
 	if (fluid_synth_get_sfont(synth.get(), 0) == nullptr) {
 		auto soundFont = midiConfig.getSoundFont();
 		if (fluid_is_soundfont(soundFont.c_str())) {
-			fluid_synth_sfload(synth.get(), soundFont.c_str(), 1);
+			soundFontID = fluid_synth_sfload(synth.get(), soundFont.c_str(), 1);
 		}
 		else
 			throw std::invalid_argument(soundFont + " is not a sound font file.");
