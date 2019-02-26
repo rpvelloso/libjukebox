@@ -35,6 +35,8 @@ private:
 	std::unique_ptr<snd_mixer_t, decltype(&closeMixer)> handlePtr;
 	snd_mixer_elem_t* element_handle = nullptr;
 	long minVolume, maxVolume;
+	AlsaMixer(AlsaMixer &) = delete;
+	void operator=(AlsaMixer &) = delete;
 };
 
 } /* namespace jukebox */

@@ -32,6 +32,8 @@ public:
 private:
 	HMIXER hMixer;
 	DWORD controlId;
+	WindowsMixer(WindowsMixer &) = delete;
+	void operator=(WindowsMixer &) = delete;
 };
 
 } /* namespace jukebox */
