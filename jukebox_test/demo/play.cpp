@@ -36,8 +36,7 @@ int main(int argc, char **argv) {
 		// print file info
 		printFileInfo(soundFile);
 
-		/* create a sound (decorated with fade-on-stop functionality)
-		 *  using previously loaded sound file */
+		// create a sound from soundFile
 		auto sound = jukebox::factory::makeSound(soundFile);
 
 		if (argc == 6) {
@@ -46,21 +45,21 @@ int main(int argc, char **argv) {
 			auto numDelays = std::stoi(argv[4]);
 			auto gain = std::stof(argv[5]);
 
+			// add reverb and distortion
 			sound
 				.reverb(delay, decay, numDelays)
 				.distortion(gain);
 		}
 
-		sound
-			.fadeOnStop(3)
-			.loop(true)
-			.setVolume(100);
-
 		jukebox::Mixer mixer;
 		mixer.setVolume(100); // max global volume
 
-		sound.setOnStopCallback([](){std::cout << "parou!!!" << std::endl;});
-		sound.play(); // start playing
+		sound
+			.fadeOnStop(3) // 3s fade out on stop
+			.loop(true) // looping
+			.setVolume(100) // max sound volume
+			.setOnStopCallback([](){std::cout << "parou!!!" << std::endl;}) // on stop event
+			.play(); // start playing
 
 		std::cout << "hit enter to fade out..." << std::endl;
 		std::cin.get();
