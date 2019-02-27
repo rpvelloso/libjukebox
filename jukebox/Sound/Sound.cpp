@@ -16,12 +16,11 @@
 #include <algorithm>
 #include "Sound.h"
 #include "jukebox/Decoders/Decoder.h"
-#include "../Decoders/Decorators/FadeImpl.h"
-#include "../Decoders/Decorators/ReverbImpl.h"
-#include "../Decoders/Decorators/SampleResolutionImpl.h"
-#include "../Decoders/Decorators/DistortionImpl.h"
+#include "jukebox/Decoders/Decorators/FadeImpl.h"
+#include "jukebox/Decoders/Decorators/ReverbImpl.h"
+#include "jukebox/Decoders/Decorators/SampleResolutionImpl.h"
+#include "jukebox/Decoders/Decorators/DistortionImpl.h"
 #include "Decorators/FadeOnStopSoundImpl.h"
-#include "../Decoders/MIDIDecoderImpl.h"
 
 namespace {
 
