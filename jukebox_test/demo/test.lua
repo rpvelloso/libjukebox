@@ -1,6 +1,6 @@
-local filename = './jukebox_test/data/AxelF.mid' -- three-two-one-go-deep-voice.wav'
+local filename = './jukebox_test/data/three-two-one-go-deep-voice.wav'
 
-midiConfig:setSoundFont('./jukebox_test/data/GXSCC_gm_033.sf2')
+-- midiConfig:setSoundFont('./jukebox_test/data/GXSCC_gm_033.sf2')
 
 io.write('loading sound file...\n\n')
 local soundFile = loadSoundFile(filename)
@@ -12,13 +12,12 @@ io.write('DataSize: ', soundFile:getDataSize(), '\n')
 io.write('Duration: ', soundFile:getDuration(), '\n\n')
 
 io.write('creating sound object...\n')
-local sound = makeSoundOutputToFile(soundFile, 'out.wav')
+local sound = makeSound(soundFile)
 
 
 io.write('configuring sound object...\n')
-local soundBuilder = SoundBuilder.new(sound)
 
-soundBuilder
+sound
   :distortion(5)
 
 io.write('setting global volume...\n')
@@ -29,7 +28,7 @@ io.write('playing sound, press enter for robot voice...\n')
 sound:play()
 io.read()
 
-soundBuilder -- applying effects during playback works too
+sound -- applying effects during playback works too
   :reverb(0.01, 0.5, 2)
 io.write('press enter to exit...\n')
 io.read()

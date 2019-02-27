@@ -174,21 +174,27 @@ namespace factory {
 }
 
 class Sound {
-friend class factory::SoundBuilder;
 public:
  Sound(SoundImpl *impl);
- void play();
- void stop();
+ Sound &play();
+ Sound &stop();
  int getVolume() const;
- void setVolume(int);
- void loop(bool);
  int getPosition() const;
 
 
 
 
- void setOnStopCallback(std::function<void(void)>);
- void clearOnStopCallback();
+ Sound &setOnStopCallback(std::function<void(void)>);
+ Sound &clearOnStopCallback();
+
+ Sound &reverb(float delay, float decay, size_t numDelays);
+ Sound &distortion(float gain);
+ Sound &fade(int fadeInSecs, int fadeOutSecs);
+ Sound &resolution(int bitsPerSample);
+ Sound &fadeOnStop(int fadeOutSecs);
+ Sound &setVolume(int);
+ Sound &loop(bool);
+
 private:
  std::unique_ptr<SoundImpl> impl;
 };
@@ -222,23 +228,6 @@ namespace factory {
  extern MixerImpl &makeMixerImpl();
 }
 
-}
-namespace jukebox {
-namespace factory {
-class SoundBuilder {
-public:
- SoundBuilder(Sound &sound);
- SoundBuilder &reverb(float delay, float decay, size_t numDelays);
- SoundBuilder &distortion(float gain);
- SoundBuilder &fade(int fadeInSecs, int fadeOutSecs);
- SoundBuilder &resolution(int bitsPerSample);
- SoundBuilder &fadeOnStop(int fadeOutSecs);
- SoundBuilder &loop(bool l);
- SoundBuilder &setVolume(int vol);
-private:
- Sound &sound;
-};
-}
 }
 
 #endif // #define _LIBJUKEBOX_H

@@ -27,21 +27,27 @@ namespace factory {
 }
 
 class Sound {
-friend class factory::SoundBuilder;
 public:
 	Sound(SoundImpl *impl);
-	void play();
-	void stop();
+	Sound &play();
+	Sound &stop();
 	int getVolume() const;
-	void setVolume(int);
-	void loop(bool);
 	int getPosition() const;
 	/*
 	 * this onStop event is need, so the client can be notified
 	 * when the sound stops and does not need to busy wait (poll) for it.
 	 * */
-	void setOnStopCallback(std::function<void(void)>);
-	void clearOnStopCallback();
+	Sound &setOnStopCallback(std::function<void(void)>);
+	Sound &clearOnStopCallback();
+
+	Sound &reverb(float delay, float decay, size_t numDelays);
+	Sound &distortion(float gain);
+	Sound &fade(int fadeInSecs, int fadeOutSecs);
+	Sound &resolution(int bitsPerSample);
+	Sound &fadeOnStop(int fadeOutSecs);
+	Sound &setVolume(int);
+	Sound &loop(bool);
+
 private:
 	std::unique_ptr<SoundImpl> impl;
 };

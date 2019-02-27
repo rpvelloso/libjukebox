@@ -39,7 +39,6 @@ int main(int argc, char **argv) {
 		/* create a sound (decorated with fade-on-stop functionality)
 		 *  using previously loaded sound file */
 		auto sound = jukebox::factory::makeSound(soundFile);
-		jukebox::factory::SoundBuilder soundBuilder(sound);
 
 		if (argc == 6) {
 			auto delay = std::stof(argv[2]);
@@ -47,12 +46,12 @@ int main(int argc, char **argv) {
 			auto numDelays = std::stoi(argv[4]);
 			auto gain = std::stof(argv[5]);
 
-			soundBuilder
+			sound
 				.reverb(delay, decay, numDelays)
 				.distortion(gain);
 		}
 
-		soundBuilder
+		sound
 			.fadeOnStop(3)
 			.loop(true)
 			.setVolume(100);
