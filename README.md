@@ -78,8 +78,6 @@ int main(int argc, char **argv) {
 		// print file info
 		printFileInfo(soundFile);
 
-		/* create a sound (decorated with fade-on-stop functionality)
-		 *  using previously loaded sound file */
 		auto sound = jukebox::factory::makeSound(soundFile);
 
 		jukebox::Mixer mixer;
