@@ -60,7 +60,7 @@ DirectSoundBuffer::DirectSoundBuffer(Decoder *decoder) :
 
 DirectSoundBuffer::~DirectSoundBuffer() {
 	stop();
-	if (loadBufferThread.joinable())
+	if (loadBufferThread.joinable()) //TODO: fix this - standardize with alsa driver, call always when stopping
 		loadBufferThread.join();
 }
 
