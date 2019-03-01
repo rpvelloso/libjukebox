@@ -101,7 +101,7 @@ void AlsaHandle::play() {
 		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[minFrames*frameSize]);
 
 		do {
-			position = 0;
+			//position = 0;
 			size_t numFrames = decoder->getDataSize() / frameSize;
 
 			while (numFrames > 0 && playing) {
