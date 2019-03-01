@@ -25,7 +25,7 @@
 #endif
 
 #ifndef ALSA_MIN_FRAMES
-#define ALSA_MIN_FRAMES (8*1024)
+#define ALSA_MIN_FRAMES (1*1024)
 #endif
 
 namespace {
@@ -66,7 +66,7 @@ namespace jukebox {
 
 void closeAlsaHandle(snd_pcm_t *handle) {
 	if (handle != nullptr) {
-		snd_pcm_drain(handle);
+		snd_pcm_drop(handle);
 		snd_pcm_close(handle);
 	}
 }
@@ -101,7 +101,6 @@ void AlsaHandle::play() {
 		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[minFrames*frameSize]);
 
 		do {
-			//position = 0;
 			size_t numFrames = decoder->getDataSize() / frameSize;
 
 			while (numFrames > 0 && playing) {
@@ -122,7 +121,7 @@ void AlsaHandle::play() {
 					break;
 			}
 		} while (looping && playing);
-		snd_pcm_drain(handlePtr.get());
+		clearBuffer(handlePtr.get());
 	});
 }
 
@@ -145,7 +144,7 @@ void AlsaHandle::_applyVolume(AlsaHandle &self, void *buf, int position, int len
 }
 
 void AlsaHandle::stop() {
-	snd_pcm_drop(handlePtr.get());
+	clearBuffer = snd_pcm_drop;
 	playing = false;
 
 	if (playThread.joinable())
@@ -178,6 +177,7 @@ void AlsaHandle::loop(bool l) {
 }
 
 void AlsaHandle::prepare() {
+	clearBuffer = snd_pcm_drain;
 	auto res = snd_pcm_prepare(handlePtr.get());
 	if (res != 0)
 		throw std::runtime_error("snd_pcm_prepare error.");
