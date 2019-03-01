@@ -1,3 +1,4 @@
+
 /*
     Copyright 2017 Roberto Panerai Velloso.
     This file is part of libjukebox.
@@ -24,13 +25,7 @@
 #define ALSA_DEVICE "sysdefault"
 #endif
 
-#ifndef ALSA_MIN_FRAMES
-#define ALSA_MIN_FRAMES (1*1024)
-#endif
-
 namespace {
-
-constexpr size_t minFrames = ALSA_MIN_FRAMES;
 
 class StatusGuard {
 public:
@@ -97,14 +92,14 @@ void AlsaHandle::play() {
 			playing, true,
 			onStop);
 
-		size_t frameSize = (decoder->getBitsPerSample()/8) * decoder->getNumChannels();
-		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[minFrames*frameSize]);
+		size_t frameSize = (decoder->getBitsPerSample() >> 3) * decoder->getNumChannels();
+		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[bufferSize*frameSize]);
 
 		do {
 			size_t numFrames = decoder->getDataSize() / frameSize;
 
 			while (numFrames > 0 && playing) {
-				auto frames = std::min(numFrames, minFrames);
+				auto frames = std::min(numFrames, bufferSize);
 				auto bytes = decoder->getSamples(reinterpret_cast<char *>(volBuf.get()), position, frames*frameSize);
 
 				if (bytes > 0) {
@@ -167,9 +162,13 @@ void AlsaHandle::config() {
 	decoder->getNumChannels(),
 	decoder->getSampleRate(),
     1,
-    500000);
+    100000);
+
   if (res != 0)
     throw std::runtime_error("snd_pcm_set_params error.");
+
+  snd_pcm_uframes_t period;
+  snd_pcm_get_params(handlePtr.get(), &bufferSize, &period);
 }
 
 void AlsaHandle::loop(bool l) {
