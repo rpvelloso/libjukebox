@@ -26,6 +26,10 @@ int SoundImpl::getPosition() const {
 	return position;
 }
 
+void SoundImpl::setPosition(int pos) {
+	position = pos;
+}
+
 void SoundImpl::setOnStopCallback(std::function<void(void)> os) {
 	onStop = os;
 }

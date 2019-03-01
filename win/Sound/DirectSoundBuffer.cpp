@@ -77,9 +77,9 @@ DWORD DirectSoundBuffer::status() {
 
 void DirectSoundBuffer::play() {
 	stop();
-	rewind();
 
-    DWORD playFlags = startThread();
+	pDsb->SetCurrentPosition(0);
+	DWORD playFlags = startThread();
 
     auto hr = pDsb->Play(
         0,	// Unused.
@@ -205,7 +205,7 @@ DWORD DirectSoundBuffer::startThread() {
 
 				if (playing()) {
 					WaitForSingleObject(event, INFINITE);
-					rewind();
+					pDsb->SetCurrentPosition(0);
 					fillBuffer(0, dsbdesc.dwBufferBytes);
 				}
 
@@ -278,11 +278,6 @@ void DirectSoundBuffer::setVolume(int vol) {
 	double attenuation = 1.0 / 1024.0 + ((double)vol) / 100.0 * 1023.0 / 1024.0;
 	double db = 10 * std::log10(attenuation) / std::log10(2);
 	pDsb->SetVolume(db * 100);
-}
-
-void DirectSoundBuffer::rewind() {
-    pDsb->SetCurrentPosition(0);
-    position = 0;
 }
 
 namespace factory {

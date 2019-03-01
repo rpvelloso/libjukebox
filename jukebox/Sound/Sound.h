@@ -33,6 +33,7 @@ public:
 	Sound &stop();
 	int getVolume() const;
 	int getPosition() const;
+	Sound &setPosition(int pos);
 	/*
 	 * this onStop event is need, so the client can be notified
 	 * when the sound stops and does not need to busy wait (poll) for it.

@@ -37,6 +37,8 @@ void bind(sol::state &lua) {
 		"stop", &jukebox::Sound::stop,
 		"getVolume", &jukebox::Sound::getVolume,
 		"setVolume", &jukebox::Sound::setVolume,
+		"getPosition", &jukebox::Sound::getPosition,
+		"setPosition", &jukebox::Sound::setPosition,
 		"loop", &jukebox::Sound::loop,
 		"reverb", &jukebox::Sound::reverb,
 		"distortion", &jukebox::Sound::distortion,

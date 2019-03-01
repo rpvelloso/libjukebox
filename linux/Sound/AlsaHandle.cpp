@@ -145,12 +145,12 @@ void AlsaHandle::_applyVolume(AlsaHandle &self, void *buf, int position, int len
 }
 
 void AlsaHandle::stop() {
+	snd_pcm_drop(handlePtr.get());
 	playing = false;
 
 	if (playThread.joinable())
 		playThread.join();
 
-	snd_pcm_drop(handlePtr.get());
 	prepare();
 }
 

@@ -63,6 +63,11 @@ int Sound::getPosition() const {
 	return impl->getPosition();
 }
 
+Sound& Sound::setPosition(int pos) {
+	impl->setPosition(pos);
+	return *this;
+}
+
 Sound& Sound::setOnStopCallback(std::function<void(void)> os) {
 	impl->setOnStopCallback(os);
 	return *this;

@@ -32,6 +32,7 @@ public:
 	virtual void setVolume(int) = 0;
 	virtual void loop(bool) = 0;
 	int getPosition() const;
+	void setPosition(int pos);
 	virtual void setOnStopCallback(std::function<void(void)>);
 	Decoder &getDecoder();
 protected:
