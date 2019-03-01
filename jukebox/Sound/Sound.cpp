@@ -34,7 +34,13 @@ Sound::Sound(SoundImpl *impl) : impl(impl) {
 }
 
 Sound& Sound::play() {
-	//impl->stop();
+	impl->play();
+	return *this;
+}
+
+Sound& Sound::restart() {
+	impl->stop();
+	impl->setPosition(0);
 	impl->play();
 	return *this;
 }

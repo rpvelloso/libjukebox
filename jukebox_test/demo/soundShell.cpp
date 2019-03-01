@@ -34,6 +34,7 @@ void bind(sol::state &lua) {
 
 	lua.new_usertype<jukebox::Sound>("Sound",
 		"play", &jukebox::Sound::play,
+		"restart", &jukebox::Sound::restart,
 		"stop", &jukebox::Sound::stop,
 		"getVolume", &jukebox::Sound::getVolume,
 		"setVolume", &jukebox::Sound::setVolume,

@@ -178,6 +178,7 @@ class Sound {
 public:
  Sound(SoundImpl *impl);
  Sound &play();
+ Sound &restart();
  Sound &stop();
  int getVolume() const;
  int getPosition() const;
