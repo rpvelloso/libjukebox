@@ -20,10 +20,11 @@
 #include <functional>
 #include <unordered_map>
 #include "../DecoderImpl.h"
+#include "DecoderImplDecorator.h"
 
 namespace jukebox {
 
-class SampleResolutionImpl : public DecoderImpl {
+class SampleResolutionImpl : public DecoderImplDecorator {
 public:
 	SampleResolutionImpl(DecoderImpl *impl, int resolution);
 	virtual ~SampleResolutionImpl() = default;
@@ -33,7 +34,6 @@ public:
 	int getDataSize() const override;
 	virtual int silenceLevel() const;
 private:
-	std::unique_ptr<DecoderImpl> impl;
 	int resolution, nativeResolution;
 	std::function<int(void *, int, int)> changeResolution;
 	static std::unordered_map<int, decltype(changeResolution)> changeResolutionFunc;

@@ -32,6 +32,7 @@ public:
 	virtual int getDataSize() const;
 	virtual int silenceLevel() const;
 	SoundFileImpl &getFileImpl() const;
+	virtual DecoderImpl *peel();
 protected:
 	SoundFileImpl &fileImpl;
 	int blockSize;

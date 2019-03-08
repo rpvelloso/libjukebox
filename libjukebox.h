@@ -60,6 +60,7 @@ public:
  virtual int getDataSize() const;
  virtual int silenceLevel() const;
  SoundFileImpl &getFileImpl() const;
+ virtual DecoderImpl *peel();
 protected:
  SoundFileImpl &fileImpl;
  int blockSize;
@@ -83,6 +84,13 @@ public:
   impl.reset(new T(impl.release(), std::forward<Params>(params)...));
         return *this;
  }
+
+ Decoder &peelDecoder() {
+  auto dec = impl->peel();
+  if (impl.get() != dec)
+   impl.reset(dec);
+  return *this;
+ };
 private:
  std::unique_ptr<DecoderImpl> impl;
 };

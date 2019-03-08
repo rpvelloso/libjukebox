@@ -26,8 +26,7 @@ std::unordered_map<int, decltype(DistortionImpl::distortion)> DistortionImpl::di
 };
 
 DistortionImpl::DistortionImpl(DecoderImpl* impl, float gain) :
-	DecoderImpl(impl->getFileImpl()),
-	impl(impl),
+	DecoderImplDecorator(impl->getFileImpl(), impl),
 	gain(gain) {
 
 	distortion = distortionFunc[impl->getBitsPerSample()];

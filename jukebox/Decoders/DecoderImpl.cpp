@@ -51,5 +51,9 @@ SoundFileImpl& DecoderImpl::getFileImpl() const {
 	return fileImpl;
 }
 
+DecoderImpl *DecoderImpl::peel() {
+	return this;
+}
+
 
 }

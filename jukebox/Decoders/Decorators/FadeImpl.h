@@ -21,16 +21,16 @@
 #include <algorithm>
 #include <unordered_map>
 #include "../DecoderImpl.h"
+#include "DecoderImplDecorator.h"
 
 namespace jukebox {
 
-class FadeImpl: public DecoderImpl {
+class FadeImpl: public DecoderImplDecorator {
 public:
 	FadeImpl(DecoderImpl *, int, int);
 	virtual ~FadeImpl() = default;
 	int getSamples(char *buf, int pos, int len) override;
 private:
-	std::unique_ptr<DecoderImpl> impl;
 	int fadeInSecs, fadeOutSecs;
 	int fadeInEndPos, fadeOutStartPos;
 	std::function<void(FadeImpl&, void *, int, int)> fadeIn;

@@ -20,16 +20,16 @@
 #include <functional>
 #include <unordered_map>
 #include "../DecoderImpl.h"
+#include "DecoderImplDecorator.h"
 
 namespace jukebox {
 
-class DistortionImpl: public DecoderImpl {
+class DistortionImpl: public DecoderImplDecorator {
 public:
 	DistortionImpl(DecoderImpl *impl, float gain);
 	virtual ~DistortionImpl() = default;
 	int getSamples(char* buf, int pos, int len) override;
 private:
-	std::unique_ptr<DecoderImpl> impl;
 	float gain;
 	std::function<void(void *, int, int, float)> distortion;
 	static std::unordered_map<int, decltype(distortion)> distortionFunc;

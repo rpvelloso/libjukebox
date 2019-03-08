@@ -53,8 +53,7 @@ void ReverbImpl::_reverb(ReverbImpl &self, void *buf, int pos, int len) {
 };
 
 ReverbImpl::ReverbImpl(DecoderImpl *impl, float delay, float decay, size_t numDelays) :
-		DecoderImpl(impl->getFileImpl()),
-		impl(impl),
+		DecoderImplDecorator(impl->getFileImpl(), impl),
 		delay(delay),
 		decay(decay),
 		numDelays(numDelays),

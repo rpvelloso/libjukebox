@@ -22,16 +22,16 @@
 #include <unordered_map>
 #include <vector>
 #include "../DecoderImpl.h"
+#include "DecoderImplDecorator.h"
 
 namespace jukebox {
 
-class ReverbImpl: public DecoderImpl {
+class ReverbImpl: public DecoderImplDecorator {
 public:
 	ReverbImpl(DecoderImpl *impl, float delay, float decay, size_t numDelays);
 	virtual ~ReverbImpl() = default;
 	int getSamples(char *buf, int pos, int len) override;
 private:
-	std::unique_ptr<DecoderImpl> impl;
 	float delay, decay;
 	size_t numDelays;
 

@@ -45,8 +45,7 @@ std::unordered_map<short, decltype(FadeOnStopImpl::fadeOut)> FadeOnStopImpl::fad
 };
 
 FadeOnStopImpl::FadeOnStopImpl(DecoderImpl *impl, int fadeOutSecs, int fadeOutStartPos) :
-		DecoderImpl(impl->getFileImpl()),
-		impl(impl),
+		DecoderImplDecorator(impl->getFileImpl(), impl),
 		fadeOutSecs(fadeOutSecs),
 		fadeOutStartPos(fadeOutStartPos) {
 

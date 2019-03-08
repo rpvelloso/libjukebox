@@ -36,6 +36,13 @@ public:
 		impl.reset(new T(impl.release(), std::forward<Params>(params)...));
         return *this;
 	}
+
+	Decoder &peelDecoder() {
+		auto dec = impl->peel();
+		if (impl.get() != dec)
+			impl.reset(dec);
+		return *this;
+	};
 private:
 	std::unique_ptr<DecoderImpl> impl;
 };

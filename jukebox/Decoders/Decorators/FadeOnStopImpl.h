@@ -22,16 +22,16 @@
 #include <unordered_map>
 
 #include "../DecoderImpl.h"
+#include "DecoderImplDecorator.h"
 
 namespace jukebox {
 
-class FadeOnStopImpl: public DecoderImpl {
+class FadeOnStopImpl: public DecoderImplDecorator {
 public:
 	FadeOnStopImpl(DecoderImpl *, int, int);
 	virtual ~FadeOnStopImpl() = default;
 	int getSamples(char *buf, int pos, int len) override;
 private:
-	std::unique_ptr<DecoderImpl> impl;
 	int fadeOutSecs, fadeOutStartPos;
 	bool fade = false;
 	std::function<void(FadeOnStopImpl&, void *, int, int)> fadeOut;

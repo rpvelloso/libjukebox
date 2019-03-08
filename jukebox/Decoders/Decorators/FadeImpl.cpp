@@ -62,8 +62,7 @@ FadeImpl::FadeImpl(
 		DecoderImpl *impl,
 		int fadeInSecs,
 		int fadeOutSecs) :
-	DecoderImpl(impl->getFileImpl()),
-	impl(impl),
+	DecoderImplDecorator(impl->getFileImpl(), impl),
 	fadeInSecs(fadeInSecs),
 	fadeOutSecs(fadeOutSecs),
 	fadeInEndPos(0),

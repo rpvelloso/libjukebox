@@ -20,8 +20,7 @@ std::unordered_map<int, decltype(SampleResolutionImpl::changeResolution)>
 	};
 
 SampleResolutionImpl::SampleResolutionImpl(DecoderImpl* impl, int resolution) :
-	DecoderImpl(impl->getFileImpl()),
-	impl(impl),
+	DecoderImplDecorator(impl->getFileImpl(), impl),
 	resolution(resolution),
 	nativeResolution(impl->getBitsPerSample()) {
 
