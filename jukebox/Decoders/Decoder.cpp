@@ -53,4 +53,11 @@ int Decoder::silenceLevel() const {
 	return impl->silenceLevel();
 }
 
+Decoder &Decoder::peel() {
+	auto dec = impl->peel();
+	if (impl.get() != dec)
+		impl.reset(dec);
+	return *this;
+}
+
 } /* namespace socks */

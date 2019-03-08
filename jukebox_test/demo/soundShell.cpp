@@ -41,6 +41,7 @@ void bind(sol::state &lua) {
 		"getPosition", &jukebox::Sound::getPosition,
 		"setPosition", &jukebox::Sound::setPosition,
 		"loop", &jukebox::Sound::loop,
+		"peelDecoder", &jukebox::Sound::peelDecoder,
 		"reverb", &jukebox::Sound::reverb,
 		"distortion", &jukebox::Sound::distortion,
 		"fade", &jukebox::Sound::fade,

@@ -16,6 +16,7 @@
 #ifndef JUKEBOX_DECODERS_DECODER_H_
 #define JUKEBOX_DECODERS_DECODER_H_
 
+#include <iostream>
 #include <memory>
 #include "DecoderImpl.h"
 
@@ -32,17 +33,12 @@ public:
 	int silenceLevel() const;
 
 	template<typename T, typename ...Params> // T's base class must derive from DecoderImpl
-	Decoder &wrapDecoder(Params&&... params) { // decorates current decoder
+	Decoder &wrap(Params&&... params) { // decorates current decoder
 		impl.reset(new T(impl.release(), std::forward<Params>(params)...));
         return *this;
 	}
 
-	Decoder &peelDecoder() {
-		auto dec = impl->peel();
-		if (impl.get() != dec)
-			impl.reset(dec);
-		return *this;
-	};
+	Decoder &peel();
 private:
 	std::unique_ptr<DecoderImpl> impl;
 };

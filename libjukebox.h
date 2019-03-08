@@ -80,17 +80,12 @@ public:
  int silenceLevel() const;
 
  template<typename T, typename ...Params>
- Decoder &wrapDecoder(Params&&... params) {
+ Decoder &wrap(Params&&... params) {
   impl.reset(new T(impl.release(), std::forward<Params>(params)...));
         return *this;
  }
 
- Decoder &peelDecoder() {
-  auto dec = impl->peel();
-  if (impl.get() != dec)
-   impl.reset(dec);
-  return *this;
- };
+ Decoder &peel();
 private:
  std::unique_ptr<DecoderImpl> impl;
 };
@@ -205,6 +200,7 @@ public:
  Sound &fadeOnStop(int fadeOutSecs);
  Sound &setVolume(int);
  Sound &loop(bool);
+ Sound &peelDecoder();
 
 private:
  std::unique_ptr<SoundImpl> impl;

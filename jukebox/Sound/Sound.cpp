@@ -85,27 +85,32 @@ Sound& Sound::clearOnStopCallback() {
 }
 
 Sound& Sound::reverb(float delay, float decay, size_t numDelays) {
-	impl->getDecoder().wrapDecoder<ReverbImpl>(delay, decay, numDelays);
+	impl->getDecoder().wrap<ReverbImpl>(delay, decay, numDelays);
 	return *this;
 }
 
 Sound& Sound::distortion(float gain) {
-	impl->getDecoder().wrapDecoder<DistortionImpl>(gain);
+	impl->getDecoder().wrap<DistortionImpl>(gain);
 	return *this;
 }
 
 Sound& Sound::fade(int fadeInSecs, int fadeOutSecs) {
-	impl->getDecoder().wrapDecoder<FadeImpl>(fadeInSecs, fadeOutSecs);
+	impl->getDecoder().wrap<FadeImpl>(fadeInSecs, fadeOutSecs);
 	return *this;
 }
 
 Sound& Sound::resolution(int bitsPerSample) {
-	impl->getDecoder().wrapDecoder<SampleResolutionImpl>(bitsPerSample);
+	impl->getDecoder().wrap<SampleResolutionImpl>(bitsPerSample);
 	return *this;
 }
 
 Sound& Sound::fadeOnStop(int fadeOutSecs) {
 	impl.reset(new FadeOnStopSoundImpl(impl.release(), fadeOutSecs));
+	return *this;
+}
+
+Sound& Sound::peelDecoder() {
+	impl->getDecoder().peel();
 	return *this;
 }
 

@@ -1,4 +1,4 @@
-local filename = './jukebox_test/data/three-two-one-go-deep-voice.wav'
+local filename = './jukebox_test/data/g_t_120_50.wav' --three-two-one-go-deep-voice.wav'
 
 -- midiConfig:setSoundFont('./jukebox_test/data/GXSCC_gm_033.sf2')
 
@@ -18,7 +18,7 @@ local sound = makeSound(soundFile)
 io.write('configuring sound object...\n')
 
 sound
-  :distortion(5)
+  :distortion(500)
 
 io.write('setting global volume...\n')
 local mixer = Mixer.new()
@@ -30,5 +30,15 @@ io.read()
 
 sound -- applying effects during playback works too
   :reverb(0.01, 0.5, 2)
+
+io.read()
+sound:peelDecoder()
+sound:peelDecoder()
+
+io.read()
+sound:peelDecoder()
+sound:peelDecoder()
+
+
 io.write('press enter to exit...\n')
 io.read()

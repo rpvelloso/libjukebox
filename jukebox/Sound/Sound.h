@@ -49,6 +49,7 @@ public:
 	Sound &fadeOnStop(int fadeOutSecs);
 	Sound &setVolume(int);
 	Sound &loop(bool);
+	Sound &peelDecoder();
 
 private:
 	std::unique_ptr<SoundImpl> impl;
