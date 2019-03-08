@@ -15,7 +15,7 @@
 
 #include "FadeOnStopSoundImpl.h"
 
-#include "../../Decoders/Decorators/FadeOnStopImpl.h"
+#include "jukebox/Decoders/Decorators/FadeOnStopImpl.h"
 
 namespace jukebox {
 
@@ -43,6 +43,10 @@ void FadeOnStopSoundImpl::setVolume(int vol) {
 
 void FadeOnStopSoundImpl::loop(bool l) {
 	impl->loop(l);
+}
+
+void FadeOnStopSoundImpl::setOnStopCallback(std::function<void(void)> os) {
+	impl->setOnStopCallback(os);
 }
 
 } /* namespace jukebox */

@@ -40,16 +40,15 @@ std::cin.get();
 ```cpp
 auto soundFile = jukebox::factory::loadFile("audio.mp3"); // open file
 auto sound = jukebox::factory::makeSound(soundFile); // create sound
-jukebox::factory::SoundBuilder soundBuilder(sound); // soundBuilder allows combining effects
 
-soundBuilder
+sound
 	.fade(2, 2) // 2 seconds fade in & out
 	.loop(true) // looping
 	.setVolume(100) // 100% volume
 	.distortion(50) // gain = 50
-	.reverb(0.01, 0.8, 3); // robot voice (delay, decay, # delays)
-	  
-sound.play(); // start playing
+	.reverb(0.01, 0.8, 3) // robot voice (delay, decay, # delays)
+	.play(); // start playing
+	
 std::cout << "hit enter to exit..." << std::endl;
 std::cin.get();
 ```
@@ -79,19 +78,16 @@ int main(int argc, char **argv) {
 		// print file info
 		printFileInfo(soundFile);
 
-		/* create a sound (decorated with fade-on-stop functionality)
-		 *  using previously loaded sound file */
 		auto sound = jukebox::factory::makeSound(soundFile);
-		jukebox::factory::SoundBuilder soundBuilder(sound);
-		soundBuilder
-			.fadeOnStop(3) // 3 seconds fade out on stop
-			.loop(true) // looping
-			.setVolume(100); // 100% volume 
 
 		jukebox::Mixer mixer;
 		mixer.setVolume(100); // max global volume
 
-		sound.play(); // start playing
+		sound
+			.fadeOnStop(3) // 3 seconds fade out on stop
+			.loop(true) // looping
+			.setVolume(100) // 100% volume 
+			.play(); // start playing
 
 		std::cout << "hit enter to fade out..." << std::endl;
 		std::cin.get();

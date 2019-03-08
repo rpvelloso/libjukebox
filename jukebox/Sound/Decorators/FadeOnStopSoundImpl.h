@@ -30,6 +30,7 @@ public:
 	int getVolume() const override;
 	void setVolume(int) override;
 	void loop(bool) override;
+	void setOnStopCallback(std::function<void(void)> os) override;
 private:
 	std::unique_ptr<SoundImpl> impl;
 	int fadeOutSecs;

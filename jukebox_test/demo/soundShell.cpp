@@ -34,20 +34,18 @@ void bind(sol::state &lua) {
 
 	lua.new_usertype<jukebox::Sound>("Sound",
 		"play", &jukebox::Sound::play,
+		"restart", &jukebox::Sound::restart,
 		"stop", &jukebox::Sound::stop,
 		"getVolume", &jukebox::Sound::getVolume,
 		"setVolume", &jukebox::Sound::setVolume,
-		"loop", &jukebox::Sound::loop);
-
-	lua.new_usertype<jukebox::factory::SoundBuilder>("SoundBuilder",
-		sol::constructors<jukebox::factory::SoundBuilder(jukebox::Sound &)>(),
-		"reverb", &jukebox::factory::SoundBuilder::reverb,
-		"distortion", &jukebox::factory::SoundBuilder::distortion,
-		"fade", &jukebox::factory::SoundBuilder::fade,
-		"resolution", &jukebox::factory::SoundBuilder::resolution,
-		"fadeOnStop", &jukebox::factory::SoundBuilder::fadeOnStop,
-		"loop", &jukebox::factory::SoundBuilder::loop,
-		"setVolume", &jukebox::factory::SoundBuilder::setVolume);
+		"getPosition", &jukebox::Sound::getPosition,
+		"setPosition", &jukebox::Sound::setPosition,
+		"loop", &jukebox::Sound::loop,
+		"reverb", &jukebox::Sound::reverb,
+		"distortion", &jukebox::Sound::distortion,
+		"fade", &jukebox::Sound::fade,
+		"resolution", &jukebox::Sound::resolution,
+		"fadeOnStop", &jukebox::Sound::fadeOnStop);
 
 	lua.new_usertype<jukebox::MIDIConfigurator>("MIDIConfigurator",
 		"setSoundFont", &jukebox::MIDIConfigurator::setSoundFont,

@@ -2,7 +2,6 @@
 #include <exception>
 #include <algorithm>
 
-#include "jukebox/Sound/SoundBuilder.h"
 #include "jukebox/Sound/FileWriterSoundImpl.h"
 #include "jukebox/FileFormats/MP3FileImpl.h"
 #include "jukebox/FileFormats/VorbisFileImpl.h"

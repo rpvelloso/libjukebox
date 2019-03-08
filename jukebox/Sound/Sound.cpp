@@ -15,6 +15,12 @@
 
 #include <algorithm>
 #include "Sound.h"
+#include "jukebox/Decoders/Decoder.h"
+#include "jukebox/Decoders/Decorators/FadeImpl.h"
+#include "jukebox/Decoders/Decorators/ReverbImpl.h"
+#include "jukebox/Decoders/Decorators/SampleResolutionImpl.h"
+#include "jukebox/Decoders/Decorators/DistortionImpl.h"
+#include "Decorators/FadeOnStopSoundImpl.h"
 
 namespace {
 
@@ -27,13 +33,21 @@ namespace jukebox {
 Sound::Sound(SoundImpl *impl) : impl(impl) {
 }
 
-void Sound::play() {
-	//impl->stop();
+Sound& Sound::play() {
 	impl->play();
+	return *this;
 }
 
-void Sound::stop() {
+Sound& Sound::restart() {
 	impl->stop();
+	impl->setPosition(0);
+	impl->play();
+	return *this;
+}
+
+Sound& Sound::stop() {
+	impl->stop();
+	return *this;
 }
 
 int Sound::getVolume() const {
@@ -41,24 +55,58 @@ int Sound::getVolume() const {
 	return normalize(vol);
 }
 
-void Sound::setVolume(int vol) {
+Sound& Sound::setVolume(int vol) {
 	impl->setVolume(normalize(vol));
+	return *this;
 }
 
-void Sound::loop(bool l) {
+Sound& Sound::loop(bool l) {
 	impl->loop(l);
+	return *this;
 }
 
 int Sound::getPosition() const {
 	return impl->getPosition();
 }
 
-void Sound::setOnStopCallback(std::function<void(void)> os) {
-	impl->setOnStopCallback(os);
+Sound& Sound::setPosition(int pos) {
+	impl->setPosition(pos);
+	return *this;
 }
 
-void Sound::clearOnStopCallback() {
+Sound& Sound::setOnStopCallback(std::function<void(void)> os) {
+	impl->setOnStopCallback(os);
+	return *this;
+}
+
+Sound& Sound::clearOnStopCallback() {
 	impl->setOnStopCallback([](){});
+	return *this;
+}
+
+Sound& Sound::reverb(float delay, float decay, size_t numDelays) {
+	impl->getDecoder().wrapDecoder<ReverbImpl>(delay, decay, numDelays);
+	return *this;
+}
+
+Sound& Sound::distortion(float gain) {
+	impl->getDecoder().wrapDecoder<DistortionImpl>(gain);
+	return *this;
+}
+
+Sound& Sound::fade(int fadeInSecs, int fadeOutSecs) {
+	impl->getDecoder().wrapDecoder<FadeImpl>(fadeInSecs, fadeOutSecs);
+	return *this;
+}
+
+Sound& Sound::resolution(int bitsPerSample) {
+	impl->getDecoder().wrapDecoder<SampleResolutionImpl>(bitsPerSample);
+	return *this;
+}
+
+Sound& Sound::fadeOnStop(int fadeOutSecs) {
+	impl.reset(new FadeOnStopSoundImpl(impl.release(), fadeOutSecs));
+	return *this;
 }
 
 } /* namespace jukebox */

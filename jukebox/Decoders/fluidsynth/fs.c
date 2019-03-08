@@ -2183,7 +2183,7 @@ typedef struct GError {
 #define g_get_current_time(t) gettimeofday(t, NULL)
 #define g_usleep usleep
 
-static GThread *
+static inline GThread *
 g_thread_create(
 		GThreadFunc func,
         gpointer data,
