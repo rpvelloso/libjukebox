@@ -18,24 +18,26 @@ local sound = makeSound(soundFile)
 io.write('configuring sound object...\n')
 
 sound
+  :loop(true)
   :distortion(500)
 
 io.write('setting global volume...\n')
 local mixer = Mixer.new()
-mixer:setVolume(100)
+mixer:setVolume(50)
 
-io.write('playing sound, press enter for robot voice...\n')
+io.write('playing sound, press enter for echo/delay effect...\n')
 sound:play()
 io.read()
 
 sound -- applying effects during playback works too
-  :reverb(0.01, 0.5, 2)
+  :reverb(0.1, 0.5, 2)
 
+io.write('press enter to restore original sound...\n')
 io.read()
 sound:peelDecoder()
 sound:peelDecoder()
-
-io.read()
+sound:peelDecoder()
+sound:peelDecoder()
 sound:peelDecoder()
 sound:peelDecoder()
 

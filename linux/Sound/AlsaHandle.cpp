@@ -115,6 +115,7 @@ void AlsaHandle::play() {
 				} else
 					break;
 			}
+			position = 0;
 		} while (looping && playing);
 		clearBuffer(handlePtr.get());
 	});
