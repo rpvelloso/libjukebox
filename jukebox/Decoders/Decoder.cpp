@@ -55,7 +55,7 @@ int Decoder::silenceLevel() const {
 
 Decoder &Decoder::peel() {
 	auto dec = impl->peel();
-	if (impl.get() != dec)
+	if (dec != nullptr)
 		impl.reset(dec);
 	return *this;
 }

@@ -30,7 +30,7 @@ void FadeOnStopSoundImpl::play() {
 }
 
 void FadeOnStopSoundImpl::stop() {
-	impl->getDecoder().wrapDecoder<FadeOnStopImpl>(fadeOutSecs, impl->getPosition());
+	impl->getDecoder().wrap<FadeOnStopImpl>(fadeOutSecs, impl->getPosition());
 }
 
 int FadeOnStopSoundImpl::getVolume() const {

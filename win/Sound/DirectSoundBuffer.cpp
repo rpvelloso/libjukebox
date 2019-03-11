@@ -206,6 +206,7 @@ DWORD DirectSoundBuffer::startThread() {
 				if (playing()) {
 					WaitForSingleObject(event, INFINITE);
 					pDsb->SetCurrentPosition(0);
+					position = 0;
 					fillBuffer(0, dsbdesc.dwBufferBytes);
 				}
 
