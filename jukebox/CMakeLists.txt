@@ -39,10 +39,10 @@ add_library(libjukebox
         Sound/Decorators/FadeOnStopSoundImpl.cpp
         Sound/Decorators/FadeOnStopSoundImpl.h)
 
-add_library(libjukebox_midi
-        Decoders/MIDIDecoderImpl.cpp
-        Decoders/MIDIDecoderImpl.h
-        FileFormats/MIDIFactory.h
-        FileFormats/MIDIFileImpl.cpp
-        FileFormats/MIDIFileImpl.h
-        FileFormats/midi/MidiFile.h)
+#add_library(libjukebox_midi
+#        Decoders/MIDIDecoderImpl.cpp
+#        Decoders/MIDIDecoderImpl.h
+#        FileFormats/MIDIFactory.h
+#        FileFormats/MIDIFileImpl.cpp
+#        FileFormats/MIDIFileImpl.h
+#        FileFormats/midi/MidiFile.h)
