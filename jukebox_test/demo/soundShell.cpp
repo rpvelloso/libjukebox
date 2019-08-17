@@ -14,7 +14,6 @@
  */
 
 #include <iostream>
-#include <algorithm>
 #include <exception>
 #include "libjukebox.h"
 #include "sol.hpp"
@@ -72,9 +71,7 @@ int main(int argc, char **argv) {
 	if (script.status() == sol::load_status::ok) {
 		bind(lua);
 		script();
-	}
-
-	if (script.status() != sol::load_status::ok) {
+	} else {
 		std::cout <<
 			"Error: " <<
 			lua_tostring(lua.lua_state(), -1) <<

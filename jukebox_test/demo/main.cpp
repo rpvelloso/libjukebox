@@ -14,13 +14,11 @@
  */
 
 #include <array>
-#include <fstream>
 #include <iostream>
 #include <string>
 
 #include "jukebox/FileFormats/SoundFile.h"
 #include "jukebox/Mixer/Mixer.h"
-#include "jukebox/Sound/Sound.h"
 #include "jukebox/Sound/Factory.h"
 
 std::string formatDuration(double duration) {
@@ -61,7 +59,6 @@ int main(int argc, char **argv) {
 	printFileInfo(soundFile1);
 
 	std::cout << "ready to load " << filename2 << " as a stream" << std::endl;
-	std::fstream file(filename2, std::ios::binary|std::ios::in);
 	auto soundFile2 = jukebox::factory::loadFile(filename2);
 	printFileInfo(soundFile2);
 

@@ -46,7 +46,7 @@ public:
 		std::unique_ptr<drmp3> ret(new drmp3);
 
 		if (!drmp3_init_memory(ret.get(), (char *)memoryBuffer.get(), memoryBufferSize, &config))
-			throw new std::runtime_error("error creating MP3 decoder handler from memory");
+			throw std::runtime_error("error creating MP3 decoder handler from memory");
 
 		return ret.release();
 	};
@@ -80,7 +80,7 @@ public:
 				(drmp3_seek_proc)dr_libs_seek_callback,
 				(void *)&inp,
 				&config)) {
-			throw new std::runtime_error("error creating MP3 decoder handler from stream");
+			throw std::runtime_error("error creating MP3 decoder handler from stream");
 		}
 
 		return ret.release();
