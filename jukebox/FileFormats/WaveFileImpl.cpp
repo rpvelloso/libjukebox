@@ -32,8 +32,7 @@ public:
 	void *createHandler() override {
 		auto ret = drwav_open_memory(memoryBuffer.get(), memoryBufferSize);
 		if (ret == nullptr)
-			throw new std::runtime_error("error creating WAV decoder handler from memory");
-
+			throw std::runtime_error("error creating WAV decoder handler from memory");
 		return ret;
 	};
 };
@@ -53,8 +52,7 @@ public:
 				(void *)&inp);
 
 		if (ret == nullptr)
-			throw new std::runtime_error("error creating WAV decoder handler from stream");
-
+			throw std::runtime_error("error creating WAV decoder handler from stream");
 		return ret;
 	};
 };
@@ -70,10 +68,9 @@ WaveFileImpl::WaveFileImpl(const std::string& filename, bool onMemory) :
 	filename(filename),
 	streamBuffer(new std::fstream(this->filename, std::ios::binary|std::ios::in)),
 	inp(*streamBuffer),
-	fileLoader(onMemory?
-		(FileLoader *)new WaveFileMemoryLoader(*this, inp):
-		(FileLoader *)new WaveFileStreamLoader(*this, inp)) {
-
+	fileLoader(onMemory ?
+		static_cast<FileLoader *>(new WaveFileMemoryLoader(*this, inp)) :
+		static_cast<FileLoader *>(new WaveFileStreamLoader(*this, inp))) {
 	load();
 }
 

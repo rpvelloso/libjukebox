@@ -32,7 +32,7 @@ public:
 	void *createHandler() override {
 		auto ret = drflac_open_memory(memoryBuffer.get(), memoryBufferSize);
 		if (ret == nullptr)
-			throw new std::runtime_error("error creating FLAC decoder handler from memory");
+			throw std::runtime_error("error creating FLAC decoder handler from memory");
 
 		return ret;
 	};
@@ -53,7 +53,7 @@ public:
 				(void *)&inp);
 
 		if (ret == nullptr)
-			throw new std::runtime_error("error creating FLAC decoder handler from stream");
+			throw std::runtime_error("error creating FLAC decoder handler from stream");
 
 		return ret;
 	};

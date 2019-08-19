@@ -23,6 +23,10 @@
 
 #include <stdio.h>
 
+#define HAVE_STDINT_H 1
+#define FLUIDSYNTH_NOT_A_DLL
+#define SUPPORTS_VLA
+
 #ifdef __cplusplus
 extern "C" {
 #endif
