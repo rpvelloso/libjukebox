@@ -46,6 +46,7 @@ Sound& Sound::restart() {
 }
 
 Sound& Sound::stop() {
+	impl->loop(false);
 	impl->stop();
 	return *this;
 }
