@@ -46,6 +46,7 @@ private:
 	int vol = 100;
 	bool looping = false;
 	snd_pcm_uframes_t bufferSize;
+	size_t frameSize;
 	std::function<void(AlsaHandle &self, void *, int , int )> applyVolume;
 	std::function<decltype(snd_pcm_drain)> clearBuffer = snd_pcm_drain;
 	static std::unordered_map<short, decltype(applyVolume)> applyVolumeFunc;
@@ -55,6 +56,7 @@ private:
 
 	void config();
 	void prepare();
+	void processTimedEvents();
 };
 
 } /* namespace jukebox */

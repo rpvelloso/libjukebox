@@ -46,6 +46,7 @@ echo '/*
 #include <memory>
 #include <istream>
 #include <functional>
+#include <map>
 
 ' > libjukebox.h
 

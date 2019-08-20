@@ -20,6 +20,7 @@
 #include <memory>
 #include <istream>
 #include <functional>
+#include <map>
 
 
 namespace jukebox {
@@ -163,11 +164,13 @@ public:
  int getPosition() const;
  void setPosition(int pos);
  virtual void setOnStopCallback(std::function<void(void)>);
- Decoder &getDecoder();
+ virtual void addTimedEventCallback(size_t seconds, std::function<void(void)>);
+ virtual Decoder &getDecoder();
 protected:
  int position = 0;
  std::unique_ptr<Decoder> decoder;
  std::function<void (void)> onStop;
+ std::map<size_t, std::function<void (void)> > timedEvents;
 };
 
 }
@@ -192,6 +195,11 @@ public:
 
  Sound &setOnStopCallback(std::function<void(void)>);
  Sound &clearOnStopCallback();
+
+
+
+
+ Sound &addTimedEventCallback(size_t seconds, std::function<void(void)>);
 
  Sound &reverb(float delay, float decay, size_t numDelays);
  Sound &distortion(float gain);

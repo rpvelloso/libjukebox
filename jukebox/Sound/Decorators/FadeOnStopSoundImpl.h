@@ -31,6 +31,8 @@ public:
 	void setVolume(int) override;
 	void loop(bool) override;
 	void setOnStopCallback(std::function<void(void)> os) override;
+	void addTimedEventCallback(size_t seconds, std::function<void(void)>) override;
+	Decoder &getDecoder() override;
 private:
 	std::unique_ptr<SoundImpl> impl;
 	int fadeOutSecs;

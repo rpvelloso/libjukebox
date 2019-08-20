@@ -49,4 +49,12 @@ void FadeOnStopSoundImpl::setOnStopCallback(std::function<void(void)> os) {
 	impl->setOnStopCallback(os);
 }
 
+void FadeOnStopSoundImpl::addTimedEventCallback(size_t seconds, std::function<void(void)> te) {
+	impl->addTimedEventCallback(seconds, te);
+}
+
+Decoder &FadeOnStopSoundImpl::getDecoder() {
+	return impl->getDecoder();
+}
+
 } /* namespace jukebox */

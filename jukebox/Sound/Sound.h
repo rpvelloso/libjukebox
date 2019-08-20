@@ -42,6 +42,11 @@ public:
 	Sound &setOnStopCallback(std::function<void(void)>);
 	Sound &clearOnStopCallback();
 
+	/*
+	 * one shot timed event, callback removed after execution. Resolution in seconds.
+	 * */
+	Sound &addTimedEventCallback(size_t seconds, std::function<void(void)>);
+
 	Sound &reverb(float delay, float decay, size_t numDelays);
 	Sound &distortion(float gain);
 	Sound &fade(int fadeInSecs, int fadeOutSecs);

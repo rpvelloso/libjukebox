@@ -18,6 +18,7 @@
 
 #include <memory>
 #include <functional>
+#include <map>
 #include "jukebox/Decoders/Decoder.h"
 
 namespace jukebox {
@@ -34,11 +35,13 @@ public:
 	int getPosition() const;
 	void setPosition(int pos);
 	virtual void setOnStopCallback(std::function<void(void)>);
-	Decoder &getDecoder();
+	virtual void addTimedEventCallback(size_t seconds, std::function<void(void)>);
+	virtual Decoder &getDecoder();
 protected:
 	int position = 0;
 	std::unique_ptr<Decoder> decoder;
 	std::function<void (void)> onStop;
+	std::map<size_t, std::function<void (void)> > timedEvents;
 };
 
 } /* namespace jukebox */

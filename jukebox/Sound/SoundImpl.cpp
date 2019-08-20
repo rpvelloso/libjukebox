@@ -34,6 +34,10 @@ void SoundImpl::setOnStopCallback(std::function<void(void)> os) {
 	onStop = os;
 }
 
+void SoundImpl::addTimedEventCallback(size_t seconds, std::function<void(void)> te) {
+	timedEvents[seconds] = te;
+}
+
 Decoder& SoundImpl::getDecoder() {
 	return *decoder;
 }

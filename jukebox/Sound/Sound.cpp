@@ -80,6 +80,11 @@ Sound& Sound::setOnStopCallback(std::function<void(void)> os) {
 	return *this;
 }
 
+Sound &Sound::addTimedEventCallback(size_t seconds, std::function<void(void)> te) {
+	impl->addTimedEventCallback(seconds, te);
+	return *this;
+}
+
 Sound& Sound::clearOnStopCallback() {
 	impl->setOnStopCallback([](){});
 	return *this;

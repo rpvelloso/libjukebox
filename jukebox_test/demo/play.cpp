@@ -59,6 +59,18 @@ int main(int argc, char **argv) {
 			.loop(true) // looping
 			.setVolume(100) // max sound volume
 			.setOnStopCallback([](){std::cout << "parou!!!" << std::endl;}) // on stop event
+			.addTimedEventCallback(2, [&sound](){
+				std::cout << "adding effects!!!" << std::endl;
+				sound
+					.distortion(15)
+					.reverb(0.01, 0.5, 3);
+			}) // timed event: add effects
+			.addTimedEventCallback(4, [&sound](){
+				std::cout << "removing effects!!!" << std::endl;
+				sound
+					.peelDecoder()
+					.peelDecoder();
+			}) // timed event: remove last effects
 			.play(); // start playing
 
 		std::cout << "hit enter to fade out..." << std::endl;
