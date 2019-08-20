@@ -15,6 +15,7 @@ Platform independent (windows/linux) C++ audio playback library (uses DirectSoun
 - Simple reverberation (multiple delay lines with decay parameter);
 - Distortion (tanh);
 - File writer driver output;
+- Timed events (with seconds resolution) and on stop event;
 - Extensible architecture allows implementation of custom effects.
 
 # Building
