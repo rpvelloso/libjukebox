@@ -21,6 +21,7 @@
 #include <istream>
 #include <functional>
 #include <map>
+#include <mutex>
 
 
 namespace jukebox {
@@ -161,8 +162,8 @@ public:
  virtual int getVolume() const = 0;
  virtual void setVolume(int) = 0;
  virtual void loop(bool) = 0;
- int getPosition() const;
- void setPosition(int pos);
+ virtual int getPosition() const;
+ virtual void setPosition(int pos);
  virtual void setOnStopCallback(std::function<void(void)>);
  virtual void addTimedEventCallback(size_t seconds, std::function<void(void)>);
  virtual Decoder &getDecoder();
@@ -170,6 +171,7 @@ protected:
  int position = 0;
  std::unique_ptr<Decoder> decoder;
  std::function<void (void)> onStop;
+ std::recursive_mutex timedEventsMutex;
  std::map<size_t, std::function<void (void)> > timedEvents;
 };
 

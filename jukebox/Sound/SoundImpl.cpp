@@ -35,6 +35,8 @@ void SoundImpl::setOnStopCallback(std::function<void(void)> os) {
 }
 
 void SoundImpl::addTimedEventCallback(size_t seconds, std::function<void(void)> te) {
+	std::lock_guard<std::recursive_mutex> lock(timedEventsMutex);
+
 	timedEvents[seconds] = te;
 }
 

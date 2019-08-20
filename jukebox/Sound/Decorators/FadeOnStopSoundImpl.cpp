@@ -45,6 +45,14 @@ void FadeOnStopSoundImpl::loop(bool l) {
 	impl->loop(l);
 }
 
+int FadeOnStopSoundImpl::getPosition() const {
+	return impl->getPosition();
+}
+
+void FadeOnStopSoundImpl::setPosition(int pos) {
+	impl->setPosition(pos);
+}
+
 void FadeOnStopSoundImpl::setOnStopCallback(std::function<void(void)> os) {
 	impl->setOnStopCallback(os);
 }

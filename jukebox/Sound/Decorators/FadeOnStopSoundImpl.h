@@ -30,6 +30,8 @@ public:
 	int getVolume() const override;
 	void setVolume(int) override;
 	void loop(bool) override;
+	int getPosition() const override;
+	void setPosition(int pos) override;
 	void setOnStopCallback(std::function<void(void)> os) override;
 	void addTimedEventCallback(size_t seconds, std::function<void(void)>) override;
 	Decoder &getDecoder() override;

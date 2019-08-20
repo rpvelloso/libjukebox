@@ -85,6 +85,8 @@ AlsaHandle::AlsaHandle(Decoder *decoder) :
 }
 
 void AlsaHandle::processTimedEvents() {
+	std::lock_guard<std::recursive_mutex> lock(timedEventsMutex);
+
 	auto seconds = (position/(frameSize * decoder->getSampleRate()));
 	auto top = timedEvents.begin();
 	while (top != timedEvents.end() && seconds >= top->first) {
