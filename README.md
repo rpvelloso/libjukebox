@@ -16,7 +16,7 @@ Self-contained (i.e., no external dependencies) and platform independent (window
 - Distortion (tanh);
 - File writer driver output;
 - Timed events (with seconds resolution) and on stop event;
-- Extensible architecture allows implementation of custom effects.
+- Extensible architecture allows implementation of custom effects and audio drivers.
 
 # Building
 make -f makefile.linux
