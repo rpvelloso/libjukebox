@@ -20,6 +20,10 @@ namespace jukebox {
 SoundImpl::SoundImpl(Decoder *decoder) :
 		decoder(decoder),
 		onStop([](void){}) {
+
+	if (decoder) {
+		frameSize = (decoder->getBitsPerSample() >> 3) * decoder->getNumChannels();
+	}
 }
 
 int SoundImpl::getPosition() const {
@@ -42,6 +46,22 @@ void SoundImpl::addTimedEventCallback(size_t seconds, std::function<void(void)> 
 
 Decoder& SoundImpl::getDecoder() {
 	return *decoder;
+}
+
+void SoundImpl::processTimedEvents() {
+	std::lock_guard<std::recursive_mutex> lock(timedEventsMutex);
+
+	auto seconds = (position/(frameSize * decoder->getSampleRate()));
+	auto top = timedEvents.begin();
+	while (top != timedEvents.end() && seconds >= top->first) {
+		top->second();
+		timedEvents.erase(top);
+		top = timedEvents.begin();
+	}
+}
+
+size_t SoundImpl::getFrameSize() const {
+	return frameSize;
 }
 
 } /* namespace jukebox */

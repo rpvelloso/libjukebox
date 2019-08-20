@@ -84,18 +84,6 @@ AlsaHandle::AlsaHandle(Decoder *decoder) :
 	applyVolume = applyVolumeFunc[decoder->getBitsPerSample()];
 }
 
-void AlsaHandle::processTimedEvents() {
-	std::lock_guard<std::recursive_mutex> lock(timedEventsMutex);
-
-	auto seconds = (position/(frameSize * decoder->getSampleRate()));
-	auto top = timedEvents.begin();
-	while (top != timedEvents.end() && seconds >= top->first) {
-		top->second();
-		timedEvents.erase(top);
-		top = timedEvents.begin();
-	}
-}
-
 void AlsaHandle::play() {
 	stop();
 
@@ -104,7 +92,6 @@ void AlsaHandle::play() {
 			playing, true,
 			onStop);
 
-		frameSize = (decoder->getBitsPerSample() >> 3) * decoder->getNumChannels();
 		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[bufferSize*frameSize]);
 
 		do {

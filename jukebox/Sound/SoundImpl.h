@@ -38,12 +38,16 @@ public:
 	virtual void setOnStopCallback(std::function<void(void)>);
 	virtual void addTimedEventCallback(size_t seconds, std::function<void(void)>);
 	virtual Decoder &getDecoder();
+	virtual size_t getFrameSize() const;
 protected:
 	int position = 0;
 	std::unique_ptr<Decoder> decoder;
+	size_t frameSize = 0;
 	std::function<void (void)> onStop;
 	std::recursive_mutex timedEventsMutex;
 	std::map<size_t, std::function<void (void)> > timedEvents;
+
+	void processTimedEvents();
 };
 
 } /* namespace jukebox */

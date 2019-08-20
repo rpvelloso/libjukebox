@@ -120,6 +120,7 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 	if (FAILED(hr))
 		throw std::runtime_error("failed Lock");
 
+	processTimedEvents();
 	size_t len = decoder->getSamples((char *)bufAddr, position, bufLen);
 
 	position += len;

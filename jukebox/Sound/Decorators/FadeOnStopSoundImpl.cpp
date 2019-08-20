@@ -65,4 +65,8 @@ Decoder &FadeOnStopSoundImpl::getDecoder() {
 	return impl->getDecoder();
 }
 
+size_t FadeOnStopSoundImpl::getFrameSize() const {
+	return impl->getFrameSize();
+}
+
 } /* namespace jukebox */

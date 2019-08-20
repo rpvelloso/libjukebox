@@ -35,6 +35,7 @@ public:
 	void setOnStopCallback(std::function<void(void)> os) override;
 	void addTimedEventCallback(size_t seconds, std::function<void(void)>) override;
 	Decoder &getDecoder() override;
+	size_t getFrameSize() const override;
 private:
 	std::unique_ptr<SoundImpl> impl;
 	int fadeOutSecs;
