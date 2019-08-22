@@ -34,6 +34,7 @@ public:
 	Sound &stop();
 	int getVolume() const;
 	int getPosition() const;
+	bool playing() const;
 	Sound &setPosition(int pos);
 	/*
 	 * this onStop event is need, so the client can be notified

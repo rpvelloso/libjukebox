@@ -83,4 +83,8 @@ void FileWriterSoundImpl::setVolume(int vol) {
 void FileWriterSoundImpl::loop(bool l) {
 }
 
+bool FileWriterSoundImpl::playing() const {
+	return false;
+}
+
 } /* namespace jukebox */

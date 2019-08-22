@@ -33,6 +33,7 @@ public:
 	virtual int getVolume() const = 0;
 	virtual void setVolume(int) = 0;
 	virtual void loop(bool) = 0;
+	virtual bool playing() const = 0;
 	virtual int getPosition() const;
 	virtual void setPosition(int pos);
 	virtual void setOnStopCallback(std::function<void(void)>);

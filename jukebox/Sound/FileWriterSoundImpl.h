@@ -29,6 +29,7 @@ public:
 	int getVolume() const override;
 	void setVolume(int) override;
 	void loop(bool) override;
+	bool playing() const override;
 private:
 	std::string filename;
 };

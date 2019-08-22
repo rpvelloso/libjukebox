@@ -89,7 +89,7 @@ void AlsaHandle::play() {
 
 	playThread = std::thread([this]() {
 		StatusGuard statusGuard(
-			playing, true,
+			isPlaying, true,
 			onStop);
 
 		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[bufferSize*frameSize]);
@@ -97,7 +97,7 @@ void AlsaHandle::play() {
 		do {
 			size_t numFrames = decoder->getDataSize() / frameSize;
 
-			while (numFrames > 0 && playing) {
+			while (numFrames > 0 && isPlaying) {
 				auto frames = std::min(numFrames, bufferSize);
 				processTimedEvents();
 				auto bytes = decoder->getSamples(reinterpret_cast<char *>(volBuf.get()), position, frames*frameSize);
@@ -115,7 +115,7 @@ void AlsaHandle::play() {
 					break;
 			}
 			position = 0;
-		} while (looping && playing);
+		} while (looping && isPlaying);
 		clearBuffer(handlePtr.get());
 	});
 }
@@ -140,7 +140,7 @@ void AlsaHandle::_applyVolume(AlsaHandle &self, void *buf, int position, int len
 
 void AlsaHandle::stop() {
 	clearBuffer = snd_pcm_drop;
-	playing = false;
+	isPlaying = false;
 
 	if (playThread.joinable())
 		playThread.join();
@@ -175,13 +175,17 @@ void AlsaHandle::loop(bool l) {
 	looping = l;
 }
 
+bool AlsaHandle::playing() const {
+	return isPlaying;
+}
+
 void AlsaHandle::prepare() {
 	clearBuffer = snd_pcm_drain;
 	auto res = snd_pcm_prepare(handlePtr.get());
 	if (res != 0)
 		throw std::runtime_error("snd_pcm_prepare error.");
 
-	playing = false;
+	isPlaying = false;
 }
 
 int AlsaHandle::getVolume() const {

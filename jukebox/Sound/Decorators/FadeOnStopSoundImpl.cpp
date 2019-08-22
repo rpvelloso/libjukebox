@@ -45,6 +45,10 @@ void FadeOnStopSoundImpl::loop(bool l) {
 	impl->loop(l);
 }
 
+bool FadeOnStopSoundImpl::playing() const {
+	return impl->playing();
+}
+
 int FadeOnStopSoundImpl::getPosition() const {
 	return impl->getPosition();
 }

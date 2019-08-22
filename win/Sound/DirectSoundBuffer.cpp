@@ -68,7 +68,7 @@ void DirectSoundBuffer::loop(bool l) {
 	looping = l;
 }
 
-DWORD DirectSoundBuffer::status() {
+DWORD DirectSoundBuffer::status() const {
 	  DWORD st;
 
 	  pDsb->GetStatus(&st);
@@ -96,7 +96,7 @@ void DirectSoundBuffer::stop() {
 		throw std::runtime_error("failed Stop");
 }
 
-bool DirectSoundBuffer::playing() {
+bool DirectSoundBuffer::playing() const {
 	return status() & DSBSTATUS_PLAYING;
 }
 

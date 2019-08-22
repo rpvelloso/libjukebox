@@ -38,11 +38,12 @@ public:
 	int getVolume() const override;
 	void setVolume(int) override;
 	void loop(bool) override;
+	bool playing() const override;
 	~AlsaHandle();
 private:
 	std::unique_ptr<snd_pcm_t, decltype(&closeAlsaHandle)> handlePtr;
 	std::thread playThread;
-	std::atomic<bool> playing;
+	std::atomic<bool> isPlaying;
 	int vol = 100;
 	bool looping = false;
 	snd_pcm_uframes_t bufferSize;

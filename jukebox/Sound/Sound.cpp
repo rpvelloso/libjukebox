@@ -75,6 +75,10 @@ Sound& Sound::setPosition(int pos) {
 	return *this;
 }
 
+bool Sound::playing() const {
+	return impl->playing();
+}
+
 Sound& Sound::setOnStopCallback(std::function<void(void)> os) {
 	impl->setOnStopCallback(os);
 	return *this;

@@ -30,6 +30,7 @@ public:
 	int getVolume() const override;
 	void setVolume(int) override;
 	void loop(bool) override;
+	bool playing() const override;
 	int getPosition() const override;
 	void setPosition(int pos) override;
 	void setOnStopCallback(std::function<void(void)> os) override;
