@@ -74,11 +74,13 @@ int main(int argc, char **argv) {
 			.play(); // start playing
 
 		std::cout << "hit enter to fade out..." << std::endl;
-		std::cin.get();
+		std::string dummy;
+		std::getline(std::cin,dummy);
+		std::cout << "fading out..." << std::endl;
 		sound.stop(); // fade out the sound before stopping it
 
 		std::cout << "hit enter to exit..." << std::endl;
-		std::cin.get();
+		std::getline(std::cin,dummy);
 	} catch (std::exception &e) {
 		std::cerr << "error loading " << filename << ": " << e.what() << std::endl;
 	}
