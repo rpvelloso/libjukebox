@@ -1,8 +1,8 @@
 CC = gcc
-CXXFLAGS = -Wall -O3 -ggdb -std=c++1y -fPIC -I. -I./win/ -I/local/include
-CFLAGS = -Wall -O3 -ggdb -fPIC -Wno-unknown-pragmas -Wno-incompatible-pointer-types -DHAVE_WINDOWS_H=1
+CXXFLAGS = -Wall -O3 -ggdb -std=c++1y -fPIC -I. -I./win/ -I/local/include -flto
+CFLAGS = -Wall -O3 -ggdb -fPIC -Wno-unknown-pragmas -Wno-incompatible-pointer-types -DHAVE_WINDOWS_H=1 -flto
 BINS = ./bin/libjukebox.dll ./bin/test.exe ./bin/play.exe ./bin/loop.exe ./bin/soundShell.exe
-LDFLAGS = -ldxguid -ldsound -lwinmm -L/local/lib
+LDFLAGS = -ldxguid -ldsound -lwinmm -L/local/lib -flto
 
 include makefile.common
  

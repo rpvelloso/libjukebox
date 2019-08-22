@@ -195,6 +195,7 @@ public:
  Sound &stop();
  int getVolume() const;
  int getPosition() const;
+ bool playing() const;
  Sound &setPosition(int pos);
 
 
