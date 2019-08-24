@@ -18,6 +18,10 @@
 #include "libjukebox.h"
 #include "sol.hpp"
 
+jukebox::Sound makeSound(jukebox::SoundFile &file) {
+	return jukebox::factory::makeSound(file);
+}
+
 void bind(sol::state &lua) {
 	lua.new_usertype<jukebox::Mixer>("Mixer",
 		"getVolume", &jukebox::Mixer::getVolume,
@@ -53,7 +57,7 @@ void bind(sol::state &lua) {
 
 	lua["loadSoundFile"] = &jukebox::factory::loadFile;
 	lua["midiConfig"] = &jukebox::MIDIConfigurator::getInstance();
-	lua["makeSound"] = &jukebox::factory::makeSound;
+	lua["makeSound"] = &makeSound;
 	lua["makeSoundOutputToFile"] = &jukebox::factory::makeSoundOutputToFile;
 }
 

@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include "Sound.h"
+#include "Factory.h"
 #include "jukebox/Decoders/Decoder.h"
 #include "jukebox/Decoders/Decorators/FadeImpl.h"
 #include "jukebox/Decoders/Decorators/ReverbImpl.h"
@@ -31,6 +32,11 @@ int normalize(int vol) { return std::max(0,std::min(vol,100)); }
 namespace jukebox {
 
 Sound::Sound(SoundImpl *impl) : impl(impl) {
+}
+
+Sound::Sound(std::shared_ptr<SoundFile> soundFile) :
+	soundFile(soundFile),
+	impl(factory::makeSoundImpl(new Decoder(soundFile->makeDecoder()))) {
 }
 
 Sound& Sound::play() {
@@ -122,6 +128,13 @@ Sound& Sound::fadeOnStop(int fadeOutSecs) {
 Sound& Sound::peelDecoder() {
 	impl->getDecoder().peel();
 	return *this;
+}
+
+Sound Sound::clone() {
+	if (soundFile.get() == nullptr) {
+		throw std::runtime_error("can not clone this sound because it does not own a sound file.");
+	}
+	return Sound(soundFile);
 }
 
 } /* namespace jukebox */

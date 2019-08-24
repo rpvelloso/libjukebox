@@ -18,6 +18,10 @@ Sound makeSound(SoundFile &file) {
 	return Sound(makeSoundImpl(new Decoder(file.makeDecoder())));
 }
 
+Sound makeSound(const std::string &filename) {
+	return Sound(std::shared_ptr<SoundFile>(new SoundFile(loadFile(filename))));
+}
+
 Sound makeSoundOutputToFile(SoundFile &file, std::string filename) {
 	return Sound(new FileWriterSoundImpl(new Decoder(file.makeDecoder()), filename));
 }

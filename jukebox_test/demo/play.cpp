@@ -31,13 +31,13 @@ int main(int argc, char **argv) {
 
 	try {
 		// load a sound file
-		auto soundFile = jukebox::factory::loadFile(filename);
+		//auto soundFile = jukebox::factory::loadFile(filename);
 
 		// print file info
-		printFileInfo(soundFile);
+		//printFileInfo(soundFile);
 
 		// create a sound from soundFile
-		auto sound = jukebox::factory::makeSound(soundFile);
+		auto sound = jukebox::factory::makeSound(filename);
 
 		if (argc == 6) {
 			auto delay = std::stof(argv[2]);

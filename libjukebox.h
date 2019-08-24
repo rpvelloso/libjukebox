@@ -190,6 +190,7 @@ namespace factory {
 class Sound {
 public:
  Sound(SoundImpl *impl);
+ Sound(std::shared_ptr<SoundFile> soundFile);
  Sound &play();
  Sound &restart();
  Sound &stop();
@@ -218,7 +219,10 @@ public:
  Sound &loop(bool);
  Sound &peelDecoder();
 
+ Sound clone();
+
 private:
+ std::shared_ptr<SoundFile> soundFile;
  std::unique_ptr<SoundImpl> impl;
 };
 
@@ -227,6 +231,7 @@ namespace jukebox {
 namespace factory {
 
 Sound makeSound(SoundFile &file);
+Sound makeSound(const std::string &filename);
 Sound makeSoundOutputToFile(SoundFile &file, std::string filename);
 SoundImpl *makeSoundImpl(Decoder *decoder);
 

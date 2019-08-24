@@ -19,6 +19,7 @@
 #include <memory>
 
 #include "SoundImpl.h"
+#include "jukebox/FileFormats/SoundFile.h"
 
 namespace jukebox {
 
@@ -29,6 +30,7 @@ namespace factory {
 class Sound {
 public:
 	Sound(SoundImpl *impl);
+	Sound(std::shared_ptr<SoundFile> soundFile);
 	Sound &play();
 	Sound &restart();
 	Sound &stop();
@@ -57,7 +59,10 @@ public:
 	Sound &loop(bool);
 	Sound &peelDecoder();
 
+	Sound clone();
+
 private:
+	std::shared_ptr<SoundFile> soundFile;
 	std::unique_ptr<SoundImpl> impl;
 };
 
