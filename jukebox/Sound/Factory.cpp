@@ -19,7 +19,7 @@ Sound makeSound(SoundFile &file) {
 }
 
 Sound makeSound(const std::string &filename) {
-	return Sound(makeSoundImpl(new Decoder(std::shared_ptr<SoundFile>(new SoundFile(loadFile(filename))))));
+	return Sound(makeSoundImpl(new Decoder(std::make_shared<SoundFile>(loadFile(filename)))));
 }
 
 Sound makeSoundOutputToFile(SoundFile &file, const std::string &filename) {
@@ -27,7 +27,7 @@ Sound makeSoundOutputToFile(SoundFile &file, const std::string &filename) {
 }
 
 Sound makeSoundOutputToFile(const std::string  &inputFile, const std::string &filename) {
-	return Sound(new FileWriterSoundImpl(new Decoder(std::shared_ptr<SoundFile>(new SoundFile(loadFile(inputFile)))), filename));
+	return Sound(new FileWriterSoundImpl(new Decoder(std::make_shared<SoundFile>(loadFile(inputFile))), filename));
 }
 
 // TODO: add more extensions and/or a way to autodetect the file format
