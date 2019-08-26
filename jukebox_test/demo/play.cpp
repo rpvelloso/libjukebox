@@ -38,6 +38,7 @@ int main(int argc, char **argv) {
 
 		// create a sound from soundFile
 		auto sound = jukebox::factory::makeSound(filename);
+		auto sound2 = sound.clone();
 
 		if (argc == 6) {
 			auto delay = std::stof(argv[2]);
@@ -78,6 +79,7 @@ int main(int argc, char **argv) {
 		std::getline(std::cin,dummy);
 		std::cout << "fading out..." << std::endl;
 		sound.stop(); // fade out the sound before stopping it
+		sound2.play();
 
 		std::cout << "hit enter to exit..." << std::endl;
 		std::getline(std::cin,dummy);

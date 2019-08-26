@@ -18,9 +18,10 @@
 
 #include <memory>
 #include "SoundFileImpl.h"
-#include "jukebox/Decoders/Decoder.h"
 
 namespace jukebox {
+
+class Decoder;
 
 class SoundFile {
 public:

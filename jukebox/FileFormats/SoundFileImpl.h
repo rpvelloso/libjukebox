@@ -17,7 +17,7 @@
 #define LIBJUKEBOX_SOUNDFILEIMPL_2017_12_17_H_
 
 #include <string>
-#include "jukebox/Decoders/Decoder.h"
+#include "jukebox/Decoders/DecoderImpl.h"
 
 namespace jukebox {
 

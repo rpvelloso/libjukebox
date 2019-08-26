@@ -34,11 +34,6 @@ namespace jukebox {
 Sound::Sound(SoundImpl *impl) : impl(impl) {
 }
 
-Sound::Sound(std::shared_ptr<SoundFile> soundFile) :
-	soundFile(soundFile),
-	impl(factory::makeSoundImpl(new Decoder(soundFile->makeDecoder()))) {
-}
-
 Sound& Sound::play() {
 	impl->play();
 	return *this;
@@ -131,10 +126,7 @@ Sound& Sound::peelDecoder() {
 }
 
 Sound Sound::clone() {
-	if (soundFile.get() == nullptr) {
-		throw std::runtime_error("can not clone this sound because it does not own a sound file.");
-	}
-	return Sound(soundFile);
+	return Sound(factory::makeSoundImpl(impl->getDecoder().clone()));
 }
 
 } /* namespace jukebox */

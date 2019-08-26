@@ -17,6 +17,7 @@
 #include <exception>
 
 #include "SoundFile.h"
+#include "jukebox/Decoders/DecoderImpl.h"
 
 namespace jukebox {
 
