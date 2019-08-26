@@ -13,13 +13,13 @@ all							:	$(BINS)
 ./bin/libjukebox.dll		:	$(objects)
 	g++ -std=c++1y -ggdb -Wall $(objects) -shared $(LDFLAGS) -o ./bin/libjukebox.dll
 ./bin/test.exe				:	genheader ./jukebox_test/demo/main.o ./bin/libjukebox.dll
-	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/main.o -Lbin -ljukebox -o ./bin/test.exe
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/main.o -Lbin -ljukebox -flto -o ./bin/test.exe
 ./bin/play.exe				:	genheader ./jukebox_test/demo/play.o ./bin/libjukebox.dll
-	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/play.o -Lbin -ljukebox -o ./bin/play.exe
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/play.o -Lbin -ljukebox -flto -o ./bin/play.exe
 ./bin/loop.exe				:	genheader ./jukebox_test/demo/loop.o ./bin/libjukebox.dll
-	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/loop.o -Lbin -ljukebox -o ./bin/loop.exe
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/loop.o -Lbin -ljukebox -flto -o ./bin/loop.exe
 ./bin/soundShell.exe		:	genheader ./jukebox_test/demo/soundShell.o ./bin/libjukebox.dll
-	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/soundShell.o -L/local/lib -Lbin -ljukebox -llua -o ./bin/soundShell.exe
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/soundShell.o -L/local/lib -Lbin -ljukebox -llua -flto -o ./bin/soundShell.exe
 
 .PHONY		:	clean	genheader
 genheader	:
