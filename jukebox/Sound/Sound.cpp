@@ -125,8 +125,8 @@ Sound& Sound::peelDecoder() {
 	return *this;
 }
 
-Sound Sound::clone() {
-	return Sound(factory::makeSoundImpl(impl->getDecoder().clone()));
+Sound Sound::prototype() {
+	return Sound(factory::makeSoundImpl(impl->getDecoder().prototype()));
 }
 
 } /* namespace jukebox */

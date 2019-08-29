@@ -22,19 +22,19 @@
 
 namespace jukebox {
 
+class SoundFileImpl;
 class SoundFile;
 
 class Decoder {
 public:
-	Decoder(SoundFile &soundFile);
-	Decoder(std::shared_ptr<SoundFile> soundFilePtr);
+	Decoder(SoundFile soundFile);
 	int getSamples(char *buf, int pos, int len);
 	short getNumChannels() const;
 	int getSampleRate() const;
 	short getBitsPerSample() const;
 	int getDataSize() const;
 	int silenceLevel() const;
-	Decoder *clone();
+	Decoder *prototype();
 
 	template<typename T, typename ...Params> // T's base class must derive from DecoderImpl
 	Decoder &wrap(Params&&... params) { // decorates current decoder
@@ -44,8 +44,8 @@ public:
 
 	Decoder &peel();
 private:
-	std::shared_ptr<SoundFile> soundFilePtr;
-	SoundFile &soundFile;
+	Decoder(std::shared_ptr<SoundFileImpl> soundFileImpl);
+	std::shared_ptr<SoundFileImpl> soundFileImpl;
 	std::unique_ptr<DecoderImpl> impl;
 };
 

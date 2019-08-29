@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 
 		// create a sound from soundFile
 		auto sound = jukebox::factory::makeSound(filename);
-		auto sound2 = sound.clone();
+		auto sound2 = sound.prototype();
 
 		if (argc == 6) {
 			auto delay = std::stof(argv[2]);

@@ -58,7 +58,7 @@ public:
 	Sound &loop(bool);
 	Sound &peelDecoder();
 
-	Sound clone();
+	Sound prototype();
 
 private:
 	std::unique_ptr<SoundImpl> impl;

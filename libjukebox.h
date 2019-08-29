@@ -71,19 +71,19 @@ protected:
 }
 namespace jukebox {
 
+class SoundFileImpl;
 class SoundFile;
 
 class Decoder {
 public:
- Decoder(SoundFile &soundFile);
- Decoder(std::shared_ptr<SoundFile> soundFilePtr);
+ Decoder(SoundFile soundFile);
  int getSamples(char *buf, int pos, int len);
  short getNumChannels() const;
  int getSampleRate() const;
  short getBitsPerSample() const;
  int getDataSize() const;
  int silenceLevel() const;
- Decoder *clone();
+ Decoder *prototype();
 
  template<typename T, typename ...Params>
  Decoder &wrap(Params&&... params) {
@@ -93,8 +93,8 @@ public:
 
  Decoder &peel();
 private:
- std::shared_ptr<SoundFile> soundFilePtr;
- SoundFile &soundFile;
+ Decoder(std::shared_ptr<SoundFileImpl> soundFileImpl);
+ std::shared_ptr<SoundFileImpl> soundFileImpl;
  std::unique_ptr<DecoderImpl> impl;
 };
 
@@ -143,6 +143,7 @@ namespace jukebox {
 class Decoder;
 
 class SoundFile {
+friend class Decoder;
 public:
  SoundFile(SoundFileImpl *impl);
  short getNumChannels() const;
@@ -155,7 +156,7 @@ public:
  DecoderImpl *makeDecoder();
  int silenceLevel() const;
 private:
- std::unique_ptr<SoundFileImpl> impl;
+ std::shared_ptr<SoundFileImpl> impl;
 };
 
 }
@@ -226,7 +227,7 @@ public:
  Sound &loop(bool);
  Sound &peelDecoder();
 
- Sound clone();
+ Sound prototype();
 
 private:
  std::unique_ptr<SoundImpl> impl;

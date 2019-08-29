@@ -24,6 +24,7 @@ namespace jukebox {
 class Decoder;
 
 class SoundFile {
+friend class Decoder;
 public:
 	SoundFile(SoundFileImpl *impl);
 	short getNumChannels() const;
@@ -36,7 +37,7 @@ public:
 	DecoderImpl *makeDecoder();
 	int silenceLevel() const;
 private:
-	std::unique_ptr<SoundFileImpl> impl;
+	std::shared_ptr<SoundFileImpl> impl;
 };
 
 } /* namespace jukebox */

@@ -15,26 +15,22 @@
 
 #include "Decoder.h"
 #include "jukebox/FileFormats/SoundFile.h"
+#include "jukebox/FileFormats/SoundFileImpl.h"
 
 namespace jukebox {
 
-Decoder::Decoder(SoundFile &soundFile) :
-		soundFile(soundFile),
-		impl(soundFile.makeDecoder()) {
+Decoder::Decoder(SoundFile soundFile) :
+		soundFileImpl(soundFile.impl),
+		impl(soundFileImpl->makeDecoder()) {
 }
 
-Decoder::Decoder(std::shared_ptr<SoundFile> soundFilePtr) :
-		soundFilePtr(soundFilePtr),
-		soundFile(*soundFilePtr),
-		impl(soundFile.makeDecoder()) {
+Decoder::Decoder(std::shared_ptr<SoundFileImpl> soundFileImpl) :
+		soundFileImpl(soundFileImpl),
+		impl(soundFileImpl->makeDecoder()) {
 }
 
-Decoder *Decoder::clone() {
-	if (soundFilePtr.get() == nullptr) {
-		return new Decoder(soundFile);
-	} else {
-		return new Decoder(soundFilePtr);
-	}
+Decoder *Decoder::prototype() {
+	return new Decoder(soundFileImpl);
 }
 
 int Decoder::getSamples(char* buf, int pos, int len) {
