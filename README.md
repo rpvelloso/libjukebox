@@ -30,17 +30,19 @@ To provide MIDI support we are using [FluidSynth](https://github.com/FluidSynth/
 
 # Simple Usage
 ```cpp
-auto soundFile = jukebox::factory::loadFile("audio.mp3"); // open file
-auto sound = jukebox::factory::makeSound(soundFile); // create sound
+auto sound = jukebox::factory::makeSound("audio.mp3"); // create sound
 sound.play(); // start playing
+std::cout << "hit enter to stop..." << std::endl;
+std::cin.get();
+
+sound.stop(); // stop playing
 std::cout << "hit enter to exit..." << std::endl;
 std::cin.get();
 ```
 
 # Combining effects
 ```cpp
-auto soundFile = jukebox::factory::loadFile("audio.mp3"); // open file
-auto sound = jukebox::factory::makeSound(soundFile); // create sound
+auto sound = jukebox::factory::makeSound("audio.mp3"); // create sound
 
 sound
 	.fade(2, 2) // 2 seconds fade in & out
