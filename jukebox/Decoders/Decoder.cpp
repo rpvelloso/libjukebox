@@ -13,6 +13,7 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <cmath>
 #include "Decoder.h"
 #include "jukebox/FileFormats/SoundFile.h"
 #include "jukebox/FileFormats/SoundFileImpl.h"
@@ -22,6 +23,18 @@ namespace jukebox {
 Decoder::Decoder(SoundFile soundFile) :
 		soundFileImpl(soundFile.impl),
 		impl(soundFileImpl->makeDecoder()) {
+}
+
+const std::string& Decoder::getFilename() const {
+	return soundFileImpl->getFilename();
+}
+
+double Decoder::getDuration() const {
+	double rate = impl->getSampleRate();
+	double chan = impl->getNumChannels();
+	double res = impl->getBitsPerSample() >> 3;
+	double len = impl->getDataSize();
+	return std::round(len/(rate*chan*res));
 }
 
 Decoder::Decoder(std::shared_ptr<SoundFileImpl> soundFileImpl) :

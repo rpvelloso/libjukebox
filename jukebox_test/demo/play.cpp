@@ -19,7 +19,8 @@
 #include "libjukebox.h"
 
 // forward declarations
-void printFileInfo(const jukebox::SoundFile &file);
+template<class T>
+void printInfo(T &fileOrSound);
 
 int main(int argc, char **argv) {
 	if( argc < 2 ) {
@@ -33,11 +34,18 @@ int main(int argc, char **argv) {
 		// load a sound file
 		//auto soundFile = jukebox::factory::loadFile(filename);
 
-		// print file info
-		//printFileInfo(soundFile);
+		// print FILE info
+		//printInfo(soundFile);
 
 		// create a sound from soundFile
 		auto sound = jukebox::factory::makeSound(filename);
+
+		/*
+		 * print SOUND info, this may be different from FILE info
+		 * (e.g., after resampling, changing sample resolution, etc)
+		*/
+		printInfo(sound);
+
 		auto sound2 = sound.prototype();
 
 		if (argc == 6) {
@@ -102,13 +110,14 @@ std::string formatDuration(double duration) {
 		(secs<10?"0":"") + std::to_string(secs);
 };
 
-void printFileInfo(const jukebox::SoundFile &file) {
+template<class T>
+void printInfo(T &fileOrSound) {
 	static std::array<std::string, 2> channels = {"Mono", "Stereo"};
 
-	std::cout << file.getFilename() << " attributes: " << std::endl;
-	std::cout << file.getBitsPerSample() << " bits" << std::endl;
-	std::cout << channels[file.getNumChannels() - 1] << std::endl;
-	std::cout << file.getSampleRate() << " Hz" << std::endl;
-	std::cout << file.getDataSize() << " bytes" << std::endl;
-	std::cout << formatDuration(file.getDuration()) << " sec(s)" << std::endl << std::endl;
+	std::cout << fileOrSound.getFilename() << " attributes: " << std::endl;
+	std::cout << fileOrSound.getBitsPerSample() << " bits" << std::endl;
+	std::cout << channels[fileOrSound.getNumChannels() - 1] << std::endl;
+	std::cout << fileOrSound.getSampleRate() << " Hz" << std::endl;
+	std::cout << fileOrSound.getDataSize() << " bytes" << std::endl;
+	std::cout << formatDuration(fileOrSound.getDuration()) << " sec(s)" << std::endl << std::endl;
 }

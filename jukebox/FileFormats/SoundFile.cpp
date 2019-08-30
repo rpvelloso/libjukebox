@@ -45,7 +45,7 @@ int SoundFile::getDataSize() const {
 double SoundFile::getDuration() const {
 	double rate = impl->getSampleRate();
 	double chan = impl->getNumChannels();
-	double res = impl->getBitsPerSample()/8;
+	double res = impl->getBitsPerSample() >> 3;
 	double len = impl->getDataSize();
 	return std::round(len/(rate*chan*res));
 }

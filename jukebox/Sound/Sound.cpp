@@ -129,4 +129,28 @@ Sound Sound::prototype() {
 	return Sound(factory::makeSoundImpl(impl->getDecoder().prototype()));
 }
 
+short Sound::getNumChannels() const {
+	return impl->getDecoder().getNumChannels();
+}
+
+int Sound::getSampleRate() const {
+	return impl->getDecoder().getSampleRate();
+}
+
+short Sound::getBitsPerSample() const {
+	return impl->getDecoder().getBitsPerSample();
+}
+
+int Sound::getDataSize() const {
+	return impl->getDecoder().getDataSize();
+}
+
+const std::string& Sound::getFilename() const {
+	return impl->getDecoder().getFilename();
+}
+
+double Sound::getDuration() const {
+	return impl->getDecoder().getDuration();
+}
+
 } /* namespace jukebox */

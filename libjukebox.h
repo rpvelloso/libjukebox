@@ -82,6 +82,8 @@ public:
  int getSampleRate() const;
  short getBitsPerSample() const;
  int getDataSize() const;
+ const std::string &getFilename() const;
+ double getDuration() const;
  int silenceLevel() const;
  Decoder *prototype();
 
@@ -228,6 +230,13 @@ public:
  Sound &peelDecoder();
 
  Sound prototype();
+
+ short getNumChannels() const;
+ int getSampleRate() const;
+ short getBitsPerSample() const;
+ int getDataSize() const;
+ const std::string &getFilename() const;
+ double getDuration() const;
 
 private:
  std::unique_ptr<SoundImpl> impl;
