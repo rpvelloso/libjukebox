@@ -19,7 +19,7 @@ sound:stop()
 io.write('enter to play again...\n')
 io.read()
 
-sound:loop(true):play();
+sound:play(); -- keep on looping after playing the sound again
 io.write('enter to stop and exit...\n')
 io.read()
 sound:stop()
