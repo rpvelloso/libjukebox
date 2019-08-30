@@ -35,6 +35,7 @@ Sound::Sound(SoundImpl *impl) : impl(impl) {
 }
 
 Sound& Sound::play() {
+	loop(looping);
 	impl->play();
 	return *this;
 }
@@ -42,6 +43,7 @@ Sound& Sound::play() {
 Sound& Sound::restart() {
 	impl->stop();
 	impl->setPosition(0);
+	loop(looping);
 	impl->play();
 	return *this;
 }
@@ -63,7 +65,8 @@ Sound& Sound::setVolume(int vol) {
 }
 
 Sound& Sound::loop(bool l) {
-	impl->loop(l);
+	looping = l;
+	impl->loop(looping);
 	return *this;
 }
 

@@ -77,6 +77,8 @@ class SoundFile;
 class Decoder {
 public:
  Decoder(SoundFile soundFile);
+ Decoder(Decoder &&) = default;
+ Decoder &operator=(Decoder &&) = default;
  int getSamples(char *buf, int pos, int len);
  short getNumChannels() const;
  int getSampleRate() const;
@@ -96,6 +98,9 @@ public:
  Decoder &peel();
 private:
  Decoder(std::shared_ptr<SoundFileImpl> soundFileImpl);
+ Decoder(const Decoder &) = delete;
+ Decoder &operator=(const Decoder &) = delete;
+
  std::shared_ptr<SoundFileImpl> soundFileImpl;
  std::unique_ptr<DecoderImpl> impl;
 };
@@ -201,6 +206,9 @@ namespace factory {
 class Sound {
 public:
  Sound(SoundImpl *impl);
+ Sound(Sound &&) = default;
+ Sound &operator=(Sound &&) = default;
+
  Sound &play();
  Sound &restart();
  Sound &stop();
@@ -239,7 +247,11 @@ public:
  double getDuration() const;
 
 private:
+ Sound(const Sound &) = delete;
+ Sound &operator=(const Sound &) = delete;
+
  std::unique_ptr<SoundImpl> impl;
+ bool looping = false;
 };
 
 }

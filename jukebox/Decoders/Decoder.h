@@ -28,6 +28,8 @@ class SoundFile;
 class Decoder {
 public:
 	Decoder(SoundFile soundFile);
+	Decoder(Decoder &&) = default;
+	Decoder &operator=(Decoder &&) = default;
 	int getSamples(char *buf, int pos, int len);
 	short getNumChannels() const;
 	int getSampleRate() const;
@@ -47,6 +49,9 @@ public:
 	Decoder &peel();
 private:
 	Decoder(std::shared_ptr<SoundFileImpl> soundFileImpl);
+	Decoder(const Decoder &) = delete;
+	Decoder &operator=(const Decoder &) = delete;
+
 	std::shared_ptr<SoundFileImpl> soundFileImpl;
 	std::unique_ptr<DecoderImpl> impl;
 };
