@@ -47,29 +47,26 @@ std::unordered_map<short, decltype(FadeOnStopImpl::fadeOut)> FadeOnStopImpl::fad
 FadeOnStopImpl::FadeOnStopImpl(DecoderImpl *impl, int fadeOutSecs, int fadeOutStartPos) :
 		DecoderImplDecorator(impl->getFileImpl(), impl),
 		fadeOutSecs(fadeOutSecs),
-		fadeOutStartPos(fadeOutStartPos) {
-
-	int stopPos =
-		fadeOutStartPos + (
-		getSampleRate()*
-		getNumChannels()*
-		(getBitsPerSample() >> 3)*
-		fadeOutSecs);
-
-	if (stopPos < getDataSize()) {
-		fade = true;
-		fileImpl.truncAt(stopPos);
-	}
-
-	fadeOut = fadeOutFunc[getBitsPerSample()];
+		fadeOutStartPos(fadeOutStartPos),
+		fadeOutStopPos(
+			fadeOutStartPos + (
+			getSampleRate()*
+			getNumChannels()*
+			(getBitsPerSample() >> 3)*
+			fadeOutSecs)),
+		fade(fadeOutStopPos < impl->getDataSize()), // do not fade at all if fading goes beyond EOF
+		fadeOut(fadeOutFunc[getBitsPerSample()]) {
 }
 
-/*void FadeOnStopSoundImpl::stop() {
-	if (impl->getPosition() > 0 && fadeOutSecs > 0)
-		impl->setTransformationCallback(FadeOutOnStop(impl->getSoundFile(), fadeOutSecs, impl->getPosition()));
-}*/
+int FadeOnStopImpl::getDataSize() const {
+	return std::min(fadeOutStopPos+1, impl->getDataSize());
+}
 
 int FadeOnStopImpl::getSamples(char* buf, int pos, int len) {
+	if ((pos + len - 1) > fadeOutStopPos) {
+		len = std::max(fadeOutStopPos-pos+1, 0);
+	}
+
 	auto ret = impl->getSamples(buf, pos, len);
 
 	if (ret > 0) {

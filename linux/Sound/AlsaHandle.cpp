@@ -108,9 +108,8 @@ void AlsaHandle::play() {
 					if (n > 0) {
 						numFrames -= n;
 						position += n * frameSize;
-					} else {
-						throw std::runtime_error("snd_pcm_writei error." + std::string(snd_strerror(n)));
-					}
+					} else
+						break;
 				} else
 					break;
 			}

@@ -31,8 +31,9 @@ public:
 	FadeOnStopImpl(DecoderImpl *, int, int);
 	virtual ~FadeOnStopImpl() = default;
 	int getSamples(char *buf, int pos, int len) override;
+	int getDataSize() const override;
 private:
-	int fadeOutSecs, fadeOutStartPos;
+	int fadeOutSecs, fadeOutStartPos, fadeOutStopPos;
 	bool fade = false;
 	std::function<void(FadeOnStopImpl&, void *, int, int)> fadeOut;
 	static std::unordered_map<short, decltype(fadeOut)> fadeOutFunc;
