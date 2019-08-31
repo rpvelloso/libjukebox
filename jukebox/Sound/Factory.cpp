@@ -18,16 +18,16 @@ Sound makeSound(SoundFile &file) {
 	return Sound(makeSoundImpl(new Decoder(file)));
 }
 
-Sound makeSound(const std::string &filename) {
-	return Sound(makeSoundImpl(new Decoder(loadFile(filename))));
+Sound makeSound(const std::string &filename, bool onMemory) {
+	return Sound(makeSoundImpl(new Decoder(loadFile(filename, onMemory))));
 }
 
 Sound makeSoundOutputToFile(SoundFile &file, const std::string &filename) {
 	return Sound(new FileWriterSoundImpl(new Decoder(file), filename));
 }
 
-Sound makeSoundOutputToFile(const std::string  &inputFile, const std::string &filename) {
-	return Sound(new FileWriterSoundImpl(new Decoder(loadFile(inputFile)), filename));
+Sound makeSoundOutputToFile(const std::string  &inputFile, const std::string &filename, bool onMemory) {
+	return Sound(new FileWriterSoundImpl(new Decoder(loadFile(inputFile, onMemory)), filename));
 }
 
 // TODO: add more extensions and/or a way to autodetect the file format

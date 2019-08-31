@@ -26,9 +26,9 @@ namespace jukebox {
 namespace factory {
 
 Sound makeSound(SoundFile &file);
-Sound makeSound(const std::string &filename);
+Sound makeSound(const std::string &filename, bool onMemory = false);
 Sound makeSoundOutputToFile(SoundFile &file, const std::string &filename);
-Sound makeSoundOutputToFile(const std::string &inputFile, const std::string &filename);
+Sound makeSoundOutputToFile(const std::string &inputFile, const std::string &filename, bool onMemory = false);
 SoundImpl *makeSoundImpl(Decoder *decoder);
 
 SoundFile loadFile(const std::string &filename, bool onMemory = false);
