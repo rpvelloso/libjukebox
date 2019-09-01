@@ -19,7 +19,7 @@ namespace jukebox {
 
 SoundImpl::SoundImpl(Decoder *decoder) :
 		decoder(decoder),
-		onStop([](void){})
+		onStop([](){})
 {
 	if (decoder) {
 		frameSize = (decoder->getBitsPerSample() / 8) * decoder->getNumChannels();
