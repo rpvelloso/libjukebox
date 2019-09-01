@@ -19,10 +19,10 @@ namespace jukebox {
 
 SoundImpl::SoundImpl(Decoder *decoder) :
 		decoder(decoder),
-		onStop([](void){}) {
-
+		onStop([](void){})
+{
 	if (decoder) {
-		frameSize = (decoder->getBitsPerSample() >> 3) * decoder->getNumChannels();
+		frameSize = (decoder->getBitsPerSample() / 8) * decoder->getNumChannels();
 	}
 }
 
@@ -51,7 +51,7 @@ Decoder& SoundImpl::getDecoder() {
 void SoundImpl::processTimedEvents() {
 	std::lock_guard<std::recursive_mutex> lock(timedEventsMutex);
 
-	auto seconds = (position/(frameSize * decoder->getSampleRate()));
+	auto seconds = position / (frameSize * decoder->getSampleRate());
 	auto top = timedEvents.begin();
 	while (top != timedEvents.end() && seconds >= top->first) {
 		top->second();

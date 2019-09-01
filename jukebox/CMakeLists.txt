@@ -14,9 +14,6 @@ add_library(libjukebox
         Decoders/DecoderImpl.h
         Decoders/FLACDecoderImpl.cpp
         Decoders/FLACDecoderImpl.h
-        Decoders/MIDIConfigurator.h
-        Decoders/MIDIDecoderImpl.cpp
-        Decoders/MIDIDecoderImpl.h
         Decoders/MP3DecoderImpl.cpp
         Decoders/MP3DecoderImpl.h
         Decoders/VorbisDecoderImpl.cpp
@@ -42,7 +39,6 @@ add_library(libjukebox
         FileFormats/FileLoader.h
         FileFormats/FLACFileImpl.cpp
         FileFormats/FLACFileImpl.h
-        FileFormats/MIDIFileImpl.cpp
         FileFormats/MP3FileImpl.h
         FileFormats/MP3FileImpl.cpp
         FileFormats/MP3FileImpl.h
@@ -54,7 +50,6 @@ add_library(libjukebox
         FileFormats/VorbisFileImpl.h
         FileFormats/WaveFileImpl.cpp
         FileFormats/WaveFileImpl.h
-        FileFormats/midi/MidiFile.h
         Mixer/Factory.h
         Mixer/Mixer.cpp
         Mixer/Mixer.h
@@ -70,4 +65,12 @@ add_library(libjukebox
         Sound/Decorators/FadeOnStopSoundImpl.cpp
         Sound/Decorators/FadeOnStopSoundImpl.h)
 
-target_link_libraries(libjukebox fluidsynth)
+add_library(libjukebox-midi
+        Decoders/MIDIConfigurator.h
+        Decoders/MIDIDecoderImpl.cpp
+        Decoders/MIDIDecoderImpl.h
+        FileFormats/MIDIFileImpl.cpp
+        FileFormats/MIDIFileImpl.h
+        FileFormats/midi/MidiFile.h)
+
+target_link_libraries(libjukebox libjukebox-midi fluidsynth)
