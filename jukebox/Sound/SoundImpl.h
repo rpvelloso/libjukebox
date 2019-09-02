@@ -20,6 +20,7 @@
 #include <functional>
 #include <map>
 #include <mutex>
+#include <vector>
 #include "jukebox/Decoders/Decoder.h"
 
 namespace jukebox {
@@ -36,7 +37,9 @@ public:
 	virtual bool playing() const = 0;
 	virtual int getPosition() const;
 	virtual void setPosition(int pos);
-	virtual void setOnStopCallback(std::function<void(void)>);
+	virtual void pushOnStopCallback(std::function<void(void)>);
+	virtual std::function<void(void)> popOnStopCallback();
+	virtual void clearOnStopStack();
 	virtual void addTimedEventCallback(size_t seconds, std::function<void(void)>);
 	virtual Decoder &getDecoder();
 	virtual size_t getFrameSize() const;
@@ -44,7 +47,7 @@ protected:
 	int position = 0;
 	std::unique_ptr<Decoder> decoder;
 	size_t frameSize = 0;
-	std::function<void (void)> onStop;
+	std::vector<std::function<void (void)>> onStopStack;
 	std::recursive_mutex timedEventsMutex;
 	std::map<size_t, std::function<void (void)> > timedEvents;
 

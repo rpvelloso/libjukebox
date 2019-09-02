@@ -44,8 +44,9 @@ public:
 	 * this onStop event is need, so the client can be notified
 	 * when the sound stops and does not need to busy wait (poll) for it.
 	 * */
-	Sound &setOnStopCallback(std::function<void(void)>);
-	Sound &clearOnStopCallback();
+	Sound &pushOnStopCallback(std::function<void(void)>);
+	std::function<void(void)> popOnStopCallback();
+	Sound &clearOnStopStack();
 
 	/*
 	 * one shot timed event, callback removed after execution. Resolution in seconds.

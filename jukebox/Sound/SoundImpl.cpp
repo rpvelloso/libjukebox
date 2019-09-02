@@ -18,8 +18,7 @@
 namespace jukebox {
 
 SoundImpl::SoundImpl(Decoder *decoder) :
-		decoder(decoder),
-		onStop([](void){}) {
+		decoder(decoder) {
 
 	if (decoder) {
 		frameSize = (decoder->getBitsPerSample() >> 3) * decoder->getNumChannels();
@@ -34,8 +33,18 @@ void SoundImpl::setPosition(int pos) {
 	position = pos;
 }
 
-void SoundImpl::setOnStopCallback(std::function<void(void)> os) {
-	onStop = os;
+void SoundImpl::pushOnStopCallback(std::function<void(void)> os) {
+	onStopStack.emplace_back(os);
+}
+
+std::function<void(void)> SoundImpl::popOnStopCallback() {
+	auto result = std::move(onStopStack.back());
+	onStopStack.pop_back();
+	return result;
+}
+
+void SoundImpl::clearOnStopStack() {
+	onStopStack.clear();
 }
 
 void SoundImpl::addTimedEventCallback(size_t seconds, std::function<void(void)> te) {

@@ -48,6 +48,7 @@ echo '/*
 #include <functional>
 #include <map>
 #include <mutex>
+#include <vector>
 
 ' > libjukebox.h
 

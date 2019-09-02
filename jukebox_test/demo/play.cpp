@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
 			.fadeOnStop(3) // 3s fade out on stop
 			.loop(true) // looping
 			.setVolume(100) // max sound volume
-			.setOnStopCallback([](){std::cout << "parou!!!" << std::endl;}) // on stop event
+			.pushOnStopCallback([](){std::cout << "parou!!!" << std::endl;}) // on stop event
 			.addTimedEventCallback(2, [&sound](){
 				std::cout << "adding effects!!!" << std::endl;
 				sound

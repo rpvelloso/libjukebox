@@ -83,18 +83,22 @@ bool Sound::playing() const {
 	return impl->playing();
 }
 
-Sound& Sound::setOnStopCallback(std::function<void(void)> os) {
-	impl->setOnStopCallback(os);
+Sound& Sound::pushOnStopCallback(std::function<void(void)> os) {
+	impl->pushOnStopCallback(os);
 	return *this;
+}
+
+Sound& Sound::clearOnStopStack() {
+	impl->clearOnStopStack();
+	return *this;
+}
+
+std::function<void(void)> Sound::popOnStopCallback() {
+	return impl->popOnStopCallback();
 }
 
 Sound &Sound::addTimedEventCallback(size_t seconds, std::function<void(void)> te) {
 	impl->addTimedEventCallback(seconds, te);
-	return *this;
-}
-
-Sound& Sound::clearOnStopCallback() {
-	impl->setOnStopCallback([](){});
 	return *this;
 }
 
