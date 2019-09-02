@@ -66,33 +66,32 @@ int main(int argc, char **argv) {
 
 	jukebox::Mixer mixer;
 	mixer.setVolume(100);
-	std::cout << "vol: " << mixer.getVolume() << std::endl;
+	std::cout << "mixer volume: " << mixer.getVolume() << std::endl;
 	sound1.play();
-
 	// TODO replace with a proper key reading
-	char n;
-	std::cin >> n;
+	std::string dummy;
+	std::getline(std::cin,dummy);
 
-	//sound11.play(); // play same soundFile simultaneously
+	sound1.stop();
+	std::cout << "stopped sound 1!" << std::endl;
 	// TODO replace with a proper key reading
-	//std::cin >> n;
+	std::getline(std::cin,dummy);
 
-	//sound1.stop();
+	sound1.play();
+	std::cout << "playing sound 1 again!" << std::endl;
+	// TODO replace with a proper key reading
+	std::getline(std::cin,dummy);
+
 	mixer.setVolume(40);
-	std::cout << "vol: " << mixer.getVolume() << std::endl;
-	//sound.setVolume(30);
-	sound1.play();
-
+	std::cout << "mixer volume: " << mixer.getVolume() << std::endl;
 	// TODO replace with a proper key reading
-	std::cin >> n;
+	std::getline(std::cin,dummy);
 
-	//sound2.setVolume(100);
 	mixer.setVolume(80);
-	std::cout << "vol: " << mixer.getVolume() << std::endl;
+	std::cout << "playing sound 2 with mixer volume: " << mixer.getVolume() << std::endl;
 	sound2.play();
-
 	// TODO replace with a proper key reading
-	std::cin >> n;
+	std::getline(std::cin,dummy);
 
 	return 0;
 }

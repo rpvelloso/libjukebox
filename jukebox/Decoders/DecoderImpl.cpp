@@ -55,5 +55,4 @@ DecoderImpl *DecoderImpl::peel() {
 	return nullptr;
 }
 
-
 }

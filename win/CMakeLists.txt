@@ -4,9 +4,9 @@ FIND_LIBRARY(DXGUID_LIB NAMES dxguid PATHS "C:/mingw-dists/mingw-w64/x86_64-8.1.
 FIND_LIBRARY(WINMM_LIB winmm)
 set(WIN_LIBS ${DSOUND_LIB} ${DXGUID_LIB} ${WINMM_LIB})
 
-add_library(libjukebox-win
+add_library(libjukebox-impl
         Mixer/WindowsMixer.cpp
         Mixer/WindowsMixer.h
         Sound/DirectSoundBuffer.cpp
         Sound/DirectSoundBuffer.h)
-target_link_libraries(libjukebox-win libjukebox ${WIN_LIBS})
+target_link_libraries(libjukebox-impl libjukebox ${WIN_LIBS})
