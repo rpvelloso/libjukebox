@@ -21,6 +21,7 @@
 #include "jukebox/Decoders/Decorators/ReverbImpl.h"
 #include "jukebox/Decoders/Decorators/SampleResolutionImpl.h"
 #include "jukebox/Decoders/Decorators/DistortionImpl.h"
+#include "jukebox/Decoders/Decorators/JointStereoImpl.h"
 #include "Decorators/FadeOnStopSoundImpl.h"
 
 namespace {
@@ -158,6 +159,13 @@ const std::string& Sound::getFilename() const {
 
 Sound& Sound::stop() {
 	pause().setPosition(0);
+	return *this;
+}
+
+Sound& Sound::jointStereo() {
+	if (getNumChannels() == 2) {
+		impl->getDecoder().wrap<JointStereoImpl>();
+	}
 	return *this;
 }
 

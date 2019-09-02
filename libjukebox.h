@@ -240,6 +240,7 @@ public:
  Sound &fadeOnStop(int fadeOutSecs);
  Sound &setVolume(int);
  Sound &loop(bool);
+ Sound &jointStereo();
  Sound &peelDecoder();
 
  Sound prototype();

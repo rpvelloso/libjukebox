@@ -52,9 +52,16 @@ void bind(sol::state &lua) {
 		"peelDecoder", &jukebox::Sound::peelDecoder,
 		"reverb", &jukebox::Sound::reverb,
 		"distortion", &jukebox::Sound::distortion,
+		"jointStereo", &jukebox::Sound::jointStereo,
 		"fade", &jukebox::Sound::fade,
 		"resolution", &jukebox::Sound::resolution,
-		"fadeOnStop", &jukebox::Sound::fadeOnStop);
+		"fadeOnStop", &jukebox::Sound::fadeOnStop,
+		"getNumChannels", &jukebox::Sound::getNumChannels,
+		"getSampleRate", &jukebox::Sound::getSampleRate,
+		"getBitsPerSample", &jukebox::Sound::getBitsPerSample,
+		"getDataSize", &jukebox::Sound::getDataSize,
+		"getFilename", &jukebox::Sound::getFilename,
+		"getDuration", &jukebox::Sound::getDuration);
 
 	lua.new_usertype<jukebox::MIDIConfigurator>("MIDIConfigurator",
 		"setSoundFont", &jukebox::MIDIConfigurator::setSoundFont,

@@ -1,17 +1,20 @@
-local filename = '../games/mimomania/res/sound/card_deal.wav' -- './jukebox_test/data/g_t_120_50.wav' --three-two-one-go-deep-voice.wav'
+local filename = './jukebox_test/data/ACDC_-_Back_In_Black-sample.ogg'
 
 io.write('loading sound file...\n\n')
 local soundFile = loadSoundFile(filename)
-io.write('Filename: ', soundFile:getFilename(), '\n')
-io.write('NumChannels: ', soundFile:getNumChannels(), '\n')
-io.write('SampleRate: ', soundFile:getSampleRate(), '\n')
-io.write('BitsPerSample: ', soundFile:getBitsPerSample(), '\n')
-io.write('DataSize: ', soundFile:getDataSize(), '\n')
-io.write('Duration: ', soundFile:getDuration(), '\n\n')
 
 io.write('creating sound object...\n')
 local sound = makeSound(soundFile)
-sound:loop(true):play()
+sound:loop(false):jointStereo()
+
+io.write('Filename: ', sound:getFilename(), '\n')
+io.write('NumChannels: ', sound:getNumChannels(), '\n')
+io.write('SampleRate: ', sound:getSampleRate(), '\n')
+io.write('BitsPerSample: ', sound:getBitsPerSample(), '\n')
+io.write('DataSize: ', sound:getDataSize(), '\n')
+io.write('Duration: ', sound:getDuration(), '\n\n')
+
+sound:play()
 io.write('enter to stop...\n')
 io.read()
 
