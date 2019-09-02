@@ -35,6 +35,7 @@ public:
 
 	Sound &play();
 	Sound &restart();
+	Sound &pause();
 	Sound &stop();
 	int getVolume() const;
 	int getPosition() const;

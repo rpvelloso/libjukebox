@@ -1,4 +1,4 @@
-local filename = './jukebox_test/data/g_t_120_50.wav' --three-two-one-go-deep-voice.wav'
+local filename = '../games/mimomania/res/sound/card_deal.wav' -- './jukebox_test/data/g_t_120_50.wav' --three-two-one-go-deep-voice.wav'
 
 io.write('loading sound file...\n\n')
 local soundFile = loadSoundFile(filename)
@@ -11,7 +11,7 @@ io.write('Duration: ', soundFile:getDuration(), '\n\n')
 
 io.write('creating sound object...\n')
 local sound = makeSound(soundFile)
-sound:fadeOnStop(2):loop(true):play()
+sound:loop(true):play()
 io.write('enter to stop...\n')
 io.read()
 

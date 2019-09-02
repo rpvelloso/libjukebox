@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
 	std::string dummy;
 	std::getline(std::cin,dummy);
 
-	sound1.stop();
+	sound1.pause();
 	std::cout << "stopped sound 1!" << std::endl;
 	// TODO replace with a proper key reading
 	std::getline(std::cin,dummy);

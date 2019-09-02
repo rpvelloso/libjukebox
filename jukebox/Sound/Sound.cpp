@@ -41,16 +41,16 @@ Sound& Sound::play() {
 }
 
 Sound& Sound::restart() {
-	impl->stop();
+	impl->pause();
 	impl->setPosition(0);
 	loop(looping);
 	impl->play();
 	return *this;
 }
 
-Sound& Sound::stop() {
+Sound& Sound::pause() {
 	impl->loop(false);
-	impl->stop();
+	impl->pause();
 	return *this;
 }
 
@@ -154,6 +154,11 @@ int Sound::getDataSize() const {
 
 const std::string& Sound::getFilename() const {
 	return impl->getDecoder().getFilename();
+}
+
+Sound& Sound::stop() {
+	pause().setPosition(0);
+	return *this;
 }
 
 double Sound::getDuration() const {

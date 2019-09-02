@@ -175,7 +175,7 @@ public:
  SoundImpl(Decoder *);
  virtual ~SoundImpl() = default;
  virtual void play() = 0;
- virtual void stop() = 0;
+ virtual void pause() = 0;
  virtual int getVolume() const = 0;
  virtual void setVolume(int) = 0;
  virtual void loop(bool) = 0;
@@ -214,6 +214,7 @@ public:
 
  Sound &play();
  Sound &restart();
+ Sound &pause();
  Sound &stop();
  int getVolume() const;
  int getPosition() const;

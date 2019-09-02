@@ -34,7 +34,7 @@ class AlsaHandle: public SoundImpl {
 public:
 	AlsaHandle(Decoder *decoder);
 	void play() override;
-	void stop() override;
+	void pause() override;
 	int getVolume() const override;
 	void setVolume(int) override;
 	void loop(bool) override;

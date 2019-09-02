@@ -59,7 +59,7 @@ DirectSoundBuffer::DirectSoundBuffer(Decoder *decoder) :
 }
 
 DirectSoundBuffer::~DirectSoundBuffer() {
-	stop();
+	pause();
 	if (loadBufferThread.joinable()) //TODO: fix this - standardize with alsa driver, call always when stopping
 		loadBufferThread.join();
 }
@@ -76,7 +76,7 @@ DWORD DirectSoundBuffer::status() const {
 }
 
 void DirectSoundBuffer::play() {
-	stop();
+	pause();
 
 	pDsb->SetCurrentPosition(0);
 	DWORD playFlags = startThread();
@@ -90,7 +90,7 @@ void DirectSoundBuffer::play() {
       throw std::runtime_error("failed Play");
 }
 
-void DirectSoundBuffer::stop() {
+void DirectSoundBuffer::pause() {
 	auto hr = pDsb->Stop();
 	if (FAILED(hr))
 		throw std::runtime_error("failed Stop");
@@ -177,7 +177,7 @@ DWORD DirectSoundBuffer::startThread() {
 	notifyPos[2].dwOffset = dsbdesc.dwBufferBytes - 1; // end of buffer event
 	notifyPos[2].hEventNotify = notifyPos[0].hEventNotify;
 
-    bool reload = fillBuffer(0, dsbdesc.dwBufferBytes);
+    bool reload = fillBuffer(0, dsbdesc.dwBufferBytes) || looping;
 
 	hr = notifyIface->SetNotificationPositions(reload?3:1, notifyPos);
 	notifyIface->Release();
@@ -216,7 +216,7 @@ DWORD DirectSoundBuffer::startThread() {
 
 			} while (looping && playing());
 			if (playing())
-				stop();
+				pause();
 		},
 		notifyPos[0].hEventNotify);
 

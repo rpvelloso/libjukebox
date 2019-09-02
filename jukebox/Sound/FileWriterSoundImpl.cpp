@@ -73,7 +73,7 @@ void FileWriterSoundImpl::play() {
 	}
 }
 
-void FileWriterSoundImpl::stop() {
+void FileWriterSoundImpl::pause() {
 }
 
 int FileWriterSoundImpl::getVolume() const {

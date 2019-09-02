@@ -33,7 +33,7 @@ public:
 	DirectSoundBuffer(Decoder *);
 	~DirectSoundBuffer();
 	void play() override;
-	void stop() override;
+	void pause() override;
 	int getVolume() const override;
 	void setVolume(int) override;
 	void loop(bool) override;

@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
 	std::cin.get();
 
 	sounds.front().clearOnStopStack(); // need to clear events in order to stop the loop
-	sounds.front().stop();
+	sounds.front().pause();
 	sounds.back().clearOnStopStack();
-	sounds.back().stop();
+	sounds.back().pause();
 }

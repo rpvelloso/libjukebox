@@ -30,7 +30,7 @@ void FadeOnStopSoundImpl::play() {
 	impl->play();
 }
 
-void FadeOnStopSoundImpl::stop() {
+void FadeOnStopSoundImpl::pause() {
 	impl->pushOnStopCallback([this](){
 		impl->getDecoder().peel();
 	});

@@ -88,7 +88,7 @@ AlsaHandle::AlsaHandle(Decoder *decoder) :
 }
 
 void AlsaHandle::play() {
-	stop();
+	pause();
 
 	playThread = std::thread([this]() {
 		StatusGuard statusGuard(
@@ -140,7 +140,7 @@ void AlsaHandle::_applyVolume(AlsaHandle &self, void *buf, int position, int len
 	});
 }
 
-void AlsaHandle::stop() {
+void AlsaHandle::pause() {
 	clearBuffer = snd_pcm_drop;
 	isPlaying = false;
 
@@ -151,7 +151,7 @@ void AlsaHandle::stop() {
 }
 
 AlsaHandle::~AlsaHandle() {
-	stop();
+	pause();
 };
 
 void AlsaHandle::config() {

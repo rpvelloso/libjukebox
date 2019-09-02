@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
 		std::string dummy;
 		std::getline(std::cin,dummy);
 		std::cout << "fading out..." << std::endl;
-		sound.stop(); // fade out the sound before stopping it
+		sound.pause(); // fade out the sound before stopping it
 		sound2.play();
 
 		std::cout << "hit enter to exit..." << std::endl;
