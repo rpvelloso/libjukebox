@@ -20,6 +20,8 @@ public:
 	virtual ~JointStereoImpl() = default;
 	int getSamples(char *buf, int pos, int len) override;
 	short getNumChannels() const override;
+	int getDataSize() const override;
+	int getBlockSize() const override;
 private:
 	std::function<void(void *, void *, int)> mixChannels;
 	static std::unordered_map<int, decltype(mixChannels)> mixChannelsFunc;

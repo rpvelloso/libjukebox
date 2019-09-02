@@ -54,8 +54,6 @@ void ReleaseBuffer(LPDIRECTSOUNDBUFFER pDsb) {
 DirectSoundBuffer::DirectSoundBuffer(Decoder *decoder) :
 	SoundImpl(decoder),
 	pDsb(nullptr, ReleaseBuffer) {
-
-	prepare();
 }
 
 DirectSoundBuffer::~DirectSoundBuffer() {
@@ -76,6 +74,7 @@ DWORD DirectSoundBuffer::status() const {
 }
 
 void DirectSoundBuffer::play() {
+	prepare();
 	pause();
 
 	pDsb->SetCurrentPosition(0);
@@ -101,8 +100,9 @@ bool DirectSoundBuffer::playing() const {
 }
 
 bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
-	if (position >= decoder->getDataSize())
+	if (position >= decoder->getDataSize()) {
 		return false;
+	}
 
 	// fill secondary buffer with wav/sound
 	LPVOID bufAddr;
@@ -215,8 +215,9 @@ DWORD DirectSoundBuffer::startThread() {
 				}
 
 			} while (looping && playing());
-			if (playing())
+			if (playing()) {
 				pause();
+			}
 		},
 		notifyPos[0].hEventNotify);
 

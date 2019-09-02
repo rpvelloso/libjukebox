@@ -47,4 +47,12 @@ short JointStereoImpl::getNumChannels() const {
 	return 1;
 }
 
+int JointStereoImpl::getDataSize() const {
+	return impl->getDataSize() / 2;
+}
+
+int JointStereoImpl::getBlockSize() const {
+	return impl->getBlockSize() / 2;
+}
+
 } /* namespace jukebox */
