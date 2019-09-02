@@ -11,7 +11,7 @@ io.write('Duration: ', soundFile:getDuration(), '\n\n')
 
 io.write('creating sound object...\n')
 local sound = makeSound(soundFile)
-sound:loop(true):play()
+sound:fadeOnStop(2):loop(true):play()
 io.write('enter to stop...\n')
 io.read()
 

@@ -138,12 +138,15 @@ bool DirectSoundBuffer::fillBuffer(int offset, size_t size) {
 
 class HandleGuard {
 public:
-	HandleGuard(HANDLE handle, std::function<void(void)> &onStop) :
+	HandleGuard(HANDLE handle, std::vector<std::function<void(void)>> &onStopStack) :
 		handle(handle),
-		onStop(onStop) {
+		onStopStack(onStopStack) {
 	};
 	~HandleGuard() {
-		onStop();
+		while (!onStopStack.empty()) {
+			onStopStack.back()();
+			onStopStack.pop_back();
+		}
 		CloseHandle(handle);
 	};
 private:
@@ -153,7 +156,7 @@ private:
 	 * changes the event the playing thread won't be notified
 	 * because it has a COPY and not the actual event handler.
 	 */
-	std::function<void(void)> &onStop;
+	std::vector<std::function<void(void)>> &onStopStack;
 };
 
 /* this method returns the PLAYING FLAGS for DSOUND play.
@@ -190,7 +193,7 @@ DWORD DirectSoundBuffer::startThread() {
 		[this](auto event){
 			HandleGuard handleGuard(
 				event,
-				onStop);
+				onStopStack);
 
 			size_t offsets[2] = {0, dsbdesc.dwBufferBytes / 2};
 

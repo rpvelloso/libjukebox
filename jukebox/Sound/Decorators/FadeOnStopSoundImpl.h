@@ -33,7 +33,9 @@ public:
 	bool playing() const override;
 	int getPosition() const override;
 	void setPosition(int pos) override;
-	void setOnStopCallback(std::function<void(void)> os) override;
+	void pushOnStopCallback(std::function<void(void)> os) override;
+	std::function<void(void)> popOnStopCallback() override;
+	void clearOnStopStack() override;
 	void addTimedEventCallback(size_t seconds, std::function<void(void)>) override;
 	Decoder &getDecoder() override;
 	size_t getFrameSize() const override;

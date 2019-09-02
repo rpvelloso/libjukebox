@@ -13,6 +13,7 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
 #include "FadeOnStopSoundImpl.h"
 
 #include "jukebox/Decoders/Decorators/FadeOnStopImpl.h"
@@ -30,7 +31,11 @@ void FadeOnStopSoundImpl::play() {
 }
 
 void FadeOnStopSoundImpl::stop() {
+	impl->pushOnStopCallback([this](){
+		impl->getDecoder().peel();
+	});
 	impl->getDecoder().wrap<FadeOnStopImpl>(fadeOutSecs, impl->getPosition());
+
 }
 
 int FadeOnStopSoundImpl::getVolume() const {
@@ -57,8 +62,16 @@ void FadeOnStopSoundImpl::setPosition(int pos) {
 	impl->setPosition(pos);
 }
 
-void FadeOnStopSoundImpl::setOnStopCallback(std::function<void(void)> os) {
-	impl->setOnStopCallback(os);
+void FadeOnStopSoundImpl::pushOnStopCallback(std::function<void(void)> os) {
+	impl->pushOnStopCallback(os);
+}
+
+std::function<void(void)> FadeOnStopSoundImpl::popOnStopCallback() {
+	return impl->popOnStopCallback();
+}
+
+void FadeOnStopSoundImpl::clearOnStopStack() {
+	impl->clearOnStopStack();
 }
 
 void FadeOnStopSoundImpl::addTimedEventCallback(size_t seconds, std::function<void(void)> te) {

@@ -35,12 +35,12 @@ int main(int argc, char **argv) {
 	sounds.emplace_back(jukebox::factory::makeSound(soundFiles.front()));
 	sounds.emplace_back(jukebox::factory::makeSound(soundFiles.back()));
 
-	sounds.front().setOnStopCallback([&sounds](){
+	sounds.front().pushOnStopCallback([&sounds](){
 		std::cout << "sound 1 stopped. Starting sound 2..." << std::endl;
 		sounds.back().play();
 	});
 
-	sounds.back().setOnStopCallback([&sounds](){
+	sounds.back().pushOnStopCallback([&sounds](){
 		std::cout << "sound 2 stopped. Starting sound 1..." << std::endl;
 		sounds.front().play();
 	});
@@ -50,8 +50,8 @@ int main(int argc, char **argv) {
 	std::cout << "hit enter to exit..." << std::endl;
 	std::cin.get();
 
-	sounds.front().clearOnStopCallback(); // need to clear events in order to stop the loop
+	sounds.front().clearOnStopStack(); // need to clear events in order to stop the loop
 	sounds.front().stop();
-	sounds.back().clearOnStopCallback();
+	sounds.back().clearOnStopStack();
 	sounds.back().stop();
 }

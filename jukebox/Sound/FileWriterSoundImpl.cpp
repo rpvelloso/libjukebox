@@ -67,7 +67,10 @@ void FileWriterSoundImpl::play() {
 		output.write(buf.get(), len);
 		len = decoder->getSamples(buf.get(), pos, bufSize);
 	}
-	onStop();
+	while (!onStopStack.empty()) {
+		onStopStack.back()();
+		onStopStack.pop_back();
+	}
 }
 
 void FileWriterSoundImpl::stop() {

@@ -32,16 +32,19 @@ public:
   StatusGuard(
 		  std::atomic<bool> &status,
 		  bool entry,
-		  std::function<void(void)> &onStop) :
+		  std::vector<std::function<void(void)>> &onStopStack) :
 	  status(status),
 	  exitStatus(!entry),
-	  onStop(onStop) {
+	  onStopStack(onStopStack) {
 
 	  status = entry;
   };
 
   ~StatusGuard() {
-	  onStop();
+	  while (!onStopStack.empty()) {
+		  onStopStack.back()();
+		  onStopStack.pop_back();
+	  }
 	  status = exitStatus;
   }
 private:
@@ -52,7 +55,7 @@ private:
 	 * changes the event the playing thread won't be notified
 	 * because it has a COPY and not the actual event handler.
 	 */
-  std::function<void(void)> &onStop;
+  std::vector<std::function<void(void)>> &onStopStack;
 };
 
 }
@@ -90,7 +93,7 @@ void AlsaHandle::play() {
 	playThread = std::thread([this]() {
 		StatusGuard statusGuard(
 			isPlaying, true,
-			onStop);
+			onStopStack);
 
 		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[bufferSize*frameSize]);
 
