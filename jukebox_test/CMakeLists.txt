@@ -9,7 +9,7 @@ add_executable(jukeboxdemo_play
 add_executable(jukeboxdemo_soundShell
         demo/soundShell.cpp)
 
-target_link_libraries(jukeboxdemo libjukebox libjukebox-win)
-target_link_libraries(jukeboxdemo_loop libjukebox libjukebox-win)
-target_link_libraries(jukeboxdemo_play libjukebox libjukebox-win)
-target_link_libraries(jukeboxdemo_soundShell libjukebox libjukebox-win ${LUA_LIB})
+target_link_libraries(jukeboxdemo libjukebox libjukebox-impl)
+target_link_libraries(jukeboxdemo_loop libjukebox libjukebox-impl)
+target_link_libraries(jukeboxdemo_play libjukebox libjukebox-impl)
+target_link_libraries(jukeboxdemo_soundShell libjukebox libjukebox-impl ${LUA_LIB})
