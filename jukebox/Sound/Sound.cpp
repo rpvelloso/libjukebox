@@ -22,6 +22,7 @@
 #include "jukebox/Decoders/Decorators/SampleResolutionImpl.h"
 #include "jukebox/Decoders/Decorators/DistortionImpl.h"
 #include "jukebox/Decoders/Decorators/JointStereoImpl.h"
+#include "jukebox/Decoders/Decorators/MovingAverageImpl.h"
 #include "Decorators/FadeOnStopSoundImpl.h"
 
 namespace {
@@ -171,6 +172,11 @@ Sound& Sound::jointStereo() {
 	if (getNumChannels() == 2 && !playing()) {
 		impl->getDecoder().wrap<JointStereoImpl>();
 	} // TODO: throw?
+	return *this;
+}
+
+Sound& Sound::movingAverage(float len) {
+	impl->getDecoder().wrap<MovingAverageImpl>(len);
 	return *this;
 }
 

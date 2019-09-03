@@ -10,6 +10,7 @@ objects = \
 	./jukebox/Decoders/Decorators/DecoderImplDecorator.o \
 	./jukebox/Decoders/Decorators/DistortionImpl.o \
 	./jukebox/Decoders/Decorators/JointStereoImpl.o \
+	./jukebox/Decoders/Decorators/MovingAverageImpl.o \
 	./jukebox/Decoders/Decorators/FadeOnStopImpl.o ./jukebox/Decoders/Decorators/FadeImpl.o \
 	./jukebox/Decoders/Decorators/ReverbImpl.o ./jukebox/Decoders/Decorators/SampleResolutionImpl.o \
 	./jukebox/Decoders/Decoder.o ./jukebox/Decoders/DecoderImpl.o ./jukebox/Decoders/WaveDecoderImpl.o  \
@@ -26,7 +27,8 @@ SRCS = \
 	./jukebox/Mixer/Mixer.cpp \
 	./jukebox/Decoders/Decorators/DecoderImplDecorator.cpp \
 	./jukebox/Decoders/Decorators/DistortionImpl.cpp \
-	./jukebox/Decoders/Decorators/JointStereoImpl.o \
+	./jukebox/Decoders/Decorators/JointStereoImpl.cpp \
+	./jukebox/Decoders/Decorators/MovingAverageImpl.cpp \
 	./jukebox/Decoders/Decorators/FadeOnStopImpl.cpp ./jukebox/Decoders/Decorators/FadeImpl.cpp \
 	./jukebox/Decoders/Decorators/ReverbImpl.cpp ./jukebox/Decoders/Decorators/SampleResolutionImpl.cpp \
 	./jukebox/Decoders/Decoder.cpp ./jukebox/Decoders/DecoderImpl.cpp ./jukebox/Decoders/WaveDecoderImpl.cpp \

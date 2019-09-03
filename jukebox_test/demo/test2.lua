@@ -1,11 +1,14 @@
-local filename = './jukebox_test/data/Sample_BeeMoved_96kHz24bit.flac'
+local filename = './jukebox_test/data/g_t_120_50.wav'
 
 io.write('loading sound file...\n\n')
 local soundFile = loadSoundFile(filename)
 
 io.write('creating sound object...\n')
 local sound = makeSound(soundFile)
-sound:loop(false):jointStereo()
+sound
+  :distortion(500)
+  --:reverb(0.5, 0.5, 7)
+  :movingAverage(0.0005)
 
 io.write('Filename: ', sound:getFilename(), '\n')
 io.write('NumChannels: ', sound:getNumChannels(), '\n')
