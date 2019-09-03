@@ -35,11 +35,11 @@ public:
 	virtual int silenceLevel() const;
 private:
 	int resolution, nativeResolution;
-	std::function<int(void *, int, int)> changeResolution;
+	std::function<int(void *, void *, int, int)> changeResolution;
 	static std::unordered_map<int, decltype(changeResolution)> changeResolutionFunc;
 
 	template<class T, class U> // converts from T to U
-	static int _changeResolution(void *buf, int len, int offset);
+	static int _changeResolution(void *buf, void *out, int len, int offset);
 };
 
 } /* namespace jukebox */
