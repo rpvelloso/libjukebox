@@ -118,8 +118,13 @@ Sound& Sound::fade(int fadeInSecs, int fadeOutSecs) {
 	return *this;
 }
 
+/* changing sound properties (resolution, sample
+ * rate, channels) is not allowed while playing
+ */
 Sound& Sound::resolution(int bitsPerSample) {
-	impl->getDecoder().wrap<SampleResolutionImpl>(bitsPerSample);
+	if (!playing()) {
+		impl->getDecoder().wrap<SampleResolutionImpl>(bitsPerSample);
+	} // TODO: throw?
 	return *this;
 }
 
@@ -163,9 +168,9 @@ Sound& Sound::stop() {
 }
 
 Sound& Sound::jointStereo() {
-	if (getNumChannels() == 2) {
+	if (getNumChannels() == 2 && !playing()) {
 		impl->getDecoder().wrap<JointStereoImpl>();
-	}
+	} // TODO: throw?
 	return *this;
 }
 
