@@ -6,6 +6,7 @@ local soundFile = loadSoundFile(filename)
 io.write('creating sound object...\n')
 local sound = makeSound(soundFile)
 sound
+  :jointStereo()
   :distortion(500)
   --:reverb(0.5, 0.5, 7)
   :movingAverage(0.0005)

@@ -17,6 +17,12 @@ class DecoderImplDecorator: public DecoderImpl {
 public:
 	DecoderImplDecorator(SoundFileImpl &fileImpl, DecoderImpl *impl);
 	virtual ~DecoderImplDecorator() = default;
+	int getBlockSize() const override;
+	short getNumChannels() const override;
+	int getSampleRate() const override;
+	short getBitsPerSample() const override;
+	int getDataSize() const override;
+	int silenceLevel() const override;
 	DecoderImpl *peel() override;
 protected:
 	std::unique_ptr<DecoderImpl> impl;
