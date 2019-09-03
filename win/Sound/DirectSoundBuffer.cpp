@@ -69,6 +69,8 @@ void DirectSoundBuffer::loop(bool l) {
 DWORD DirectSoundBuffer::status() const {
 	  DWORD st;
 
+	  if (!pDsb)
+		  return 0;
 	  pDsb->GetStatus(&st);
 	  return st;
 }
