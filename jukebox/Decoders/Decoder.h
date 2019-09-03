@@ -35,6 +35,7 @@ public:
 	int getSampleRate() const;
 	short getBitsPerSample() const;
 	int getDataSize() const;
+	int getBlockSize() const;
 	const std::string &getFilename() const;
 	double getDuration() const;
 	int silenceLevel() const;

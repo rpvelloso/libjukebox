@@ -46,7 +46,7 @@ private:
 	std::atomic<bool> isPlaying;
 	int vol = 100;
 	bool looping = false;
-	snd_pcm_uframes_t bufferSize;
+	snd_pcm_uframes_t bufferSize = 0;
 	std::function<void(AlsaHandle &self, void *, int , int )> applyVolume;
 	std::function<decltype(snd_pcm_drain)> clearBuffer = snd_pcm_drain;
 	static std::unordered_map<short, decltype(applyVolume)> applyVolumeFunc;

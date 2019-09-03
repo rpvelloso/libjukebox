@@ -29,33 +29,33 @@ namespace {
 
 class StatusGuard {
 public:
-  StatusGuard(
-		  std::atomic<bool> &status,
-		  bool entry,
-		  std::vector<std::function<void(void)>> &onStopStack) :
-	  status(status),
-	  exitStatus(!entry),
-	  onStopStack(onStopStack) {
+	StatusGuard(
+			std::atomic<bool> &status,
+			bool entry,
+			std::vector<std::function<void(void)>> &onStopStack) :
+				status(status),
+				exitStatus(!entry),
+				onStopStack(onStopStack) {
 
-	  status = entry;
-  };
+		status = entry;
+	};
 
-  ~StatusGuard() {
-	  while (!onStopStack.empty()) {
-		  onStopStack.back()();
-		  onStopStack.pop_back();
-	  }
-	  status = exitStatus;
-  }
+	~StatusGuard() {
+		while (!onStopStack.empty()) {
+			onStopStack.back()();
+			onStopStack.pop_back();
+		}
+		status = exitStatus;
+	}
 private:
-  std::atomic<bool> &status;
-  bool exitStatus;
+	std::atomic<bool> &status;
+	bool exitStatus;
 
-  /* this NEEDS to be passed by ref, otherwise when the user
+	/* this NEEDS to be passed by ref, otherwise when the user
 	 * changes the event the playing thread won't be notified
 	 * because it has a COPY and not the actual event handler.
 	 */
-  std::vector<std::function<void(void)>> &onStopStack;
+	std::vector<std::function<void(void)>> &onStopStack;
 };
 
 }
@@ -72,8 +72,8 @@ void closeAlsaHandle(snd_pcm_t *handle) {
 // AlsaHandle
 
 AlsaHandle::AlsaHandle(Decoder *decoder) :
-	SoundImpl(decoder),
-	handlePtr(nullptr, closeAlsaHandle) {
+			SoundImpl(decoder),
+			handlePtr(nullptr, closeAlsaHandle) {
 
 	snd_pcm_t *handle;
 	auto res = snd_pcm_open(&handle, ALSA_DEVICE, SND_PCM_STREAM_PLAYBACK, 0);
@@ -81,42 +81,40 @@ AlsaHandle::AlsaHandle(Decoder *decoder) :
 		throw std::runtime_error("snd_pcm_open error.");
 
 	handlePtr.reset(handle);
-	config();
-	prepare();
-
-	applyVolume = applyVolumeFunc[decoder->getBitsPerSample()];
 }
 
 void AlsaHandle::play() {
+	config();
 	pause();
 
 	playThread = std::thread([this]() {
 		StatusGuard statusGuard(
-			isPlaying, true,
-			onStopStack);
+				isPlaying, true,
+				onStopStack);
 
-		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[bufferSize*frameSize]);
+		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[bufferSize*decoder->getBlockSize()]);
 
 		do {
-			size_t numFrames = decoder->getDataSize() / frameSize;
+			size_t numFrames = decoder->getDataSize() / decoder->getBlockSize();
 
 			while (numFrames > 0 && isPlaying) {
 				auto frames = std::min(numFrames, bufferSize);
 				processTimedEvents();
-				auto bytes = decoder->getSamples(reinterpret_cast<char *>(volBuf.get()), position, frames*frameSize);
+				auto bytes = decoder->getSamples(reinterpret_cast<char *>(volBuf.get()), position, frames*decoder->getBlockSize());
 				if (bytes > 0) {
 					applyVolume(*this, volBuf.get(), position, bytes);
 
-					auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), bytes / frameSize);
+					auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), bytes / decoder->getBlockSize());
 					if (n > 0) {
 						numFrames -= n;
-						position += n * frameSize;
+						position += n * decoder->getBlockSize();
 					} else
 						break;
 				} else
 					break;
 			}
-			position = 0;
+			if (numFrames == 0)
+				position = 0;
 		} while (looping && isPlaying);
 		clearBuffer(handlePtr.get());
 	});
@@ -155,22 +153,28 @@ AlsaHandle::~AlsaHandle() {
 };
 
 void AlsaHandle::config() {
-  auto res = snd_pcm_set_params(
-    handlePtr.get(),
-	decoder->getBitsPerSample() == 32 ? SND_PCM_FORMAT_S32_LE :
-	decoder->getBitsPerSample() == 16 ? SND_PCM_FORMAT_S16_LE :
-	SND_PCM_FORMAT_U8,
-	SND_PCM_ACCESS_RW_INTERLEAVED,
-	decoder->getNumChannels(),
-	decoder->getSampleRate(),
-    1,
-    100000);
+	std::cerr << decoder->getBitsPerSample() << " "
+			<< decoder->getNumChannels() << " "
+			<< decoder->getSampleRate() << std::endl;
 
-  if (res != 0)
-    throw std::runtime_error("snd_pcm_set_params error.");
+	applyVolume = applyVolumeFunc[decoder->getBitsPerSample()];
 
-  snd_pcm_uframes_t period;
-  snd_pcm_get_params(handlePtr.get(), &bufferSize, &period);
+	auto res = snd_pcm_set_params(
+		handlePtr.get(),
+		decoder->getBitsPerSample() == 32 ? SND_PCM_FORMAT_S32_LE :
+			decoder->getBitsPerSample() == 16 ? SND_PCM_FORMAT_S16_LE :
+			SND_PCM_FORMAT_U8,
+		SND_PCM_ACCESS_RW_INTERLEAVED,
+		decoder->getNumChannels(),
+		decoder->getSampleRate(),
+		1,
+		100000);
+
+	if (res != 0)
+		throw std::runtime_error("snd_pcm_set_params error.");
+
+	snd_pcm_uframes_t period;
+	snd_pcm_get_params(handlePtr.get(), &bufferSize, &period);
 }
 
 void AlsaHandle::loop(bool l) {

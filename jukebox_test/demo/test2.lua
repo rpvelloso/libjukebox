@@ -1,4 +1,4 @@
-local filename = './jukebox_test/data/ACDC_-_Back_In_Black-sample.ogg'
+local filename = './jukebox_test/data/Sample_BeeMoved_96kHz24bit.flac'
 
 io.write('loading sound file...\n\n')
 local soundFile = loadSoundFile(filename)
@@ -18,7 +18,7 @@ sound:play()
 io.write('enter to stop...\n')
 io.read()
 
-sound:stop()
+sound:pause()
 io.write('enter to play again...\n')
 io.read()
 

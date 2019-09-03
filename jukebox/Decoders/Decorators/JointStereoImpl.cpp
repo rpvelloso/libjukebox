@@ -30,8 +30,9 @@ void JointStereoImpl::_mixChannels(void *input, void *output, int len) {
 	auto endIt = beginIt + (len / sizeof(T));
 	for (auto it = beginIt; it != endIt; it += 2, ++outp) {
 		auto left = it;
-		auto right = it+1;
-		*outp = (*left + *right) / 2;
+		auto right = ++left;
+		double mix = ((int64_t)*left + (int64_t)*right);
+		*outp =  mix / 2;
 	}
 }
 
