@@ -28,6 +28,10 @@ add_library(libjukebox
         Decoders/Decorators/FadeImpl.h
         Decoders/Decorators/FadeOnStopImpl.cpp
         Decoders/Decorators/FadeOnStopImpl.h
+        Decoders/Decorators/JointStereoImpl.cpp
+        Decoders/Decorators/JointStereoImpl.h
+        Decoders/Decorators/MovingAverageImpl.cpp
+        Decoders/Decorators/MovingAverageImpl.h
         Decoders/Decorators/ReverbImpl.cpp
         Decoders/Decorators/ReverbImpl.h
         Decoders/Decorators/SampleResolutionImpl.cpp
