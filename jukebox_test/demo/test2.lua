@@ -1,11 +1,16 @@
-local filename = './jukebox_test/data/ACDC_-_Back_In_Black-sample.ogg'
+local filename = './jukebox_test/data/g_t_120_50.wav'
 
 io.write('loading sound file...\n\n')
 local soundFile = loadSoundFile(filename)
 
 io.write('creating sound object...\n')
 local sound = makeSound(soundFile)
-sound:loop(false):jointStereo()
+sound
+  --:jointStereo()
+  :resolution(32)
+  :distortion(50)
+  :reverb(0.1, 0.5, 7)
+  :movingAverage(0.0001)
 
 io.write('Filename: ', sound:getFilename(), '\n')
 io.write('NumChannels: ', sound:getNumChannels(), '\n')
@@ -18,7 +23,7 @@ sound:play()
 io.write('enter to stop...\n')
 io.read()
 
-sound:stop()
+sound:pause()
 io.write('enter to play again...\n')
 io.read()
 

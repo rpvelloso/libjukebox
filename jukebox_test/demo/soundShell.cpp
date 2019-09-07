@@ -53,6 +53,7 @@ void bind(sol::state &lua) {
 		"reverb", &jukebox::Sound::reverb,
 		"distortion", &jukebox::Sound::distortion,
 		"jointStereo", &jukebox::Sound::jointStereo,
+		"movingAverage", &jukebox::Sound::movingAverage,
 		"fade", &jukebox::Sound::fade,
 		"resolution", &jukebox::Sound::resolution,
 		"fadeOnStop", &jukebox::Sound::fadeOnStop,

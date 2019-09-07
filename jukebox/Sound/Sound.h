@@ -62,6 +62,7 @@ public:
 	Sound &setVolume(int);
 	Sound &loop(bool);
 	Sound &jointStereo();
+	Sound &movingAverage(float len);
 	Sound &peelDecoder();
 
 	Sound prototype();

@@ -85,6 +85,7 @@ public:
  int getSampleRate() const;
  short getBitsPerSample() const;
  int getDataSize() const;
+ int getBlockSize() const;
  const std::string &getFilename() const;
  double getDuration() const;
  int silenceLevel() const;
@@ -187,11 +188,9 @@ public:
  virtual void clearOnStopStack();
  virtual void addTimedEventCallback(size_t seconds, std::function<void(void)>);
  virtual Decoder &getDecoder();
- virtual size_t getFrameSize() const;
 protected:
  int position = 0;
  std::unique_ptr<Decoder> decoder;
- size_t frameSize = 0;
  std::vector<std::function<void (void)>> onStopStack;
  std::recursive_mutex timedEventsMutex;
  std::map<size_t, std::function<void (void)> > timedEvents;
@@ -241,6 +240,7 @@ public:
  Sound &setVolume(int);
  Sound &loop(bool);
  Sound &jointStereo();
+ Sound &movingAverage(float len);
  Sound &peelDecoder();
 
  Sound prototype();

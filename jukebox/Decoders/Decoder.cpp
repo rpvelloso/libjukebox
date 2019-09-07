@@ -86,4 +86,9 @@ Decoder &Decoder::peel() {
 	return *this;
 }
 
+int Decoder::getBlockSize() const {
+	return impl->getBlockSize();
+}
+
 } /* namespace socks */
+
