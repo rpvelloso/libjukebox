@@ -92,9 +92,11 @@ void DirectSoundBuffer::play() {
 }
 
 void DirectSoundBuffer::pause() {
-	auto hr = pDsb->Stop();
-	if (FAILED(hr))
-		throw std::runtime_error("failed Stop");
+	if (playing()) {
+		auto hr = pDsb->Stop();
+		if (FAILED(hr))
+			throw std::runtime_error("failed Stop");
+	}
 }
 
 bool DirectSoundBuffer::playing() const {
@@ -274,6 +276,9 @@ void DirectSoundBuffer::prepare() {
  * */
 
 int DirectSoundBuffer::getVolume() const {
+	if (!pDsb)
+		return 0;
+
 	LONG vol;
 	pDsb->GetVolume(&vol);
 
@@ -283,6 +288,9 @@ int DirectSoundBuffer::getVolume() const {
 }
 
 void DirectSoundBuffer::setVolume(int vol) {
+	if (!pDsb)
+		return;
+
 	double attenuation = 1.0 / 1024.0 + ((double)vol) / 100.0 * 1023.0 / 1024.0;
 	double db = 10 * std::log10(attenuation) / std::log10(2);
 	pDsb->SetVolume(db * 100);

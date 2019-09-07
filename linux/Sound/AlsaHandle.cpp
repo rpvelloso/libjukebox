@@ -153,10 +153,6 @@ AlsaHandle::~AlsaHandle() {
 };
 
 void AlsaHandle::config() {
-	std::cerr << decoder->getBitsPerSample() << " "
-			<< decoder->getNumChannels() << " "
-			<< decoder->getSampleRate() << std::endl;
-
 	applyVolume = applyVolumeFunc[decoder->getBitsPerSample()];
 
 	auto res = snd_pcm_set_params(
