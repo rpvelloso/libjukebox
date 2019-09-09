@@ -20,13 +20,12 @@
 #include <dsound.h>
 #include <mmsystem.h>
 
-#include "jukebox/FileFormats/SoundFile.h"
 #include "jukebox/Sound/SoundImpl.h"
 #include "jukebox/Decoders/Decoder.h"
 
 namespace jukebox {
 
-extern void ReleaseBuffer(LPDIRECTSOUNDBUFFER);
+class DirectSoundState;
 
 class DirectSoundBuffer: public SoundImpl {
 public:
@@ -38,17 +37,13 @@ public:
 	void setVolume(int) override;
 	void loop(bool) override;
 	bool playing() const override;
+	void setState(DirectSoundState *newState);
+	bool isLooping() const;
+	std::vector<std::function<void (void)>> &getOnStopStack();
 private:
-	WAVEFORMATEX wfx;
-	DSBUFFERDESC dsbdesc;
-	std::unique_ptr<struct IDirectSoundBuffer, decltype(&ReleaseBuffer)> pDsb;
-	std::thread loadBufferThread;
-
+	std::unique_ptr<DirectSoundState> state;
 	bool looping = false;
-	void prepare();
-	bool fillBuffer(int offset, size_t size);
-	DWORD startThread();
-	DWORD status() const;
+
 };
 
 } /* namespace jukebox */

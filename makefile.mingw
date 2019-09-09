@@ -6,8 +6,12 @@ LDFLAGS = -ldxguid -ldsound -lwinmm -L/local/lib -flto
 
 include makefile.common
  
-objects += ./win/Sound/DirectSoundBuffer.o ./win/Mixer/WindowsMixer.o
-SRCS += ./win/Sound/DirectSoundBuffer.cpp ./win/Mixer/WindowsMixer.cpp
+objects += ./win/Sound/DirectSoundBuffer.o ./win/Mixer/WindowsMixer.o \
+	./win/Sound/States/DirectSoundPaused.o ./win/Sound/States/DirectSoundPlaying.o \
+	./win/Sound/States/DirectSoundState.o
+SRCS += ./win/Sound/DirectSoundBuffer.cpp ./win/Mixer/WindowsMixer.cpp \
+	./win/Sound/States/DirectSoundPaused.cpp ./win/Sound/States/DirectSoundPlaying.cpp \
+	./win/Sound/States/DirectSoundState.cpp
 
 all							:	$(BINS)
 ./bin/libjukebox.dll		:	$(objects)
@@ -30,4 +34,5 @@ clean		:
 $(shell mkdir -p $(DEPDIR)/win >/dev/null)
 $(shell mkdir -p $(DEPDIR)/win/Mixer >/dev/null)
 $(shell mkdir -p $(DEPDIR)/win/Sound >/dev/null)
+$(shell mkdir -p $(DEPDIR)/win/Sound/States >/dev/null)
 	

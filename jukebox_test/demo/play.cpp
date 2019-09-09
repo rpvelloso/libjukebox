@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
 			.loop(true) // looping
 			.setVolume(100) // max sound volume
 			.pushOnStopCallback([](){std::cout << "parou!!!" << std::endl;}) // on stop event
-			.addTimedEventCallback(2, [&sound](){
+/*			.addTimedEventCallback(2, [&sound](){
 				std::cout << "adding effects!!!" << std::endl;
 				sound
 					.distortion(15)
@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
 				sound
 					.peelDecoder()
 					.peelDecoder();
-			}) // timed event: remove last effects
+			}) // timed event: remove last effects*/
 			.play(); // start playing
 
 		std::cout << "hit enter to fade out..." << std::endl;
@@ -87,10 +87,12 @@ int main(int argc, char **argv) {
 		std::getline(std::cin,dummy);
 		std::cout << "fading out..." << std::endl;
 		sound.pause(); // fade out the sound before stopping it
-		sound2.play();
+		//sound2.play();
 
 		std::cout << "hit enter to exit..." << std::endl;
 		std::getline(std::cin,dummy);
+		sound.stop();
+		//sound2.stop();
 	} catch (std::exception &e) {
 		std::cerr << "error loading " << filename << ": " << e.what() << std::endl;
 	}

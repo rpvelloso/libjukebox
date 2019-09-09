@@ -5,12 +5,12 @@ local soundFile = loadSoundFile(filename)
 
 io.write('creating sound object...\n')
 local sound = makeSound(soundFile)
-sound
-  --:jointStereo()
-  :resolution(32)
-  :distortion(50)
-  :reverb(0.1, 0.5, 7)
-  :movingAverage(0.0001)
+  :loop(true)
+--  :jointStereo()
+--  :resolution(32)
+--  :distortion(50)
+--  :reverb(0.1, 0.5, 7)
+--  :movingAverage(0.0001)
 
 io.write('Filename: ', sound:getFilename(), '\n')
 io.write('NumChannels: ', sound:getNumChannels(), '\n')
@@ -20,7 +20,7 @@ io.write('DataSize: ', sound:getDataSize(), '\n')
 io.write('Duration: ', sound:getDuration(), '\n\n')
 
 sound:play()
-io.write('enter to stop...\n')
+io.write('enter to pause...\n')
 io.read()
 
 sound:pause()
