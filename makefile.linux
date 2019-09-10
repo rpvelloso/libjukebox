@@ -5,8 +5,12 @@ LDFLAGS = -lasound -lpthread -flto
 
 include makefile.common
 
-objects += ./linux/Sound/AlsaHandle.o ./linux/Mixer/AlsaMixer.o
-SRCS += ./linux/Sound/AlsaHandle.cpp ./linux/Mixer/AlsaMixer.cpp
+objects += ./linux/Sound/AlsaHandle.o ./linux/Mixer/AlsaMixer.o \
+	./linux/Sound/States/AlsaState.o ./linux/Sound/States/AlsaPaused.o \
+	./linux/Sound/States/AlsaPlaying.o
+SRCS += ./linux/Sound/AlsaHandle.cpp ./linux/Mixer/AlsaMixer.cpp \
+	./linux/Sound/States/AlsaState.cpp ./linux/Sound/States/AlsaPaused.cpp \
+	./linux/Sound/States/AlsaPlaying.cpp
 
 
 all					:	$(BINS)
@@ -30,4 +34,5 @@ clean		:
 $(shell mkdir -p $(DEPDIR)/linux >/dev/null)
 $(shell mkdir -p $(DEPDIR)/linux/Mixer >/dev/null)
 $(shell mkdir -p $(DEPDIR)/linux/Sound >/dev/null)
+$(shell mkdir -p $(DEPDIR)/linux/Sound/States >/dev/null)
 	

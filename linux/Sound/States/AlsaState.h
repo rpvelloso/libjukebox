@@ -1,5 +1,5 @@
 /*
-    Copyright 2017 Roberto Panerai Velloso.
+    Copyright 2019 Roberto Panerai Velloso.
     This file is part of libjukebox.
     libjukebox is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,36 +13,26 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBJUKEBOX_LINUX_ALSAHANDLE_2017_12_28_H_
-#define LIBJUKEBOX_LINUX_ALSAHANDLE_2017_12_28_H_
+#ifndef LINUX_SOUND_STATES_ALSASTATE_H_
+#define LINUX_SOUND_STATES_ALSASTATE_H_
 
-#include <memory>
-
-#include "jukebox/Sound/SoundImpl.h"
-#include "jukebox/Decoders/Decoder.h"
+#include "../AlsaHandle.h"
 
 namespace jukebox {
 
-class AlsaState;
-
-class AlsaHandle: public SoundImpl {
+class AlsaState {
 public:
-	AlsaHandle(Decoder *decoder);
-	~AlsaHandle();
-	void play() override;
-	void pause() override;
-	int getVolume() const override;
-	void setVolume(int) override;
-	void loop(bool) override;
-	bool playing() const override;
-	void setState(AlsaState *newState);
-	std::vector<std::function<void (void)>> &getOnStopStack();
-	bool isLooping() const;
-private:
-	std::unique_ptr<AlsaState> state;
-	bool looping = false;
+	AlsaState(AlsaHandle &alsa);
+	virtual ~AlsaState() = default;
+	virtual void play() = 0;
+	virtual void pause() = 0;
+	virtual int getVolume() const = 0;
+	virtual void setVolume(int) = 0;
+	virtual bool playing() const = 0;
+protected:
+	AlsaHandle &alsa;
 };
 
 } /* namespace jukebox */
 
-#endif
+#endif /* LINUX_SOUND_STATES_ALSASTATE_H_ */
