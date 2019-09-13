@@ -43,6 +43,10 @@ void SoundImpl::clearOnStopStack() {
 	onStopStack.clear();
 }
 
+bool SoundImpl::onStopStackEmpty() {
+	return onStopStack.empty();
+}
+
 void SoundImpl::addTimedEventCallback(size_t seconds, std::function<void(void)> te) {
 	std::lock_guard<std::recursive_mutex> lock(timedEventsMutex);
 

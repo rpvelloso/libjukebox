@@ -30,6 +30,7 @@ public:
 	SoundImpl(Decoder *);
 	virtual ~SoundImpl() = default;
 	virtual void play() = 0;
+	virtual void stop() = 0;
 	virtual void pause() = 0;
 	virtual int getVolume() const = 0;
 	virtual void setVolume(int) = 0;
@@ -40,6 +41,7 @@ public:
 	virtual void pushOnStopCallback(std::function<void(void)>);
 	virtual std::function<void(void)> popOnStopCallback();
 	virtual void clearOnStopStack();
+	virtual bool onStopStackEmpty();
 	virtual void addTimedEventCallback(size_t seconds, std::function<void(void)>);
 	virtual Decoder &getDecoder();
 	void processTimedEvents();

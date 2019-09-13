@@ -14,7 +14,7 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "AlsaHandle.h"
-#include "States/AlsaPaused.h"
+#include "States/AlsaStopped.h"
 
 namespace jukebox {
 
@@ -22,7 +22,7 @@ namespace jukebox {
 
 AlsaHandle::AlsaHandle(Decoder *decoder) :
 			SoundImpl(decoder),
-			state(new AlsaPaused(*this)) {
+			state(new AlsaStopped(*this)) {
 
 }
 
@@ -32,6 +32,10 @@ void AlsaHandle::play() {
 
 void AlsaHandle::pause() {
 	state->pause();
+}
+
+void AlsaHandle::stop() {
+	state->stop();
 }
 
 AlsaHandle::~AlsaHandle() {
@@ -56,10 +60,6 @@ void AlsaHandle::setVolume(int vol) {
 
 void AlsaHandle::setState(AlsaState* newState) {
 	state.reset(newState);
-}
-
-std::vector<std::function<void(void)> >& AlsaHandle::getOnStopStack() {
-	return onStopStack;
 }
 
 bool AlsaHandle::isLooping() const {

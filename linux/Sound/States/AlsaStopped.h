@@ -13,37 +13,25 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "AlsaPaused.h"
-#include "AlsaPlaying.h"
-#include "AlsaStopped.h"
+#ifndef LINUX_SOUND_STATES_ALSASTOPPED_H_
+#define LINUX_SOUND_STATES_ALSASTOPPED_H_
+
+#include "AlsaState.h"
 
 namespace jukebox {
 
-AlsaPaused::AlsaPaused(AlsaHandle &alsa) : AlsaState(alsa) {
-}
-
-void AlsaPaused::play() {
-	alsa.setState(new AlsaPlaying(alsa));
-}
-
-void AlsaPaused::pause() {
-	return;
-}
-
-void AlsaPaused::stop() {
-	alsa.setState(new AlsaStopped(alsa));
-}
-
-int AlsaPaused::getVolume() const {
-	return 0;
-}
-
-void AlsaPaused::setVolume(int vol) {
-	return;
-}
-
-bool AlsaPaused::playing() const {
-	return 0;
-}
+class AlsaStopped: public AlsaState {
+public:
+	AlsaStopped(AlsaHandle &alsa);
+	virtual ~AlsaStopped() = default;
+	void play() override;
+	void pause() override;
+	void stop() override;
+	int getVolume() const override;
+	void setVolume(int) override;
+	bool playing() const override;
+};
 
 } /* namespace jukebox */
+
+#endif /* LINUX_SOUND_STATES_ALSASTOPPED_H_ */

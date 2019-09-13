@@ -99,6 +99,10 @@ std::function<void(void)> Sound::popOnStopCallback() {
 	return impl->popOnStopCallback();
 }
 
+bool Sound::onStopStackEmpty() {
+	return impl->onStopStackEmpty();
+}
+
 Sound &Sound::addTimedEventCallback(size_t seconds, std::function<void(void)> te) {
 	impl->addTimedEventCallback(seconds, te);
 	return *this;
@@ -164,7 +168,8 @@ const std::string& Sound::getFilename() const {
 }
 
 Sound& Sound::stop() {
-	pause().setPosition(0);
+	impl->loop(false);
+	impl->stop();
 	return *this;
 }
 

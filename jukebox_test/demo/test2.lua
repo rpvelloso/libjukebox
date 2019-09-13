@@ -5,7 +5,7 @@ local soundFile = loadSoundFile(filename)
 
 io.write('creating sound object...\n')
 local sound = makeSound(soundFile)
-  :loop(true)
+  :loop(false)
 --  :jointStereo()
 --  :resolution(32)
 --  :distortion(50)

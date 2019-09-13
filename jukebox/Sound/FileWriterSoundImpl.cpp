@@ -76,6 +76,9 @@ void FileWriterSoundImpl::play() {
 void FileWriterSoundImpl::pause() {
 }
 
+void FileWriterSoundImpl::stop() {
+}
+
 int FileWriterSoundImpl::getVolume() const {
 	return 100;
 }

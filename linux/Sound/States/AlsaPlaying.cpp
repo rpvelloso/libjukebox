@@ -18,6 +18,7 @@
 
 #include "AlsaPlaying.h"
 #include "AlsaPaused.h"
+#include "AlsaStopped.h"
 
 #ifndef ALSA_DEVICE
 #define ALSA_DEVICE "sysdefault"
@@ -27,33 +28,27 @@ namespace jukebox {
 
 class StatusGuard {
 public:
-	StatusGuard(
-			std::atomic<bool> &status,
-			bool entry,
-			std::vector<std::function<void(void)>> &onStopStack) :
-				status(status),
-				exitStatus(!entry),
-				onStopStack(onStopStack) {
+	StatusGuard(AlsaHandle &alsa, std::atomic<PlayingStatus> &status) :
+		alsa(alsa),
+		status(status) {
 
-		status = entry;
+		status = PlayingStatus::PLAYING;
 	};
 
 	~StatusGuard() {
-		while (!onStopStack.empty()) {
-			onStopStack.back()();
-			onStopStack.pop_back();
+		if (status != PlayingStatus::PAUSED) {
+			while (!alsa.onStopStackEmpty()) {
+				alsa.popOnStopCallback()();
+			}
 		}
-		status = exitStatus;
+
+		if (status == PlayingStatus::PLAYING) {
+			alsa.setState(new AlsaStopped(alsa));
+		}
 	}
 private:
-	std::atomic<bool> &status;
-	bool exitStatus;
-
-	/* this NEEDS to be passed by ref, otherwise when the user
-	 * changes the event the playing thread won't be notified
-	 * because it has a COPY and not the actual event handler.
-	 */
-	std::vector<std::function<void(void)>> &onStopStack;
+	AlsaHandle &alsa;
+	std::atomic<PlayingStatus> &status;
 };
 
 void closeAlsaHandle(snd_pcm_t *handle) {
@@ -69,9 +64,10 @@ std::unordered_map<short, decltype(AlsaPlaying::applyVolume)> AlsaPlaying::apply
 		{32, &AlsaPlaying::_applyVolume<int32_t>}
 };
 
-AlsaPlaying::AlsaPlaying(AlsaHandle &alsa) :
-			AlsaState(alsa),
-			handlePtr(nullptr, closeAlsaHandle) {
+AlsaPlaying::AlsaPlaying(AlsaHandle &alsaRef) :
+			AlsaState(alsaRef),
+			handlePtr(nullptr, closeAlsaHandle),
+			playingStatus(PlayingStatus::STOPPED) {
 
 	snd_pcm_t *handle;
 	auto res = snd_pcm_open(&handle, ALSA_DEVICE, SND_PCM_STREAM_PLAYBACK, 0);
@@ -104,52 +100,42 @@ AlsaPlaying::AlsaPlaying(AlsaHandle &alsa) :
 	if (res != 0)
 		throw std::runtime_error("snd_pcm_prepare error.");
 
-	if (playThread.joinable())
-		playThread.join();
+	playThread = std::thread([this]() {
+		StatusGuard statusGuard(alsa, playingStatus);
 
-	isPlaying = true;
-
-	playThread = std::thread([this, &alsa]() {
-		StatusGuard statusGuard(
-				isPlaying, true,
-				alsa.getOnStopStack());
-
-		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[bufferSize*alsa.getDecoder().getBlockSize()]);
+		auto &decoder = alsa.getDecoder();
+		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[bufferSize*decoder.getBlockSize()]);
 
 		do {
-			size_t numFrames = alsa.getDecoder().getDataSize() / alsa.getDecoder().getBlockSize();
+			size_t numFrames = decoder.getDataSize() / decoder.getBlockSize();
 
-			while (numFrames > 0 && isPlaying) {
+			while (numFrames > 0 && playingStatus == PlayingStatus::PLAYING) {
 				auto frames = std::min(numFrames, bufferSize);
 				alsa.processTimedEvents();
-				auto bytes = alsa.getDecoder().getSamples(
+				auto bytes = decoder.getSamples(
 						reinterpret_cast<char *>(volBuf.get()),
 						alsa.getPosition(),
-						frames*alsa.getDecoder().getBlockSize());
+						frames*decoder.getBlockSize());
 
 				if (bytes > 0) {
 					applyVolume(alsa, volBuf.get(), alsa.getPosition(), bytes);
 
-					auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), bytes / alsa.getDecoder().getBlockSize());
+					auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), bytes / decoder.getBlockSize());
 					if (n > 0) {
 						numFrames -= n;
-						alsa.setPosition(alsa.getPosition() + (n * alsa.getDecoder().getBlockSize()));
+						alsa.setPosition(alsa.getPosition() + (n * decoder.getBlockSize()));
 					} else
 						break;
 				} else
 					break;
 			}
-			if (numFrames == 0)
+			if (alsa.isLooping()) {
 				alsa.setPosition(0);
-		} while (alsa.isLooping() && isPlaying);
+			}
+		} while (alsa.isLooping() && playingStatus == PlayingStatus::PLAYING);
 		clearBuffer(handlePtr.get());
-		clearBuffer = snd_pcm_drain;
 	});
-}
-
-AlsaPlaying::~AlsaPlaying() {
-	if (playThread.joinable())
-		playThread.join();
+	playThread.detach();
 }
 
 void AlsaPlaying::play() {
@@ -158,8 +144,14 @@ void AlsaPlaying::play() {
 
 void AlsaPlaying::pause() {
 	clearBuffer = snd_pcm_drop;
-	isPlaying = false;
+	playingStatus = PlayingStatus::PAUSED;
 	alsa.setState(new AlsaPaused(alsa));
+}
+
+void AlsaPlaying::stop() {
+	clearBuffer = snd_pcm_drop;
+	playingStatus = PlayingStatus::STOPPED;
+	alsa.setState(new AlsaStopped(alsa));
 }
 
 int AlsaPlaying::getVolume() const {
@@ -171,7 +163,7 @@ void AlsaPlaying::setVolume(int vol) {
 }
 
 bool AlsaPlaying::playing() const {
-	return isPlaying;
+	return playingStatus == PlayingStatus::PLAYING;
 }
 
 template<typename T>

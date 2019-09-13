@@ -7,10 +7,10 @@ include makefile.common
 
 objects += ./linux/Sound/AlsaHandle.o ./linux/Mixer/AlsaMixer.o \
 	./linux/Sound/States/AlsaState.o ./linux/Sound/States/AlsaPaused.o \
-	./linux/Sound/States/AlsaPlaying.o
+	./linux/Sound/States/AlsaPlaying.o ./linux/Sound/States/AlsaStopped.o
 SRCS += ./linux/Sound/AlsaHandle.cpp ./linux/Mixer/AlsaMixer.cpp \
 	./linux/Sound/States/AlsaState.cpp ./linux/Sound/States/AlsaPaused.cpp \
-	./linux/Sound/States/AlsaPlaying.cpp
+	./linux/Sound/States/AlsaPlaying.cpp ./linux/Sound/States/AlsaPlaying.cpp 
 
 
 all					:	$(BINS)

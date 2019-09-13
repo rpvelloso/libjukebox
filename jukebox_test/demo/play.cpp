@@ -86,12 +86,11 @@ int main(int argc, char **argv) {
 		std::string dummy;
 		std::getline(std::cin,dummy);
 		std::cout << "fading out..." << std::endl;
-		sound.pause(); // fade out the sound before stopping it
+		sound.stop(); // fade out the sound before stopping it
 		//sound2.play();
 
 		std::cout << "hit enter to exit..." << std::endl;
 		std::getline(std::cin,dummy);
-		sound.stop();
 		//sound2.stop();
 	} catch (std::exception &e) {
 		std::cerr << "error loading " << filename << ": " << e.what() << std::endl;

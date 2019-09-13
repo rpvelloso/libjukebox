@@ -30,13 +30,13 @@ public:
 	AlsaHandle(Decoder *decoder);
 	~AlsaHandle();
 	void play() override;
+	void stop() override;
 	void pause() override;
 	int getVolume() const override;
 	void setVolume(int) override;
 	void loop(bool) override;
 	bool playing() const override;
 	void setState(AlsaState *newState);
-	std::vector<std::function<void (void)>> &getOnStopStack();
 	bool isLooping() const;
 private:
 	std::unique_ptr<AlsaState> state;

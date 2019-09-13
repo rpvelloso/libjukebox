@@ -30,19 +30,26 @@ namespace jukebox {
 
 extern void closeAlsaHandle(snd_pcm_t *);
 
+enum class PlayingStatus : int {
+	STOPPED = 0,
+	PAUSED = 1,
+	PLAYING = 2
+};
+
 class AlsaPlaying: public AlsaState {
 public:
-	AlsaPlaying(AlsaHandle &alsa);
-	virtual ~AlsaPlaying();
+	AlsaPlaying(AlsaHandle &alsaRef);
+	virtual ~AlsaPlaying() = default;
 	void play() override;
 	void pause() override;
+	void stop() override;
 	int getVolume() const override;
 	void setVolume(int) override;
 	bool playing() const override;
 private:
 	std::unique_ptr<snd_pcm_t, decltype(&closeAlsaHandle)> handlePtr;
 	std::thread playThread;
-	std::atomic<bool> isPlaying;
+	std::atomic<PlayingStatus> playingStatus;
 	int vol = 100;
 	snd_pcm_uframes_t bufferSize = 0;
 	std::function<void(AlsaHandle &self, void *, int , int )> applyVolume;
