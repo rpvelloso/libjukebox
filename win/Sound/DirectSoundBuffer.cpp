@@ -15,17 +15,17 @@
 #include <windows.h>
 
 #include "DirectSoundBuffer.h"
-#include "States/DirectSoundPaused.h"
+#include "States/DirectSoundStopped.h"
 
 namespace jukebox {
 
 DirectSoundBuffer::DirectSoundBuffer(Decoder *decoder) :
 	SoundImpl(decoder),
-	state(new DirectSoundPaused(*this)) {
+	state(new DirectSoundStopped(*this)) {
 }
 
 DirectSoundBuffer::~DirectSoundBuffer() {
-	state->pause();
+	pause();
 }
 
 void DirectSoundBuffer::loop(bool l) {
@@ -44,6 +44,10 @@ void DirectSoundBuffer::pause() {
 	state->pause();
 }
 
+void DirectSoundBuffer::stop() {
+	state->stop();
+}
+
 bool DirectSoundBuffer::playing() const {
 	return state->playing();
 }
@@ -58,10 +62,6 @@ void DirectSoundBuffer::setVolume(int vol) {
 
 bool DirectSoundBuffer::isLooping() const {
 	return looping;
-}
-
-std::vector<std::function<void(void)> >& DirectSoundBuffer::getOnStopStack() {
-	return onStopStack;
 }
 
 namespace factory {

@@ -8,10 +8,10 @@ include makefile.common
  
 objects += ./win/Sound/DirectSoundBuffer.o ./win/Mixer/WindowsMixer.o \
 	./win/Sound/States/DirectSoundPaused.o ./win/Sound/States/DirectSoundPlaying.o \
-	./win/Sound/States/DirectSoundState.o
+	./win/Sound/States/DirectSoundState.o ./win/Sound/States/DirectSoundStopped.o
 SRCS += ./win/Sound/DirectSoundBuffer.cpp ./win/Mixer/WindowsMixer.cpp \
 	./win/Sound/States/DirectSoundPaused.cpp ./win/Sound/States/DirectSoundPlaying.cpp \
-	./win/Sound/States/DirectSoundState.cpp
+	./win/Sound/States/DirectSoundState.cpp ./win/Sound/States/DirectSoundStopped.cpp
 
 all							:	$(BINS)
 ./bin/libjukebox.dll		:	$(objects)

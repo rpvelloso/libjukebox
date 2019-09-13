@@ -18,6 +18,7 @@
 
 #include "DirectSoundPlaying.h"
 #include "DirectSoundPaused.h"
+#include "DirectSoundStopped.h"
 
 namespace jukebox {
 
@@ -53,7 +54,8 @@ void ReleaseBuffer(LPDIRECTSOUNDBUFFER pDsb) {
 
 DirectSoundPlaying::DirectSoundPlaying(DirectSoundBuffer &dsound) :
 		DirectSoundState(dsound),
-		pDsb(nullptr, &ReleaseBuffer) {
+		pDsb(nullptr, &ReleaseBuffer),
+		playingStatus(PlayingStatus::STOPPED) {
 
 	memset((void *)&wfx, 0, sizeof(wfx));
 	memset((void *)&dsbdesc, 0, sizeof(dsbdesc));
@@ -92,7 +94,6 @@ DirectSoundPlaying::DirectSoundPlaying(DirectSoundBuffer &dsound) :
 
 	pDsb.reset(bufPtr);
 
-	pDsb->SetCurrentPosition(0);
 	DWORD playFlags = startThread();
 
     hr = pDsb->Play(
@@ -104,19 +105,20 @@ DirectSoundPlaying::DirectSoundPlaying(DirectSoundBuffer &dsound) :
       throw std::runtime_error("failed Play");
 }
 
-DirectSoundPlaying::~DirectSoundPlaying() {
-	if (loadBufferThread.joinable())
-		loadBufferThread.join();
-}
-
 void DirectSoundPlaying::play() {
 	return;
 }
 
 void DirectSoundPlaying::pause() {
+	playingStatus = PlayingStatus::PAUSED;
 	pDsb->Stop();
-
+	while (playingStatus != PlayingStatus::STOPPED);
 	dsound.setState(new DirectSoundPaused(dsound));
+}
+
+void DirectSoundPlaying::stop() {
+	pDsb->Stop();
+	while (playingStatus != PlayingStatus::STOPPED);
 }
 
 /*
@@ -187,25 +189,26 @@ bool DirectSoundPlaying::fillBuffer(int offset, size_t size) {
 
 class HandleGuard {
 public:
-	HandleGuard(HANDLE handle, std::vector<std::function<void(void)>> &onStopStack) :
+	HandleGuard(HANDLE handle, std::atomic<PlayingStatus> &status, DirectSoundBuffer &dsound) :
 		handle(handle),
-		onStopStack(onStopStack) {
+		status(status),
+		dsound(dsound) {
 	};
 	~HandleGuard() {
-		while (!onStopStack.empty()) {
-			onStopStack.back()();
-			onStopStack.pop_back();
+		if (status != PlayingStatus::PAUSED) {
+			while (!dsound.onStopStackEmpty()) {
+				dsound.popOnStopCallback()();
+			}
+			dsound.setState(new DirectSoundStopped(dsound));
 		}
+
+		status = PlayingStatus::STOPPED;
 		CloseHandle(handle);
 	};
 private:
 	HANDLE handle;
-
-	/* this NEEDS to be passed by ref, otherwise when the user
-	 * changes the event the playing thread won't be notified
-	 * because it has a COPY and not the actual event handler.
-	 */
-	std::vector<std::function<void(void)>> &onStopStack;
+	std::atomic<PlayingStatus> &status;
+	DirectSoundBuffer &dsound;
 };
 
 /* this method returns the PLAYING FLAGS for DSOUND play.
@@ -235,14 +238,11 @@ DWORD DirectSoundPlaying::startThread() {
 		throw std::runtime_error("failed SetNotificationPositions");
 	}
 
-	if (loadBufferThread.joinable())
-		loadBufferThread.join();
+	playingStatus = PlayingStatus::PLAYING;
 
 	loadBufferThread = std::thread(
 		[this](auto event){
-			HandleGuard handleGuard(
-				event,
-				dsound.getOnStopStack());
+			HandleGuard handleGuard(event, playingStatus, dsound);
 
 			size_t offsets[2] = {0, dsbdesc.dwBufferBytes / 2};
 
@@ -262,10 +262,11 @@ DWORD DirectSoundPlaying::startThread() {
 					fillBuffer(0, dsbdesc.dwBufferBytes);
 				}
 			} while (dsound.isLooping() && playing());
-
 			pDsb->Stop();
 		},
 		notifyPos[0].hEventNotify);
+
+	loadBufferThread.detach();
 
 	if (reload)
 		return DSBPLAY_LOOPING;

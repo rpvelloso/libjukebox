@@ -13,41 +13,28 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DirectSoundPaused.h"
-#include "DirectSoundPlaying.h"
-#include "DirectSoundStopped.h"
+#ifndef WIN_SOUND_STATES_DIRECTSOUNDSTOPPED_H_
+#define WIN_SOUND_STATES_DIRECTSOUNDSTOPPED_H_
+
+#include "DirectSoundState.h"
 
 namespace jukebox {
 
-DirectSoundPaused::DirectSoundPaused(DirectSoundBuffer &dsound) : DirectSoundState(dsound) {
-}
+class DirectSoundBuffer;
 
-void DirectSoundPaused::play() {
-	dsound.setState(new DirectSoundPlaying(dsound));
-}
-
-void DirectSoundPaused::pause() {
-	return;
-}
-
-void DirectSoundPaused::stop() {
-	dsound.setState(new DirectSoundStopped(dsound));
-}
-
-int DirectSoundPaused::getVolume() const {
-	return 0;
-}
-
-void DirectSoundPaused::setVolume(int vol) {
-	return;
-}
-
-bool DirectSoundPaused::playing() const {
-	return false;
-}
-
-DWORD DirectSoundPaused::status() const {
-	return 0;
-}
+class DirectSoundStopped: public DirectSoundState {
+public:
+	DirectSoundStopped(DirectSoundBuffer &dsound);
+	virtual ~DirectSoundStopped() = default;
+	void play() override;
+	void pause() override;
+	void stop() override;
+	int getVolume() const override;
+	void setVolume(int) override;
+	bool playing() const override;
+	DWORD status() const override;
+};
 
 } /* namespace jukebox */
+
+#endif /* WIN_SOUND_STATES_DIRECTSOUNDSTOPPED_H_ */

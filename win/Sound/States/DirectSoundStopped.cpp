@@ -13,41 +13,42 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DirectSoundPaused.h"
-#include "DirectSoundPlaying.h"
 #include "DirectSoundStopped.h"
+#include "DirectSoundPlaying.h"
 
 namespace jukebox {
 
-DirectSoundPaused::DirectSoundPaused(DirectSoundBuffer &dsound) : DirectSoundState(dsound) {
+DirectSoundStopped::DirectSoundStopped(DirectSoundBuffer &dsound) : DirectSoundState(dsound) {
 }
 
-void DirectSoundPaused::play() {
+void DirectSoundStopped::play() {
+	dsound.setPosition(0);
 	dsound.setState(new DirectSoundPlaying(dsound));
 }
 
-void DirectSoundPaused::pause() {
+void DirectSoundStopped::pause() {
 	return;
 }
 
-void DirectSoundPaused::stop() {
-	dsound.setState(new DirectSoundStopped(dsound));
+void DirectSoundStopped::stop() {
+	return;
 }
 
-int DirectSoundPaused::getVolume() const {
+int DirectSoundStopped::getVolume() const {
 	return 0;
 }
 
-void DirectSoundPaused::setVolume(int vol) {
+void DirectSoundStopped::setVolume(int vol) {
 	return;
 }
 
-bool DirectSoundPaused::playing() const {
+bool DirectSoundStopped::playing() const {
 	return false;
 }
 
-DWORD DirectSoundPaused::status() const {
+DWORD DirectSoundStopped::status() const {
 	return 0;
 }
 
 } /* namespace jukebox */
+

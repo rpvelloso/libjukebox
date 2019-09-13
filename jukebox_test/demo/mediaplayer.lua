@@ -5,7 +5,7 @@ local soundFile = loadSoundFile(filename)
 
 io.write('creating sound object...\n')
 sound = makeSound(soundFile)
---	:fadeOnStop(3)
+	:fadeOnStop(3)
 
 io.write('Filename: ', sound:getFilename(), '\n')
 io.write('NumChannels: ', sound:getNumChannels(), '\n')

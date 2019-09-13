@@ -33,13 +33,13 @@ public:
 	~DirectSoundBuffer();
 	void play() override;
 	void pause() override;
+	void stop() override;
 	int getVolume() const override;
 	void setVolume(int) override;
 	void loop(bool) override;
 	bool playing() const override;
 	void setState(DirectSoundState *newState);
 	bool isLooping() const;
-	std::vector<std::function<void (void)>> &getOnStopStack();
 private:
 	std::unique_ptr<DirectSoundState> state;
 	bool looping = false;

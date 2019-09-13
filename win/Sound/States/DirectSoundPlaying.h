@@ -17,6 +17,7 @@
 #define WIN_SOUND_STATES_DIRECTSOUNDPLAYING_H_
 
 #include <thread>
+#include <atomic>
 #include <memory>
 #include <dsound.h>
 #include <mmsystem.h>
@@ -27,12 +28,19 @@ namespace jukebox {
 
 extern void ReleaseBuffer(LPDIRECTSOUNDBUFFER);
 
+enum class PlayingStatus : int {
+	STOPPED = 0,
+	PAUSED = 1,
+	PLAYING = 2
+};
+
 class DirectSoundPlaying: public DirectSoundState {
 public:
 	DirectSoundPlaying(DirectSoundBuffer &dsound);
-	virtual ~DirectSoundPlaying();
+	virtual ~DirectSoundPlaying() = default;
 	void play() override;
 	void pause() override;
+	void stop() override;
 	int getVolume() const override;
 	void setVolume(int) override;
 	bool playing() const override;
@@ -42,6 +50,7 @@ private:
 	DSBUFFERDESC dsbdesc;
 	std::unique_ptr<struct IDirectSoundBuffer, decltype(&ReleaseBuffer)> pDsb;
 	std::thread loadBufferThread;
+	std::atomic<PlayingStatus> playingStatus;
 
 	bool fillBuffer(int offset, size_t size);
 	DWORD startThread();
