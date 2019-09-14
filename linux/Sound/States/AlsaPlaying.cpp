@@ -40,11 +40,9 @@ public:
 			while (!alsa.onStopStackEmpty()) {
 				alsa.popOnStopCallback()();
 			}
-		}
-
-		if (status == PlayingStatus::PLAYING) {
 			alsa.setState(new AlsaStopped(alsa));
 		}
+		status = PlayingStatus::STOPPED;
 	}
 private:
 	AlsaHandle &alsa;
@@ -151,7 +149,6 @@ void AlsaPlaying::pause() {
 void AlsaPlaying::stop() {
 	clearBuffer = snd_pcm_drop;
 	playingStatus = PlayingStatus::STOPPED;
-	alsa.setState(new AlsaStopped(alsa));
 }
 
 int AlsaPlaying::getVolume() const {
