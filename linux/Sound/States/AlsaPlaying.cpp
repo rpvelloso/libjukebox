@@ -41,8 +41,9 @@ public:
 				alsa.popOnStopCallback()();
 			}
 			alsa.setState(new AlsaStopped(alsa));
+		} else {
+			alsa.setState(new AlsaPaused(alsa));
 		}
-		status = PlayingStatus::STOPPED;
 	}
 private:
 	AlsaHandle &alsa;
@@ -143,7 +144,6 @@ void AlsaPlaying::play() {
 void AlsaPlaying::pause() {
 	clearBuffer = snd_pcm_drop;
 	playingStatus = PlayingStatus::PAUSED;
-	alsa.setState(new AlsaPaused(alsa));
 }
 
 void AlsaPlaying::stop() {

@@ -112,13 +112,10 @@ void DirectSoundPlaying::play() {
 void DirectSoundPlaying::pause() {
 	playingStatus = PlayingStatus::PAUSED;
 	pDsb->Stop();
-	while (playingStatus != PlayingStatus::STOPPED);
-	dsound.setState(new DirectSoundPaused(dsound));
 }
 
 void DirectSoundPlaying::stop() {
 	pDsb->Stop();
-	while (playingStatus != PlayingStatus::STOPPED);
 }
 
 /*
@@ -195,15 +192,15 @@ public:
 		dsound(dsound) {
 	};
 	~HandleGuard() {
+		CloseHandle(handle);
 		if (status != PlayingStatus::PAUSED) {
 			while (!dsound.onStopStackEmpty()) {
 				dsound.popOnStopCallback()();
 			}
 			dsound.setState(new DirectSoundStopped(dsound));
+		} else {
+			dsound.setState(new DirectSoundPaused(dsound));
 		}
-
-		status = PlayingStatus::STOPPED;
-		CloseHandle(handle);
 	};
 private:
 	HANDLE handle;
