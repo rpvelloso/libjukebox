@@ -40,7 +40,13 @@ public:
 			while (!alsa.onStopStackEmpty()) {
 				alsa.popOnStopCallback()();
 			}
-			alsa.setState(new AlsaStopped(alsa));
+
+			if (alsa.isLooping()) {
+				alsa.setPosition(0);
+				alsa.setState(new AlsaPlaying(alsa));
+			} else {
+				alsa.setState(new AlsaStopped(alsa));
+			}
 		} else {
 			alsa.setState(new AlsaPaused(alsa));
 		}
@@ -105,33 +111,28 @@ AlsaPlaying::AlsaPlaying(AlsaHandle &alsaRef) :
 		auto &decoder = alsa.getDecoder();
 		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[bufferSize*decoder.getBlockSize()]);
 
-		do {
-			size_t numFrames = decoder.getDataSize() / decoder.getBlockSize();
+		size_t numFrames = decoder.getDataSize() / decoder.getBlockSize();
 
-			while (numFrames > 0 && playingStatus == PlayingStatus::PLAYING) {
-				auto frames = std::min(numFrames, bufferSize);
-				alsa.processTimedEvents();
-				auto bytes = decoder.getSamples(
-						reinterpret_cast<char *>(volBuf.get()),
-						alsa.getPosition(),
-						frames*decoder.getBlockSize());
+		while (numFrames > 0 && playingStatus == PlayingStatus::PLAYING) {
+			auto frames = std::min(numFrames, bufferSize);
+			alsa.processTimedEvents();
+			auto bytes = decoder.getSamples(
+					reinterpret_cast<char *>(volBuf.get()),
+					alsa.getPosition(),
+					frames*decoder.getBlockSize());
 
-				if (bytes > 0) {
-					applyVolume(alsa, volBuf.get(), alsa.getPosition(), bytes);
+			if (bytes > 0) {
+				applyVolume(alsa, volBuf.get(), alsa.getPosition(), bytes);
 
-					auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), bytes / decoder.getBlockSize());
-					if (n > 0) {
-						numFrames -= n;
-						alsa.setPosition(alsa.getPosition() + (n * decoder.getBlockSize()));
-					} else
-						break;
+				auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), bytes / decoder.getBlockSize());
+				if (n > 0) {
+					numFrames -= n;
+					alsa.setPosition(alsa.getPosition() + (n * decoder.getBlockSize()));
 				} else
 					break;
-			}
-			if (alsa.isLooping()) {
-				alsa.setPosition(0);
-			}
-		} while (alsa.isLooping() && playingStatus == PlayingStatus::PLAYING);
+			} else
+				break;
+		}
 		clearBuffer(handlePtr.get());
 	});
 	playThread.detach();
