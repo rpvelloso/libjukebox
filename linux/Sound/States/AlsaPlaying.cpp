@@ -37,14 +37,13 @@ public:
 
 	~StatusGuard() {
 		if (status != PlayingStatus::PAUSED) {
-			while (!alsa.onStopStackEmpty()) {
-				alsa.popOnStopCallback()();
-			}
-
 			if (alsa.isLooping()) {
 				alsa.setPosition(0);
 				alsa.setState(new AlsaPlaying(alsa));
 			} else {
+				while (!alsa.onStopStackEmpty()) {
+					alsa.popOnStopCallback()();
+				}
 				alsa.setState(new AlsaStopped(alsa));
 			}
 		} else {

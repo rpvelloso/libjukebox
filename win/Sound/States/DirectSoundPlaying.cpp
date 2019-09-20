@@ -194,14 +194,13 @@ public:
 	~HandleGuard() {
 		CloseHandle(handle);
 		if (status != PlayingStatus::PAUSED) {
-			while (!dsound.onStopStackEmpty()) {
-				dsound.popOnStopCallback()();
-			}
-
 			if (dsound.isLooping()) {
 				dsound.setPosition(0);
 				dsound.setState(new DirectSoundPlaying(dsound));
 			} else {
+				while (!dsound.onStopStackEmpty()) {
+					dsound.popOnStopCallback()();
+				}
 				dsound.setState(new DirectSoundStopped(dsound));
 			}
 
