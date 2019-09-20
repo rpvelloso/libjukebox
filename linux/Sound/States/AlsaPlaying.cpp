@@ -20,10 +20,6 @@
 #include "AlsaPaused.h"
 #include "AlsaStopped.h"
 
-#ifndef ALSA_DEVICE
-#define ALSA_DEVICE "sysdefault"
-#endif
-
 namespace jukebox {
 
 class StatusGuard {
@@ -55,13 +51,6 @@ private:
 	std::atomic<PlayingStatus> &status;
 };
 
-void closeAlsaHandle(snd_pcm_t *handle) {
-	if (handle != nullptr) {
-		snd_pcm_drop(handle);
-		snd_pcm_close(handle);
-	}
-}
-
 std::unordered_map<short, decltype(AlsaPlaying::applyVolume)> AlsaPlaying::applyVolumeFunc = {
 		{ 8, &AlsaPlaying::_applyVolume<uint8_t>},
 		{16, &AlsaPlaying::_applyVolume<int16_t>},
@@ -70,20 +59,12 @@ std::unordered_map<short, decltype(AlsaPlaying::applyVolume)> AlsaPlaying::apply
 
 AlsaPlaying::AlsaPlaying(AlsaHandle &alsaRef) :
 			AlsaState(alsaRef),
-			handlePtr(nullptr, closeAlsaHandle),
 			playingStatus(PlayingStatus::STOPPED) {
-
-	snd_pcm_t *handle;
-	auto res = snd_pcm_open(&handle, ALSA_DEVICE, SND_PCM_STREAM_PLAYBACK, 0);
-	if (res != 0)
-		throw std::runtime_error("snd_pcm_open error.");
-
-	handlePtr.reset(handle);
 
 	applyVolume = applyVolumeFunc[alsa.getDecoder().getBitsPerSample()];
 
-	res = snd_pcm_set_params(
-		handlePtr.get(),
+	auto res = snd_pcm_set_params(
+		alsa.getHandle(),
 		alsa.getDecoder().getBitsPerSample() == 32 ? SND_PCM_FORMAT_S32_LE :
 				alsa.getDecoder().getBitsPerSample() == 16 ? SND_PCM_FORMAT_S16_LE :
 				SND_PCM_FORMAT_U8,
@@ -97,10 +78,10 @@ AlsaPlaying::AlsaPlaying(AlsaHandle &alsaRef) :
 		throw std::runtime_error("snd_pcm_set_params error.");
 
 	snd_pcm_uframes_t period;
-	snd_pcm_get_params(handlePtr.get(), &bufferSize, &period);
+	snd_pcm_get_params(alsa.getHandle(), &bufferSize, &period);
 
 	clearBuffer = snd_pcm_drain;
-	res = snd_pcm_prepare(handlePtr.get());
+	res = snd_pcm_prepare(alsa.getHandle());
 	if (res != 0)
 		throw std::runtime_error("snd_pcm_prepare error.");
 
@@ -123,7 +104,7 @@ AlsaPlaying::AlsaPlaying(AlsaHandle &alsaRef) :
 			if (bytes > 0) {
 				applyVolume(alsa, volBuf.get(), alsa.getPosition(), bytes);
 
-				auto n = snd_pcm_writei(handlePtr.get(), volBuf.get(), bytes / decoder.getBlockSize());
+				auto n = snd_pcm_writei(alsa.getHandle(), volBuf.get(), bytes / decoder.getBlockSize());
 				if (n > 0) {
 					numFrames -= n;
 					alsa.setPosition(alsa.getPosition() + (n * decoder.getBlockSize()));
@@ -132,7 +113,7 @@ AlsaPlaying::AlsaPlaying(AlsaHandle &alsaRef) :
 			} else
 				break;
 		}
-		clearBuffer(handlePtr.get());
+		clearBuffer(alsa.getHandle());
 	});
 	playThread.detach();
 }

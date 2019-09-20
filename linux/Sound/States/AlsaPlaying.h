@@ -22,13 +22,9 @@
 #include <memory>
 #include <atomic>
 
-#include <alsa/asoundlib.h>
-
 #include "AlsaState.h"
 
 namespace jukebox {
-
-extern void closeAlsaHandle(snd_pcm_t *);
 
 enum class PlayingStatus : int {
 	STOPPED = 0,
@@ -47,7 +43,6 @@ public:
 	void setVolume(int) override;
 	bool playing() const override;
 private:
-	std::unique_ptr<snd_pcm_t, decltype(&closeAlsaHandle)> handlePtr;
 	std::thread playThread;
 	std::atomic<PlayingStatus> playingStatus;
 	int vol = 100;

@@ -18,10 +18,14 @@
 
 #include <memory>
 
+#include <alsa/asoundlib.h>
+
 #include "jukebox/Sound/SoundImpl.h"
 #include "jukebox/Decoders/Decoder.h"
 
 namespace jukebox {
+
+extern void closeAlsaHandle(snd_pcm_t *);
 
 class AlsaState;
 
@@ -38,9 +42,11 @@ public:
 	bool playing() const override;
 	void setState(AlsaState *newState);
 	bool isLooping() const;
+	snd_pcm_t *getHandle() const;
 private:
 	std::unique_ptr<AlsaState> state;
 	bool looping = false;
+	std::unique_ptr<snd_pcm_t, decltype(&closeAlsaHandle)> handlePtr;
 };
 
 } /* namespace jukebox */

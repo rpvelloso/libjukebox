@@ -16,14 +16,33 @@
 #include "AlsaHandle.h"
 #include "States/AlsaStopped.h"
 
+#ifndef ALSA_DEVICE
+#define ALSA_DEVICE "sysdefault"
+#endif
+
 namespace jukebox {
+
+
+void closeAlsaHandle(snd_pcm_t *handle) {
+	if (handle != nullptr) {
+		snd_pcm_drop(handle);
+		snd_pcm_close(handle);
+	}
+}
 
 // AlsaHandle
 
 AlsaHandle::AlsaHandle(Decoder *decoder) :
 			SoundImpl(decoder),
-			state(new AlsaStopped(*this)) {
+			state(new AlsaStopped(*this)),
+			handlePtr(nullptr, closeAlsaHandle) {
 
+	snd_pcm_t *handle;
+	auto res = snd_pcm_open(&handle, ALSA_DEVICE, SND_PCM_STREAM_PLAYBACK, 0);
+	if (res != 0)
+		throw std::runtime_error("snd_pcm_open error.");
+
+	handlePtr.reset(handle);
 }
 
 void AlsaHandle::play() {
@@ -66,6 +85,9 @@ bool AlsaHandle::isLooping() const {
 	return looping;
 }
 
+snd_pcm_t *AlsaHandle::getHandle() const {
+	return handlePtr.get();
+}
 namespace factory {
 
 SoundImpl *makeSoundImpl(Decoder *decoder) {
