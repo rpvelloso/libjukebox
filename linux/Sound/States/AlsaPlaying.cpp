@@ -57,6 +57,13 @@ std::unordered_map<short, decltype(AlsaPlaying::applyVolume)> AlsaPlaying::apply
 		{32, &AlsaPlaying::_applyVolume<int32_t>}
 };
 
+_snd_pcm_format ALSA_PCM_FORMAT[5] = {
+		SND_PCM_FORMAT_UNKNOWN,
+		SND_PCM_FORMAT_U8,
+		SND_PCM_FORMAT_S16_LE,
+		SND_PCM_FORMAT_UNKNOWN,
+		SND_PCM_FORMAT_S32_LE};
+
 AlsaPlaying::AlsaPlaying(AlsaHandle &alsaRef) :
 			AlsaState(alsaRef),
 			playingStatus(PlayingStatus::STOPPED) {
@@ -65,9 +72,7 @@ AlsaPlaying::AlsaPlaying(AlsaHandle &alsaRef) :
 
 	auto res = snd_pcm_set_params(
 		alsa.getHandle(),
-		alsa.getDecoder().getBitsPerSample() == 32 ? SND_PCM_FORMAT_S32_LE :
-				alsa.getDecoder().getBitsPerSample() == 16 ? SND_PCM_FORMAT_S16_LE :
-				SND_PCM_FORMAT_U8,
+		ALSA_PCM_FORMAT[alsa.getDecoder().getBitsPerSample() / 8],
 		SND_PCM_ACCESS_RW_INTERLEAVED,
 		alsa.getDecoder().getNumChannels(),
 		alsa.getDecoder().getSampleRate(),
