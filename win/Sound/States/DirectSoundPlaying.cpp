@@ -197,7 +197,14 @@ public:
 			while (!dsound.onStopStackEmpty()) {
 				dsound.popOnStopCallback()();
 			}
-			dsound.setState(new DirectSoundStopped(dsound));
+
+			if (dsound.isLooping()) {
+				dsound.setPosition(0);
+				dsound.setState(new DirectSoundPlaying(dsound));
+			} else {
+				dsound.setState(new DirectSoundStopped(dsound));
+			}
+
 		} else {
 			dsound.setState(new DirectSoundPaused(dsound));
 		}
@@ -226,7 +233,7 @@ DWORD DirectSoundPlaying::startThread() {
 	notifyPos[2].dwOffset = dsbdesc.dwBufferBytes - 1; // end of buffer event
 	notifyPos[2].hEventNotify = notifyPos[0].hEventNotify;
 
-    bool reload = fillBuffer(0, dsbdesc.dwBufferBytes) || dsound.isLooping();
+    bool reload = fillBuffer(0, dsbdesc.dwBufferBytes);
 
 	hr = notifyIface->SetNotificationPositions(reload?3:1, notifyPos);
 	notifyIface->Release();
@@ -243,32 +250,24 @@ DWORD DirectSoundPlaying::startThread() {
 
 			size_t offsets[2] = {0, dsbdesc.dwBufferBytes / 2};
 
+			bool offset = true;
 			do {
-				bool offset = true;
-				do {
-					offset = !offset;
-					WaitForSingleObject(event, INFINITE);
-				} while (
-					playing() &&
-					fillBuffer(offsets[offset], dsbdesc.dwBufferBytes / 2));
+				offset = !offset;
+				WaitForSingleObject(event, INFINITE);
+			} while (
+				playing() &&
+				fillBuffer(offsets[offset], dsbdesc.dwBufferBytes / 2));
 
-				if (playing()) {
-					WaitForSingleObject(event, INFINITE);
-					pDsb->SetCurrentPosition(0);
-					dsound.setPosition(0);
-					fillBuffer(0, dsbdesc.dwBufferBytes);
-				}
-			} while (dsound.isLooping() && playing());
+			if (playing()) {
+				WaitForSingleObject(event, INFINITE);
+			}
 			pDsb->Stop();
 		},
 		notifyPos[0].hEventNotify);
 
 	loadBufferThread.detach();
 
-	if (reload)
-		return DSBPLAY_LOOPING;
-	else
-	    return dsound.isLooping()?DSBPLAY_LOOPING:0;
+	return reload?DSBPLAY_LOOPING:0;
 }
 
 } /* namespace jukebox */
