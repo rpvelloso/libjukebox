@@ -32,10 +32,6 @@ void DirectSoundBuffer::loop(bool l) {
 	looping = l;
 }
 
-void DirectSoundBuffer::setState(DirectSoundState* newState) {
-	state.reset(newState);
-}
-
 void DirectSoundBuffer::play() {
 	state->play();
 }

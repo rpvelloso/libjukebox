@@ -52,8 +52,8 @@ void ReleaseBuffer(LPDIRECTSOUNDBUFFER pDsb) {
 		pDsb->Release();
 }
 
-DirectSoundPlaying::DirectSoundPlaying(DirectSoundBuffer &dsound) :
-		DirectSoundState(dsound),
+DirectSoundPlaying::DirectSoundPlaying(DirectSoundState &state) :
+		DirectSoundState(state),
 		pDsb(nullptr, &ReleaseBuffer),
 		playingStatus(PlayingStatus::STOPPED) {
 
@@ -96,6 +96,7 @@ DirectSoundPlaying::DirectSoundPlaying(DirectSoundBuffer &dsound) :
 
 	DWORD playFlags = startThread();
 
+	setVolume(volume);
     hr = pDsb->Play(
         0,	// Unused.
         0,	// Priority for voice management.
@@ -135,6 +136,7 @@ void DirectSoundPlaying::setVolume(int vol) {
 	double attenuation = 1.0 / 1024.0 + ((double)vol) / 100.0 * 1023.0 / 1024.0;
 	double db = 10 * std::log10(attenuation) / std::log10(2);
 	pDsb->SetVolume(db * 100);
+	volume = vol;
 }
 
 bool DirectSoundPlaying::playing() const {
@@ -196,16 +198,16 @@ public:
 		if (status != PlayingStatus::PAUSED) {
 			if (dsound.isLooping()) {
 				dsound.setPosition(0);
-				dsound.setState(new DirectSoundPlaying(dsound));
+				dsound.setState<DirectSoundPlaying>();
 			} else {
 				while (!dsound.onStopStackEmpty()) {
 					dsound.popOnStopCallback()();
 				}
-				dsound.setState(new DirectSoundStopped(dsound));
+				dsound.setState<DirectSoundStopped>();
 			}
 
 		} else {
-			dsound.setState(new DirectSoundPaused(dsound));
+			dsound.setState<DirectSoundPaused>();
 		}
 	};
 private:

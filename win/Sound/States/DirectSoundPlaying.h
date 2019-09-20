@@ -36,7 +36,7 @@ enum class PlayingStatus : int {
 
 class DirectSoundPlaying: public DirectSoundState {
 public:
-	DirectSoundPlaying(DirectSoundBuffer &dsound);
+	DirectSoundPlaying(DirectSoundState &state);
 	virtual ~DirectSoundPlaying() = default;
 	void play() override;
 	void pause() override;

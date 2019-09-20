@@ -17,7 +17,11 @@
 
 namespace jukebox {
 
-DirectSoundState::DirectSoundState(DirectSoundBuffer &dsound) : dsound(dsound) {
+DirectSoundState::DirectSoundState(DirectSoundBuffer &dsound) : dsound(dsound), volume(100) {
+}
+
+DirectSoundState::DirectSoundState(DirectSoundState &state) : dsound(state.dsound), volume(state.volume) {
+
 }
 
 } /* namespace jukebox */

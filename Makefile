@@ -1,3 +1,3 @@
 all	:
 %$	:
-	make $@ -f makefile.linux
+	make $@ -f makefile.mingw

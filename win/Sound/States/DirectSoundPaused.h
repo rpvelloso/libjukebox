@@ -24,7 +24,7 @@ class DirectSoundBuffer;
 
 class DirectSoundPaused: public DirectSoundState {
 public:
-	DirectSoundPaused(DirectSoundBuffer &dsound);
+	DirectSoundPaused(DirectSoundState &state);
 	virtual ~DirectSoundPaused() = default;
 	void play() override;
 	void pause() override;

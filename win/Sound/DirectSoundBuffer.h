@@ -38,7 +38,10 @@ public:
 	void setVolume(int) override;
 	void loop(bool) override;
 	bool playing() const override;
-	void setState(DirectSoundState *newState);
+	template<class T>
+	void setState() {
+		state.reset(new T(*state));
+	};
 	bool isLooping() const;
 private:
 	std::unique_ptr<DirectSoundState> state;

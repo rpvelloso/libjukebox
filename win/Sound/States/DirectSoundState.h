@@ -25,6 +25,7 @@ namespace jukebox {
 class DirectSoundState {
 public:
 	DirectSoundState(DirectSoundBuffer &dsound);
+	DirectSoundState(DirectSoundState &state);
 	virtual ~DirectSoundState() = default;
 	virtual void play() = 0;
 	virtual void pause() = 0;
@@ -35,6 +36,7 @@ public:
 	virtual DWORD status() const = 0;
 protected:
 	DirectSoundBuffer &dsound;
+	int volume;
 };
 
 } /* namespace jukebox */

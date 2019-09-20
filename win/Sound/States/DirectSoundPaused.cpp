@@ -19,11 +19,11 @@
 
 namespace jukebox {
 
-DirectSoundPaused::DirectSoundPaused(DirectSoundBuffer &dsound) : DirectSoundState(dsound) {
+DirectSoundPaused::DirectSoundPaused(DirectSoundState &state) : DirectSoundState(state) {
 }
 
 void DirectSoundPaused::play() {
-	dsound.setState(new DirectSoundPlaying(dsound));
+	dsound.setState<DirectSoundPlaying>();
 }
 
 void DirectSoundPaused::pause() {
@@ -31,15 +31,15 @@ void DirectSoundPaused::pause() {
 }
 
 void DirectSoundPaused::stop() {
-	dsound.setState(new DirectSoundStopped(dsound));
+	dsound.setState<DirectSoundStopped>();
 }
 
 int DirectSoundPaused::getVolume() const {
-	return 0;
+	return volume;
 }
 
 void DirectSoundPaused::setVolume(int vol) {
-	return;
+	volume = vol;
 }
 
 bool DirectSoundPaused::playing() const {
