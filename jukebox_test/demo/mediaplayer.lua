@@ -15,15 +15,12 @@ io.write('DataSize: ', sound:getDataSize(), '\n')
 io.write('Duration: ', sound:getDuration(), '\n\n')
 
 local cmd = ''
-loop = false 
 while cmd ~= 'exit' do
 	cmd = io.read()
 	if cmd ~= 'exit' and cmd ~= '' then
-		if cmd == 'loop' then
-			loop = not loop
-			cmd = 'sound:'..cmd..'(loop)'
-		else
-			cmd = 'sound:'..cmd..'()'
+		cmd = 'sound:'..cmd
+		if (cmd:sub(#cmd) ~= ')') then
+		   cmd = cmd..'()'
 		end
 		io.write(cmd, '\n')
 		assert(load(cmd))()
