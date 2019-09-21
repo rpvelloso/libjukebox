@@ -17,7 +17,17 @@
 
 namespace jukebox {
 
-AlsaState::AlsaState(AlsaHandle &alsa) : alsa(alsa) {
+AlsaState::AlsaState(AlsaHandle &alsa) : alsa(alsa), volume(100) {
 }
 
+AlsaState::AlsaState(AlsaState &state) : alsa(state.alsa), volume(state.volume) {
+}
+
+int AlsaState::getVolume() const {
+	return volume;
+}
+
+void AlsaState::setVolume(int vol) {
+	volume = vol;
+}
 } /* namespace jukebox */

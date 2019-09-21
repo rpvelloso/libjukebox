@@ -40,7 +40,10 @@ public:
 	void setVolume(int) override;
 	void loop(bool) override;
 	bool playing() const override;
-	void setState(AlsaState *newState);
+	template<class T>
+	void setState() {
+		state.reset(new T(*state));
+	};
 	bool isLooping() const;
 	snd_pcm_t *getHandle() const;
 private:

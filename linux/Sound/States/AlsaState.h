@@ -23,15 +23,17 @@ namespace jukebox {
 class AlsaState {
 public:
 	AlsaState(AlsaHandle &alsa);
+	AlsaState(AlsaState &state);
 	virtual ~AlsaState() = default;
 	virtual void play() = 0;
 	virtual void pause() = 0;
 	virtual void stop() = 0;
-	virtual int getVolume() const = 0;
-	virtual void setVolume(int) = 0;
+	virtual int getVolume() const;
+	virtual void setVolume(int);
 	virtual bool playing() const = 0;
 protected:
 	AlsaHandle &alsa;
+	int volume;
 };
 
 } /* namespace jukebox */

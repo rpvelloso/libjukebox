@@ -35,15 +35,15 @@ public:
 		if (status != PlayingStatus::PAUSED) {
 			if (alsa.isLooping()) {
 				alsa.setPosition(0);
-				alsa.setState(new AlsaPlaying(alsa));
+				alsa.setState<AlsaPlaying>();
 			} else {
 				while (!alsa.onStopStackEmpty()) {
 					alsa.popOnStopCallback()();
 				}
-				alsa.setState(new AlsaStopped(alsa));
+				alsa.setState<AlsaStopped>();
 			}
 		} else {
-			alsa.setState(new AlsaPaused(alsa));
+			alsa.setState<AlsaPaused>();
 		}
 	}
 private:
@@ -64,8 +64,8 @@ _snd_pcm_format ALSA_PCM_FORMAT[5] = {
 		SND_PCM_FORMAT_UNKNOWN,
 		SND_PCM_FORMAT_S32_LE};
 
-AlsaPlaying::AlsaPlaying(AlsaHandle &alsaRef) :
-			AlsaState(alsaRef),
+AlsaPlaying::AlsaPlaying(AlsaState &state) :
+			AlsaState(state),
 			playingStatus(PlayingStatus::STOPPED) {
 
 	applyVolume = applyVolumeFunc[alsa.getDecoder().getBitsPerSample()];
@@ -135,14 +135,6 @@ void AlsaPlaying::pause() {
 void AlsaPlaying::stop() {
 	clearBuffer = snd_pcm_drop;
 	playingStatus = PlayingStatus::STOPPED;
-}
-
-int AlsaPlaying::getVolume() const {
-	return vol;
-}
-
-void AlsaPlaying::setVolume(int vol) {
-	this->vol = vol;
 }
 
 bool AlsaPlaying::playing() const {

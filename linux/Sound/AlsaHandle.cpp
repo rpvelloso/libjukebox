@@ -77,10 +77,6 @@ void AlsaHandle::setVolume(int vol) {
 	state->setVolume(vol);
 }
 
-void AlsaHandle::setState(AlsaState* newState) {
-	state.reset(newState);
-}
-
 bool AlsaHandle::isLooping() const {
 	return looping;
 }

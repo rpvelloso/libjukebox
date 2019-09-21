@@ -21,9 +21,12 @@ namespace jukebox {
 AlsaStopped::AlsaStopped(AlsaHandle &alsa) : AlsaState(alsa) {
 }
 
+AlsaStopped::AlsaStopped(AlsaState &state) : AlsaState(state) {
+}
+
 void AlsaStopped::play() {
 	alsa.setPosition(0);
-	alsa.setState(new AlsaPlaying(alsa));
+	alsa.setState<AlsaPlaying>();
 }
 
 void AlsaStopped::pause() {
@@ -31,14 +34,6 @@ void AlsaStopped::pause() {
 }
 
 void AlsaStopped::stop() {
-	return;
-}
-
-int AlsaStopped::getVolume() const {
-	return 0;
-}
-
-void AlsaStopped::setVolume(int vol) {
 	return;
 }
 

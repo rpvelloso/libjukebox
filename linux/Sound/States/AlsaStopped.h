@@ -23,12 +23,11 @@ namespace jukebox {
 class AlsaStopped: public AlsaState {
 public:
 	AlsaStopped(AlsaHandle &alsa);
+	AlsaStopped(AlsaState &state);
 	virtual ~AlsaStopped() = default;
 	void play() override;
 	void pause() override;
 	void stop() override;
-	int getVolume() const override;
-	void setVolume(int) override;
 	bool playing() const override;
 };
 

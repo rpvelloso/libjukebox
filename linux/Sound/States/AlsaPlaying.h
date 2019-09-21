@@ -34,18 +34,15 @@ enum class PlayingStatus : int {
 
 class AlsaPlaying: public AlsaState {
 public:
-	AlsaPlaying(AlsaHandle &alsaRef);
+	AlsaPlaying(AlsaState &state);
 	virtual ~AlsaPlaying() = default;
 	void play() override;
 	void pause() override;
 	void stop() override;
-	int getVolume() const override;
-	void setVolume(int) override;
 	bool playing() const override;
 private:
 	std::thread playThread;
 	std::atomic<PlayingStatus> playingStatus;
-	int vol = 100;
 	snd_pcm_uframes_t bufferSize = 0;
 	std::function<void(AlsaHandle &self, void *, int , int )> applyVolume;
 	std::function<decltype(snd_pcm_drain)> clearBuffer = snd_pcm_drain;
