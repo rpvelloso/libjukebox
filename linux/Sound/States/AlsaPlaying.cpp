@@ -82,9 +82,6 @@ AlsaPlaying::AlsaPlaying(AlsaState &state) :
 	if (res != 0)
 		throw std::runtime_error("snd_pcm_set_params error.");
 
-	snd_pcm_uframes_t period;
-	snd_pcm_get_params(alsa.getHandle(), &bufferSize, &period);
-
 	clearBuffer = snd_pcm_drain;
 	res = snd_pcm_prepare(alsa.getHandle());
 	if (res != 0)
@@ -92,6 +89,10 @@ AlsaPlaying::AlsaPlaying(AlsaState &state) :
 
 	playThread = std::thread([this]() {
 		StatusGuard statusGuard(alsa, playingStatus);
+
+		snd_pcm_uframes_t period;
+		snd_pcm_uframes_t bufferSize;
+		snd_pcm_get_params(alsa.getHandle(), &bufferSize, &period);
 
 		auto &decoder = alsa.getDecoder();
 		std::unique_ptr<uint8_t[]> volBuf(new uint8_t[bufferSize*decoder.getBlockSize()]);
