@@ -40,8 +40,10 @@ MovingAverageImpl::MovingAverageImpl(DecoderImpl *impl, float windowLength) :
 
 template<typename T>
 double rollingAverage(double &prevAvg, T currentValue, int n) {
-	//return (prevAvg*((double)n-1)/(double)n) + (currentValue / (double)n);
 	//return - (prevAvg/(double)n) + (currentValue / n);
+
+	//return (prevAvg*(double)(n-1) + (double)currentValue) / (double)n;
+	//https://stackoverflow.com/questions/12636613/how-to-calculate-moving-average-without-keeping-the-count-and-data-total
 
 	return prevAvg + ((double)currentValue - prevAvg) / (double)n;
 	//https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online
