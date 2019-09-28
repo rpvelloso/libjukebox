@@ -1,8 +1,8 @@
 CC = gcc
-CXXFLAGS = -Wall -O3 -ggdb -std=c++1y -fPIC -I. -I./win/ -I/local/include -flto
-CFLAGS = -Wall -O3 -ggdb -fPIC -Wno-unknown-pragmas -Wno-incompatible-pointer-types -DHAVE_WINDOWS_H=1 -flto
+CXXFLAGS = -Wall -O3 -ggdb -std=c++1y -fPIC -I. -I./win/ -I/local/include #-flto
+CFLAGS = -Wall -O3 -ggdb -fPIC -Wno-unknown-pragmas -Wno-incompatible-pointer-types -DHAVE_WINDOWS_H=1 #-flto
 BINS = ./bin/libjukebox.dll ./bin/test.exe ./bin/play.exe ./bin/loop.exe ./bin/soundShell.exe
-LDFLAGS = -ldxguid -ldsound -lwinmm -L/local/lib -flto
+LDFLAGS = -ldxguid -ldsound -lwinmm -L/local/lib #-flto
 
 include makefile.common
  
@@ -17,13 +17,13 @@ all							:	$(BINS)
 ./bin/libjukebox.dll		:	$(objects)
 	g++ -std=c++1y -ggdb -Wall $(objects) -shared $(LDFLAGS) -o ./bin/libjukebox.dll
 ./bin/test.exe				:	genheader ./jukebox_test/demo/main.o ./bin/libjukebox.dll
-	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/main.o -Lbin -ljukebox -flto -o ./bin/test.exe
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/main.o -Lbin -ljukebox -o ./bin/test.exe #-flto 
 ./bin/play.exe				:	genheader ./jukebox_test/demo/play.o ./bin/libjukebox.dll
-	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/play.o -Lbin -ljukebox -flto -o ./bin/play.exe
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/play.o -Lbin -ljukebox -o ./bin/play.exe #-flto 
 ./bin/loop.exe				:	genheader ./jukebox_test/demo/loop.o ./bin/libjukebox.dll
-	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/loop.o -Lbin -ljukebox -flto -o ./bin/loop.exe
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/loop.o -Lbin -ljukebox -o ./bin/loop.exe #-flto 
 ./bin/soundShell.exe		:	genheader ./jukebox_test/demo/soundShell.o ./bin/libjukebox.dll
-	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/soundShell.o -L/local/lib -Lbin -ljukebox -llua -flto -o ./bin/soundShell.exe
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/soundShell.o -L/local/lib -Lbin -ljukebox -llua -o ./bin/soundShell.exe #-flto 
 
 .PHONY		:	clean	genheader
 genheader	:

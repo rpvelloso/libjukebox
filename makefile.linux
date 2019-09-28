@@ -1,7 +1,7 @@
-CXXFLAGS = -DALSA_DEVICE=\"default\" -Wall -O3 -ggdb -std=c++1y -fPIC -I. -I/usr/include/lua5.3 -flto
-CFLAGS = -Wall -O3 -ggdb -fPIC -Wno-unknown-pragmas -Wno-incompatible-pointer-types -flto
+CXXFLAGS = -DALSA_DEVICE=\"default\" -Wall -O3 -ggdb -std=c++1y -fPIC -I. -I/usr/include/lua5.3 #-flto
+CFLAGS = -Wall -O3 -ggdb -fPIC -Wno-unknown-pragmas -Wno-incompatible-pointer-types #-flto
 BINS = ./bin/libjukebox.so ./bin/test ./bin/play ./bin/loop ./bin/soundShell
-LDFLAGS = -lasound -lpthread -flto
+LDFLAGS = -lasound -lpthread #-flto
 
 include makefile.common
 
@@ -17,13 +17,13 @@ all					:	$(BINS)
 ./bin/libjukebox.so	:	$(objects)
 	g++ -std=c++1y -ggdb -Wall $(objects) -shared $(LDFLAGS) -o ./bin/libjukebox.so
 ./bin/test			:	genheader ./jukebox_test/demo/main.o
-	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/main.cpp -I. -L./bin -ljukebox -flto -o ./bin/test
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/main.cpp -I. -L./bin -ljukebox -o ./bin/test #-flto 
 ./bin/play			:	genheader ./jukebox_test/demo/play.o
-	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/play.cpp -I. -L./bin -ljukebox -flto -o ./bin/play
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/play.cpp -I. -L./bin -ljukebox -o ./bin/play #-flto 
 ./bin/loop			:	genheader ./jukebox_test/demo/loop.o ./bin/libjukebox.so
-	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/loop.o -Lbin -ljukebox -flto -o ./bin/loop
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/loop.o -Lbin -ljukebox -o ./bin/loop #-flto 
 ./bin/soundShell		:	genheader ./jukebox_test/demo/soundShell.o ./bin/libjukebox.so
-	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/soundShell.o -Lbin -ljukebox -llua5.3 -flto -o ./bin/soundShell
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/soundShell.o -Lbin -ljukebox -llua5.3 -o ./bin/soundShell #-flto 
 
 .PHONY		:	clean	genheader
 genheader	:

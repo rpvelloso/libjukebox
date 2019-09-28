@@ -34,8 +34,17 @@ std::vector<std::unordered_map<int, decltype(MovingAverageImpl::movingAverage)>>
 
 MovingAverageImpl::MovingAverageImpl(DecoderImpl *impl, float windowLength) :
 			DecoderImplDecorator(impl->getFileImpl(), impl),
-			n_samples(windowLength * impl->getSampleRate()),
+			n_samples(std::max((int)(windowLength * impl->getSampleRate()), 1)),
 			movingAverage(movingAverageFunc[impl->getNumChannels() - 1][impl->getBitsPerSample()]) {
+}
+
+template<typename T>
+double rollingAverage(double &prevAvg, T currentValue, int n) {
+	//return (prevAvg*((double)n-1)/(double)n) + (currentValue / (double)n);
+	//return - (prevAvg/(double)n) + (currentValue / n);
+
+	return prevAvg + ((double)currentValue - prevAvg) / (double)n;
+	//https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online
 }
 
 template<typename T>
@@ -44,7 +53,7 @@ void MovingAverageImpl::_movingAverageMono(MovingAverageImpl &self, void *buf, i
 	auto endIt = beginIt + (len / sizeof(T));
 
 	std::for_each(beginIt, endIt, [&buf, &self](T &value) {
-		self.avg[0] = self.avg[0] + ((value - self.avg[0]) / (double)self.n_samples);
+		self.avg[0] = rollingAverage(self.avg[0], value, self.n_samples);
 		value = self.avg[0];
 	});
 }
@@ -57,9 +66,9 @@ void MovingAverageImpl::_movingAverageStereo(MovingAverageImpl &self, void *buf,
 	for (auto it = beginIt; it != endIt; it += 2) {
 		auto left = it;
 		auto right = left + 1;
-		self.avg[0] = self.avg[0] + ((*left - self.avg[0]) / (double)self.n_samples);
+		self.avg[0] = rollingAverage(self.avg[0], *left, self.n_samples);
+		self.avg[1] = rollingAverage(self.avg[1], *right, self.n_samples);
 		*left = self.avg[0];
-		self.avg[1] = self.avg[1] + ((*right - self.avg[1]) / (double)self.n_samples);
 		*right = self.avg[1];
 	}
 }
