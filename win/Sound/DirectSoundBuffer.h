@@ -16,9 +16,10 @@
 #ifndef LIBJUKEBOX_DIRECTSOUNDBUFFER_2017_12_17_H_
 #define LIBJUKEBOX_DIRECTSOUNDBUFFER_2017_12_17_H_
 
-#include <thread>
-#include <dsound.h>
 #include <mmsystem.h>
+#include <dsound.h>
+#include <memory>
+#include <thread>
 
 #include "jukebox/FileFormats/SoundFile.h"
 #include "jukebox/Sound/SoundImpl.h"

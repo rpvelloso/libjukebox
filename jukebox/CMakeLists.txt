@@ -1,6 +1,9 @@
 # TODO break down this target in multiple sub libraries
 
-add_subdirectory(Decoders/fluidsynth)
+option(JUKEBOX_HAS_MIDI "enable MIDI support" OFF)
+if(JUKEBOX_HAS_MIDI)
+    add_compile_definitions(JUKEBOX_HAS_MIDI)
+endif()
 
 set_source_files_properties(
         Decoders/stb_vorbis/stb_vorbis.c
@@ -69,6 +72,9 @@ add_library(libjukebox
         Sound/Decorators/FadeOnStopSoundImpl.cpp
         Sound/Decorators/FadeOnStopSoundImpl.h)
 
+if(JUKEBOX_HAS_MIDI)
+add_subdirectory(Decoders/fluidsynth)
+
 add_library(libjukebox-midi
         Decoders/MIDIConfigurator.h
         Decoders/MIDIDecoderImpl.cpp
@@ -78,3 +84,4 @@ add_library(libjukebox-midi
         FileFormats/midi/MidiFile.h)
 
 target_link_libraries(libjukebox libjukebox-midi fluidsynth)
+endif()
