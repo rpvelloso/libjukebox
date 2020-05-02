@@ -1,4 +1,4 @@
-package(default_visibility = ["//visibility:public"])
+package(default_visibility = ["//jukebox:__subpackages__"])
 
 cc_library(
 	name = "direct_sound",
@@ -6,9 +6,10 @@ cc_library(
 	hdrs = ["DirectSoundBuffer.h"],
 	deps = [
 		"//jukebox/FileFormats:sound_file",
-		"//jukebox/Sound:sound",
+		"//jukebox/Decoders:decoder",
 		"//jukebox/Sound:sound_impl",
 		"@win32_libs//:dsound",
+		"@win32_libs//:dxguid",
 		"@win32_libs//:user32",
 		"@win32_libs//:winmm",
 	],

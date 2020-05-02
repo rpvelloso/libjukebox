@@ -13,8 +13,6 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
-#include <fstream>
 #include "VorbisDecoderImpl.h"
 #include "jukebox/Decoders/stb_vorbis/stb_vorbis.c"
 

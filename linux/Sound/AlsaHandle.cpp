@@ -18,7 +18,6 @@
 #include <cstdint>
 #include <unordered_map>
 #include "AlsaHandle.h"
-#include "jukebox/Sound/Sound.h"
 #include "jukebox/Decoders/Decorators/SampleResolutionImpl.h"
 
 #ifndef ALSA_DEVICE

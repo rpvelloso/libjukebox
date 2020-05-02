@@ -16,7 +16,8 @@
 #include <array>
 #include <iostream>
 #include <string>
-#include "libjukebox.h"
+#include "jukebox/Mixer/Mixer.h"
+#include "jukebox/Sound/Factory.h"
 
 std::string formatDuration(double duration) {
 	int hr = duration/3600;
@@ -42,27 +43,20 @@ void printFileInfo(const jukebox::SoundFile &file) {
 }
 
 int main(int argc, char **argv) {
-	if( argc < 3 ) {
-		std::cout << "you need to supply two audio (wav/ogg/mp3/mid/flac) files as arguments" << std::endl;
+	if( argc < 2 ) {
+		std::cout << "you need to supply an audio (wav/ogg/mp3/mid/flac) file a argument" << std::endl;
 		return 1;
 	}
 
 	std::string filename1(argv[1]);
-	std::string filename2(argv[2]);
 
 	std::cout << "ready to load " << filename1 << " as a file" << std::endl;
 
 	auto soundFile1 = jukebox::factory::loadFile(filename1);
 	printFileInfo(soundFile1);
 
-	std::cout << "ready to load " << filename2 << " as a stream" << std::endl;
-	auto soundFile2 = jukebox::factory::loadFile(filename2);
-	printFileInfo(soundFile2);
-
 	auto sound1 = jukebox::factory::makeSound(soundFile1);
 	sound1.loop(true);
-	auto sound11 = jukebox::factory::makeSound(soundFile1); // shared soundFile
-	auto sound2 = jukebox::factory::makeSound(soundFile2);
 
 	jukebox::Mixer mixer;
 	mixer.setVolume(100);
@@ -72,24 +66,8 @@ int main(int argc, char **argv) {
 	std::string dummy;
 	std::getline(std::cin,dummy);
 
-	sound1.pause();
-	std::cout << "stopped sound 1!" << std::endl;
-	// TODO replace with a proper key reading
-	std::getline(std::cin,dummy);
-
-	sound1.play();
-	std::cout << "playing sound 1 again!" << std::endl;
-	// TODO replace with a proper key reading
-	std::getline(std::cin,dummy);
-
 	mixer.setVolume(40);
 	std::cout << "mixer volume: " << mixer.getVolume() << std::endl;
-	// TODO replace with a proper key reading
-	std::getline(std::cin,dummy);
-
-	mixer.setVolume(80);
-	std::cout << "playing sound 2 with mixer volume: " << mixer.getVolume() << std::endl;
-	sound2.play();
 	// TODO replace with a proper key reading
 	std::getline(std::cin,dummy);
 

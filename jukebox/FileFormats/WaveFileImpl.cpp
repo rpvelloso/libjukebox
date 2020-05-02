@@ -13,7 +13,6 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <algorithm>
 #include <exception>
 #include <iostream>
 

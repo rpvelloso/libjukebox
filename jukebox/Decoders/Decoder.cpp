@@ -90,5 +90,5 @@ int Decoder::getBlockSize() const {
 	return impl->getBlockSize();
 }
 
-} /* namespace socks */
+}
 
