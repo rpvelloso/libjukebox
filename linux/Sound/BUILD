@@ -6,6 +6,7 @@ cc_library(
 	hdrs = ["AlsaHandle.h"],
 	deps = [
 		"//jukebox/Decoders:decoder",
+		"//jukebox/Decoders/Decorators",
 		"//jukebox/FileFormats:sound_file",
 		"//jukebox/Sound:sound_impl",
 		"@linux_libs//:asound",
