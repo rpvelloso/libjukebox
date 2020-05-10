@@ -13,28 +13,32 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef JUKEBOX_SOUND_FILEWRITERSOUNDIMPL_H_
-#define JUKEBOX_SOUND_FILEWRITERSOUNDIMPL_H_
+#ifndef WIN_SOUND_STATES_DIRECTSOUNDSTATE_H_
+#define WIN_SOUND_STATES_DIRECTSOUNDSTATE_H_
 
-#include "SoundImpl.h"
+#include <windows.h>
+
+#include "../DirectSoundBuffer.h"
 
 namespace jukebox {
 
-class FileWriterSoundImpl: public SoundImpl {
+class DirectSoundState {
 public:
-	FileWriterSoundImpl(Decoder *, std::string filename);
-	virtual ~FileWriterSoundImpl() = default;
-	void play() override;
-	void pause() override;
-	void stop() override;
-	int getVolume() const override;
-	void setVolume(int) override;
-	void loop(bool) override;
-	bool playing() const override;
-private:
-	std::string filename;
+	DirectSoundState(DirectSoundBuffer &dsound);
+	DirectSoundState(DirectSoundState &state);
+	virtual ~DirectSoundState() = default;
+	virtual void play() = 0;
+	virtual void pause() = 0;
+	virtual void stop() = 0;
+	virtual int getVolume() const = 0;
+	virtual void setVolume(int) = 0;
+	virtual bool playing() const = 0;
+	virtual DWORD status() const = 0;
+protected:
+	DirectSoundBuffer &dsound;
+	int volume;
 };
 
 } /* namespace jukebox */
 
-#endif /* JUKEBOX_SOUND_FILEWRITERSOUNDIMPL_H_ */
+#endif /* WIN_SOUND_STATES_DIRECTSOUNDSTATE_H_ */

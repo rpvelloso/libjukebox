@@ -13,28 +13,45 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef JUKEBOX_SOUND_FILEWRITERSOUNDIMPL_H_
-#define JUKEBOX_SOUND_FILEWRITERSOUNDIMPL_H_
-
-#include "SoundImpl.h"
+#include "DirectSoundStopped.h"
+#include "DirectSoundPlaying.h"
 
 namespace jukebox {
 
-class FileWriterSoundImpl: public SoundImpl {
-public:
-	FileWriterSoundImpl(Decoder *, std::string filename);
-	virtual ~FileWriterSoundImpl() = default;
-	void play() override;
-	void pause() override;
-	void stop() override;
-	int getVolume() const override;
-	void setVolume(int) override;
-	void loop(bool) override;
-	bool playing() const override;
-private:
-	std::string filename;
-};
+DirectSoundStopped::DirectSoundStopped(DirectSoundBuffer &dsound) : DirectSoundState(dsound) {
+}
+
+DirectSoundStopped::DirectSoundStopped(DirectSoundState &state) : DirectSoundState(state) {
+}
+
+void DirectSoundStopped::play() {
+	dsound.setPosition(0);
+	dsound.setState<DirectSoundPlaying>();
+}
+
+void DirectSoundStopped::pause() {
+	return;
+}
+
+void DirectSoundStopped::stop() {
+	return;
+}
+
+int DirectSoundStopped::getVolume() const {
+	return volume;
+}
+
+void DirectSoundStopped::setVolume(int vol) {
+	volume = vol;
+}
+
+bool DirectSoundStopped::playing() const {
+	return false;
+}
+
+DWORD DirectSoundStopped::status() const {
+	return 0;
+}
 
 } /* namespace jukebox */
 
-#endif /* JUKEBOX_SOUND_FILEWRITERSOUNDIMPL_H_ */

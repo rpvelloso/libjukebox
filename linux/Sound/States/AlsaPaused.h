@@ -1,5 +1,5 @@
 /*
-    Copyright 2017 Roberto Panerai Velloso.
+    Copyright 2019 Roberto Panerai Velloso.
     This file is part of libjukebox.
     libjukebox is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,45 +13,23 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBJUKEBOX_LINUX_ALSAHANDLE_2017_12_28_H_
-#define LIBJUKEBOX_LINUX_ALSAHANDLE_2017_12_28_H_
+#ifndef LINUX_SOUND_STATES_ALSAPAUSED_H_
+#define LINUX_SOUND_STATES_ALSAPAUSED_H_
 
-#include <memory>
-
-#include <alsa/asoundlib.h>
-
-#include "jukebox/Sound/SoundImpl.h"
-#include "jukebox/Decoders/Decoder.h"
+#include "AlsaState.h"
 
 namespace jukebox {
 
-extern void closeAlsaHandle(snd_pcm_t *);
-
-class AlsaState;
-
-class AlsaHandle: public SoundImpl {
+class AlsaPaused: public AlsaState {
 public:
-	AlsaHandle(Decoder *decoder);
-	~AlsaHandle();
+	AlsaPaused(AlsaState &state);
+	virtual ~AlsaPaused() = default;
 	void play() override;
-	void stop() override;
 	void pause() override;
-	int getVolume() const override;
-	void setVolume(int) override;
-	void loop(bool) override;
+	void stop() override;
 	bool playing() const override;
-	template<class T>
-	void setState() {
-		state.reset(new T(*state));
-	};
-	bool isLooping() const;
-	snd_pcm_t *getHandle() const;
-private:
-	std::unique_ptr<AlsaState> state;
-	bool looping = false;
-	std::unique_ptr<snd_pcm_t, decltype(&closeAlsaHandle)> handlePtr;
 };
 
 } /* namespace jukebox */
 
-#endif
+#endif /* LINUX_SOUND_STATES_ALSAPAUSED_H_ */

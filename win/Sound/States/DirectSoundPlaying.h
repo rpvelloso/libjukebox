@@ -13,37 +13,49 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef JUKEBOX_SOUND_DECORATORS_FADEONSTOPSOUNDIMPL_H_
-#define JUKEBOX_SOUND_DECORATORS_FADEONSTOPSOUNDIMPL_H_
+#ifndef WIN_SOUND_STATES_DIRECTSOUNDPLAYING_H_
+#define WIN_SOUND_STATES_DIRECTSOUNDPLAYING_H_
 
+#include <thread>
+#include <atomic>
 #include <memory>
-#include "../SoundImpl.h"
+#include <dsound.h>
+#include <mmsystem.h>
+
+#include "DirectSoundState.h"
 
 namespace jukebox {
 
-class FadeOnStopSoundImpl: public SoundImpl {
+extern void ReleaseBuffer(LPDIRECTSOUNDBUFFER);
+
+enum class PlayingStatus : int {
+	STOPPED = 0,
+	PAUSED = 1,
+	PLAYING = 2
+};
+
+class DirectSoundPlaying: public DirectSoundState {
 public:
-	FadeOnStopSoundImpl(SoundImpl *impl, int);
-	virtual ~FadeOnStopSoundImpl() = default;
+	DirectSoundPlaying(DirectSoundState &state);
+	virtual ~DirectSoundPlaying() = default;
 	void play() override;
 	void pause() override;
 	void stop() override;
 	int getVolume() const override;
 	void setVolume(int) override;
-	void loop(bool) override;
 	bool playing() const override;
-	int getPosition() const override;
-	void setPosition(int pos) override;
-	void pushOnStopCallback(std::function<void(void)> os) override;
-	std::function<void(void)> popOnStopCallback() override;
-	void clearOnStopStack() override;
-	void addTimedEventCallback(size_t seconds, std::function<void(void)>) override;
-	Decoder &getDecoder() override;
+	DWORD status() const override;
 private:
-	std::unique_ptr<SoundImpl> impl;
-	int fadeOutSecs;
+	WAVEFORMATEX wfx;
+	DSBUFFERDESC dsbdesc;
+	std::unique_ptr<struct IDirectSoundBuffer, decltype(&ReleaseBuffer)> pDsb;
+	std::thread loadBufferThread;
+	std::atomic<PlayingStatus> playingStatus;
+
+	bool fillBuffer(int offset, size_t size);
+	DWORD startThread();
 };
 
 } /* namespace jukebox */
 
-#endif /* JUKEBOX_SOUND_DECORATORS_FADEONSTOPSOUNDIMPL_H_ */
+#endif /* WIN_SOUND_STATES_DIRECTSOUNDPLAYING_H_ */

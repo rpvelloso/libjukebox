@@ -1,5 +1,5 @@
 /*
-    Copyright 2017 Roberto Panerai Velloso.
+    Copyright 2019 Roberto Panerai Velloso.
     This file is part of libjukebox.
     libjukebox is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,43 +13,44 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBJUKEBOX_DIRECTSOUNDBUFFER_2017_12_17_H_
-#define LIBJUKEBOX_DIRECTSOUNDBUFFER_2017_12_17_H_
+#ifndef LINUX_SOUND_STATES_ALSAPLAYING_H_
+#define LINUX_SOUND_STATES_ALSAPLAYING_H_
 
-#include <mmsystem.h>
-#include <dsound.h>
-#include <memory>
 #include <thread>
+#include <functional>
+#include <unordered_map>
+#include <memory>
+#include <atomic>
 
-#include "jukebox/Sound/SoundImpl.h"
-#include "jukebox/Decoders/Decoder.h"
+#include "AlsaState.h"
 
 namespace jukebox {
 
-class DirectSoundState;
+enum class PlayingStatus : int {
+	STOPPED = 0,
+	PAUSED = 1,
+	PLAYING = 2
+};
 
-class DirectSoundBuffer: public SoundImpl {
+class AlsaPlaying: public AlsaState {
 public:
-	DirectSoundBuffer(Decoder *);
-	~DirectSoundBuffer();
+	AlsaPlaying(AlsaState &state);
+	virtual ~AlsaPlaying() = default;
 	void play() override;
 	void pause() override;
 	void stop() override;
-	int getVolume() const override;
-	void setVolume(int) override;
-	void loop(bool) override;
 	bool playing() const override;
-	template<class T>
-	void setState() {
-		state.reset(new T(*state));
-	};
-	bool isLooping() const;
 private:
-	std::unique_ptr<DirectSoundState> state;
-	bool looping = false;
+	std::thread playThread;
+	std::atomic<PlayingStatus> playingStatus;
+	std::function<void(AlsaHandle &self, void *, int , int )> applyVolume;
+	std::function<decltype(snd_pcm_drain)> clearBuffer = snd_pcm_drain;
+	static std::unordered_map<short, decltype(applyVolume)> applyVolumeFunc;
 
+	template <typename T>
+	static void _applyVolume(AlsaHandle &self, void *buf, int position, int len);
 };
 
 } /* namespace jukebox */
 
-#endif
+#endif /* LINUX_SOUND_STATES_ALSAPLAYING_H_ */

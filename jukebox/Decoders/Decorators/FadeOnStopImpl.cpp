@@ -59,7 +59,7 @@ FadeOnStopImpl::FadeOnStopImpl(DecoderImpl *impl, int fadeOutSecs, int fadeOutSt
 }
 
 int FadeOnStopImpl::getDataSize() const {
-	return std::min(fadeOutStopPos+1, impl->getDataSize());
+	return std::min(fadeOutStopPos, impl->getDataSize());
 }
 
 int FadeOnStopImpl::getSamples(char* buf, int pos, int len) {

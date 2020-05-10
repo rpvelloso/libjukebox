@@ -13,28 +13,15 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef JUKEBOX_SOUND_FILEWRITERSOUNDIMPL_H_
-#define JUKEBOX_SOUND_FILEWRITERSOUNDIMPL_H_
-
-#include "SoundImpl.h"
+#include "DirectSoundState.h"
 
 namespace jukebox {
 
-class FileWriterSoundImpl: public SoundImpl {
-public:
-	FileWriterSoundImpl(Decoder *, std::string filename);
-	virtual ~FileWriterSoundImpl() = default;
-	void play() override;
-	void pause() override;
-	void stop() override;
-	int getVolume() const override;
-	void setVolume(int) override;
-	void loop(bool) override;
-	bool playing() const override;
-private:
-	std::string filename;
-};
+DirectSoundState::DirectSoundState(DirectSoundBuffer &dsound) : dsound(dsound), volume(100) {
+}
+
+DirectSoundState::DirectSoundState(DirectSoundState &state) : dsound(state.dsound), volume(state.volume) {
+
+}
 
 } /* namespace jukebox */
-
-#endif /* JUKEBOX_SOUND_FILEWRITERSOUNDIMPL_H_ */

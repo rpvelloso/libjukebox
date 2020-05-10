@@ -2,7 +2,7 @@ package(default_visibility = ["//jukebox:__subpackages__"])
 
 cc_library(
 	name = "alsa_sound",
-	srcs = ["AlsaHandle.cpp"],
+	srcs = ["AlsaHandle.cpp"] + glob(["States/*"]),
 	hdrs = ["AlsaHandle.h"],
 	deps = [
 		"//jukebox/Decoders:decoder",

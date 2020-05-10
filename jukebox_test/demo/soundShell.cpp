@@ -26,7 +26,7 @@ jukebox::Sound makeSoundOutputToFile(jukebox::SoundFile &file, const std::string
 	return jukebox::factory::makeSoundOutputToFile(file, filename);
 }
 
-void bind(sol::state &lua) {
+void bind(sol::state &lua, int argc, char **argv) {
 	lua.new_usertype<jukebox::Mixer>("Mixer",
 		"getVolume", &jukebox::Mixer::getVolume,
 		"setVolume", &jukebox::Mixer::setVolume);
@@ -72,6 +72,11 @@ void bind(sol::state &lua) {
 	lua["midiConfig"] = &jukebox::MIDIConfigurator::getInstance();
 	lua["makeSound"] = &makeSound;
 	lua["makeSoundOutputToFile"] = &makeSoundOutputToFile;
+
+	lua.create_named_table("args");
+	for (int i = 2; i < argc; ++i) {
+		lua["args"][i - 1] = std::string(argv[i]);
+	}
 }
 
 int main(int argc, char **argv) {
@@ -86,7 +91,7 @@ int main(int argc, char **argv) {
 	auto script = lua.load_file(argv[1]);
 
 	if (script.status() == sol::load_status::ok) {
-		bind(lua);
+		bind(lua, argc, argv);
 		script();
 	} else {
 		std::cout <<

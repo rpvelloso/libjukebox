@@ -15,7 +15,7 @@ Self-contained (i.e., no external dependencies) and platform independent (window
 - Simple reverberation (multiple delay lines with decay parameter);
 - Distortion (tanh);
 - File writer driver output;
-- Timed events (with seconds resolution) and on stop event;
+- One shot timed events (with seconds resolution) and on stop event stack;
 - Extensible architecture allows implementation of custom effects and audio drivers.
 
 # Building
@@ -138,3 +138,7 @@ void printFileInfo(const jukebox::SoundFile &file) {
 - MP3 decoder: https://github.com/lieff/minimp3
 - MP3, FLAC & WAVE decoder: https://github.com/mackron/dr_libs
 - Sol - C++ Lua Wrapper: https://github.com/ThePhD/sol2
+
+# Collaborators
+
+- [Diego](https://github.com/thinlizzy)

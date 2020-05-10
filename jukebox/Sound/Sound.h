@@ -48,6 +48,7 @@ public:
 	Sound &pushOnStopCallback(std::function<void(void)>);
 	std::function<void(void)> popOnStopCallback();
 	Sound &clearOnStopStack();
+	bool onStopStackEmpty();
 
 	/*
 	 * one shot timed event, callback removed after execution. Resolution in seconds.

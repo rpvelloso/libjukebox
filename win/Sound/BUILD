@@ -2,7 +2,7 @@ package(default_visibility = ["//jukebox:__subpackages__"])
 
 cc_library(
 	name = "direct_sound",
-	srcs = ["DirectSoundBuffer.cpp"],
+	srcs = ["DirectSoundBuffer.cpp"] + glob(["States/*"]),
 	hdrs = ["DirectSoundBuffer.h"],
 	deps = [
 		"//jukebox/FileFormats:sound_file",

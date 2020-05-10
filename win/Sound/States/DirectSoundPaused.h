@@ -13,37 +13,28 @@
     along with libjukebox.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef JUKEBOX_SOUND_DECORATORS_FADEONSTOPSOUNDIMPL_H_
-#define JUKEBOX_SOUND_DECORATORS_FADEONSTOPSOUNDIMPL_H_
+#ifndef WIN_SOUND_STATES_DIRECTSOUNDPAUSED_H_
+#define WIN_SOUND_STATES_DIRECTSOUNDPAUSED_H_
 
-#include <memory>
-#include "../SoundImpl.h"
+#include "DirectSoundState.h"
 
 namespace jukebox {
 
-class FadeOnStopSoundImpl: public SoundImpl {
+class DirectSoundBuffer;
+
+class DirectSoundPaused: public DirectSoundState {
 public:
-	FadeOnStopSoundImpl(SoundImpl *impl, int);
-	virtual ~FadeOnStopSoundImpl() = default;
+	DirectSoundPaused(DirectSoundState &state);
+	virtual ~DirectSoundPaused() = default;
 	void play() override;
 	void pause() override;
 	void stop() override;
 	int getVolume() const override;
 	void setVolume(int) override;
-	void loop(bool) override;
 	bool playing() const override;
-	int getPosition() const override;
-	void setPosition(int pos) override;
-	void pushOnStopCallback(std::function<void(void)> os) override;
-	std::function<void(void)> popOnStopCallback() override;
-	void clearOnStopStack() override;
-	void addTimedEventCallback(size_t seconds, std::function<void(void)>) override;
-	Decoder &getDecoder() override;
-private:
-	std::unique_ptr<SoundImpl> impl;
-	int fadeOutSecs;
+	DWORD status() const override;
 };
 
 } /* namespace jukebox */
 
-#endif /* JUKEBOX_SOUND_DECORATORS_FADEONSTOPSOUNDIMPL_H_ */
+#endif /* WIN_SOUND_STATES_DIRECTSOUNDPAUSED_H_ */
