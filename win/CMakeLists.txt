@@ -8,5 +8,14 @@ add_library(libjukebox-impl
         Mixer/WindowsMixer.cpp
         Mixer/WindowsMixer.h
         Sound/DirectSoundBuffer.cpp
-        Sound/DirectSoundBuffer.h)
+        Sound/DirectSoundBuffer.h
+        Sound/States/DirectSoundPaused.cpp
+        Sound/States/DirectSoundPaused.h
+        Sound/States/DirectSoundPlaying.cpp
+        Sound/States/DirectSoundPlaying.h
+        Sound/States/DirectSoundState.cpp
+        Sound/States/DirectSoundState.cpp
+        Sound/States/DirectSoundStopped.cpp
+        Sound/States/DirectSoundStopped.h
+        )
 target_link_libraries(libjukebox-impl libjukebox ${WIN_LIBS})

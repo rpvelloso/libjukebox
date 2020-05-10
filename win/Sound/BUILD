@@ -13,4 +13,8 @@ cc_library(
 		"@win32_libs//:user32",
 		"@win32_libs//:winmm",
 	],
+	defines = [
+		"HAVE_WINDOWS_H=1",
+		"_WIN32",
+	]
 )
