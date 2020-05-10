@@ -1,4 +1,4 @@
-package(default_visibility = ["//jukebox:__subpackages__"])
+package(default_visibility = ["//visibility:public"])
 
 cc_library(
 	name = "Decorators",
