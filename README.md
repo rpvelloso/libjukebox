@@ -7,6 +7,7 @@ Self-contained (i.e., no external dependencies) and platform independent (window
 - MP3 (using [dr_mp3](https://github.com/mackron/dr_libs));
 - Ogg Vorbis (using [stb_vorbis](https://github.com/nothings/stb));
 - MIDI (using [FluiSynth](https://github.com/FluidSynth/fluidsynth) + [MidiFile](https://github.com/craigsapp/midifile));
+- Mod (using [micromod fork](https://github.com/v1993/micromod));
 - Extensible architecture allows implementation of other formats, transparently.
 
 # Effects and features
@@ -138,6 +139,7 @@ void printFileInfo(const jukebox::SoundFile &file) {
 - MP3 decoder: https://github.com/lieff/minimp3
 - MP3, FLAC & WAVE decoder: https://github.com/mackron/dr_libs
 - Sol - C++ Lua Wrapper: https://github.com/ThePhD/sol2
+- micromod - https://github.com/v1993/micromod, https://github.com/martincameron/micromod
 
 # Collaborators
 

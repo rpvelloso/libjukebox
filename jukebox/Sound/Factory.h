@@ -43,6 +43,8 @@ SoundFile loadFLACFile(const std::string &filename, bool onMemory = false);
 SoundFile loadFLACStream(std::istream &inp, bool onMemory = false);
 SoundFile loadMIDIFile(const std::string &filename);
 SoundFile loadMIDIStream(std::istream &inp);
+SoundFile loadModFile(const std::string &filename);
+SoundFile loadModStream(std::istream &inp);
 
 }
 }
