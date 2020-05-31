@@ -18,7 +18,7 @@
 
 #include <memory>
 extern "C" {
-#include "mod/micromod.h"
+#include "micromod/micromod.h"
 }
 #include "DecoderImpl.h"
 

@@ -19,7 +19,7 @@ objects = \
 	./jukebox/Decoders/MP3DecoderImpl.o ./jukebox/Decoders/MIDIDecoderImpl.o ./jukebox/Decoders/FLACDecoderImpl.o \
 	./jukebox/Decoders/ModDecoderImpl.o \
 	./jukebox/Decoders/fluidsynth/fs.o \
-	./jukebox/Decoders/mod/micromod.o
+	./jukebox/Decoders/micromod/micromod.o
 	
 
 SRCS = \
@@ -42,7 +42,7 @@ SRCS = \
 	./jukebox/Decoders/ModDecoderImpl.cpp \
 	./jukebox_test/demo/test.cpp ./jukebox_test/demo/play.cpp ./jukebox_test/demo/loop.cpp \
 	./jukebox/Decoders/fluidsynth/fs.c \
-	./jukebox/Decoders/mod/micromod.c
+	./jukebox/Decoders/micromod/micromod.c
 
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)

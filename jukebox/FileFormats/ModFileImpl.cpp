@@ -19,7 +19,7 @@
 #include "ModFileImpl.h"
 #include "jukebox/Decoders/ModDecoderImpl.h"
 extern "C" {
-#include "jukebox/Decoders/mod/micromod.h"
+#include "jukebox/Decoders/micromod/micromod.h"
 }
 
 namespace jukebox {
