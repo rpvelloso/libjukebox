@@ -43,7 +43,7 @@ void printFileInfo(const jukebox::SoundFile &file) {
 
 int main(int argc, char **argv) {
 	if( argc < 2 ) {
-		std::cout << "you need to supply an audio (wav/ogg/mp3/mid/flac) file a argument" << std::endl;
+		std::cout << "you need to supply an audio (wav/ogg/mp3/mid/flac/mod) file as an argument" << std::endl;
 		return 1;
 	}
 

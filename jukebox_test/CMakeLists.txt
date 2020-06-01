@@ -1,7 +1,7 @@
 include_directories(${LUA_INCLUDE_DIR} ${SOL_INCLUDE_DIR})
 
 add_executable(jukeboxdemo
-        demo/main.cpp)
+        demo/main.cpp demo/soundfontDemo.cpp)
 add_executable(jukeboxdemo_loop
         demo/loop.cpp)
 add_executable(jukeboxdemo_play

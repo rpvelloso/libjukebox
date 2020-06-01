@@ -31,13 +31,13 @@ cc_library(
 	name = "midi",
 	srcs = [
 		"MIDIFileImpl.cpp",
+		"midi/MidiFile.h",
 		"//jukebox/Decoders:MIDIDecoderImpl.cpp",
 		"//jukebox/Decoders:MIDIDecoderImpl.h",
-		"//jukebox/Decoders:MIDIConfigurator.h",
-		"midi/MidiFile.h",
 	],
 	hdrs = [
 		"MIDIFileImpl.h",
+		"//jukebox/Decoders:MIDIConfigurator.h",
 	],
 	deps = [
 		":file_loader",
