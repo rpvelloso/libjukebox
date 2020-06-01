@@ -147,7 +147,8 @@ private:
  * GeneralUser GS v1.471.sf2 - 30MB -> https://www.dropbox.com/s/4x27l49kxcwamp5/GeneralUser_GS_1.471.zip?dl=1
  * FluidR3_GM.sf2 - 140MB -> https://pt.osdn.net/projects/sfnet_androidframe/downloads/soundfonts/FluidR3_GM.sf2/
  * Musyng.sf2 - 1.6GB :O -> https://drive.google.com/file/d/0B6caGN_QlJVEUzVtX0tKOWVoWXc/edit
- * EMBEDDED MEMORY SF -> GXSCC_gm_033.sf2 - 126kb 8 bit style o/ -> https://musical-artifacts.com/artifacts/9
+ * GXSCC_gm_033.sf2 - 126kb 8 bit style o/ -> https://musical-artifacts.com/artifacts/9
+ * MEMORY EMBEDDED SF: Famicon.sf2, 53kb, 8 bit style, https://www.woolyss.com/chipmusic-soundfonts.php
  * */
 
 const std::string &MIDIConfigurator::getSoundFont() const {
