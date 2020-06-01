@@ -2261,7 +2261,7 @@ g_cond_new() {
 #define g_static_private_set(p, d, n) pthread_setspecific(*p, d)
 #define g_static_private_free(p) pthread_key_delete(*p)
 
-#ifdef HAVE_WINDOWS_H
+#ifdef _MSC_VER
 #define g_atomic_int_inc(v) InterlockedIncrement(v)
 #define g_atomic_int_get(v) InterlockedAdd(v, 0)
 #define g_atomic_int_set(v, vv) InterlockedCompareExchange(v, vv, *v)
@@ -2425,6 +2425,8 @@ typedef guint64  uint64_t;
 
 #include <winsock2.h>
 #include <ws2tcpip.h>	/* Provides also socklen_t */
+
+#ifdef _MSC_VER
 #include <windows.h>
 
 // https://stackoverflow.com/questions/10905892/equivalent-of-gettimeday-for-windows
@@ -2460,6 +2462,7 @@ void usleep(__int64 usec) {
 	WaitForSingleObject(timer, INFINITE);
 	CloseHandle(timer);
 }
+#endif
 
 /* WIN32 special defines */
 #define DSOUND_SUPPORT 1
@@ -2506,7 +2509,7 @@ typedef int fluid_socket_t;
 
 #if defined(SUPPORTS_VLA)
 
-#if defined(HAVE_WINDOWS_H)
+#ifdef _MSC_VER
 #  define FLUID_DECLARE_VLA(_type, _name, _len) \
      _type* _name = (_type*) _alloca(sizeof(_type) * (_len))
 #else
