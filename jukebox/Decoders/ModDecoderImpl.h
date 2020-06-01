@@ -16,7 +16,6 @@
 #ifndef JUKEBOX_DECODERS_MODDECODERIMPL_H_
 #define JUKEBOX_DECODERS_MODDECODERIMPL_H_
 
-#include <memory>
 extern "C" {
 #include "micromod/micromod.h"
 }
