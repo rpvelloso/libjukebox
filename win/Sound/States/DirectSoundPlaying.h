@@ -19,8 +19,8 @@
 #include <thread>
 #include <atomic>
 #include <memory>
-#include <dsound.h>
 #include <mmsystem.h>
+#include <dsound.h>
 
 #include "DirectSoundState.h"
 

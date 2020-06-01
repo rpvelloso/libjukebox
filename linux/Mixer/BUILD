@@ -1,4 +1,4 @@
-package(default_visibility = ["//visibility:public"])
+package(default_visibility = ["//jukebox:__subpackages__"])
 
 cc_library(
 	name = "alsa_mixer",

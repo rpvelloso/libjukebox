@@ -631,37 +631,3 @@ void micromod_get_audio_obj( struct micromod_obj* obj, short *output_buffer, lon
 		count -= remain;
 	}
 }
-
-/*
-	Implement global-state compatiblity functions
-*/
-
-static struct micromod_obj micromod_global;
-
-long micromod_initialise( signed char *data, long sampling_rate ) {
-	return micromod_initialise_obj(&micromod_global, data, sampling_rate);
-}
-
-void micromod_get_string( long instrument, char *string ) {
-	micromod_get_string_obj(&micromod_global, instrument, string);
-}
-
-long micromod_calculate_song_duration( void ) {
-	return micromod_calculate_song_duration_obj(&micromod_global);
-}
-
-void micromod_set_position( long pos ) {
-	micromod_set_position_obj(&micromod_global, pos);
-}
-
-long micromod_mute_channel( long channel ) {
-	return micromod_mute_channel_obj(&micromod_global, channel);
-}
-
-void micromod_set_gain( long value ) {
-	micromod_set_gain_obj(&micromod_global, value);
-}
-
-void micromod_get_audio( short *output_buffer, long count ) {
-	micromod_get_audio_obj(&micromod_global, output_buffer, count);
-}

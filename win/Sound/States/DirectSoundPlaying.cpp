@@ -227,7 +227,7 @@ DWORD DirectSoundPlaying::startThread() {
 	if (FAILED(hr))
 		throw std::runtime_error("failed QueryInterface");
 
-	notifyPos[0].dwOffset = DSCBPN_OFFSET_STOP; // sound stop event
+	notifyPos[0].dwOffset = DSBPN_OFFSETSTOP; // sound stop event
 	notifyPos[0].hEventNotify = CreateEvent(nullptr, false, false, nullptr);
 	notifyPos[1].dwOffset = (dsbdesc.dwBufferBytes / 2) - 1; // half way buffer event
 	notifyPos[1].hEventNotify = notifyPos[0].hEventNotify;

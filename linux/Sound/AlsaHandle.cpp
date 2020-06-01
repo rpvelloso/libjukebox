@@ -33,9 +33,9 @@ void closeAlsaHandle(snd_pcm_t *handle) {
 // AlsaHandle
 
 AlsaHandle::AlsaHandle(Decoder *decoder) :
-			SoundImpl(decoder),
-			state(new AlsaStopped(*this)),
-			handlePtr(nullptr, closeAlsaHandle) {
+	SoundImpl(decoder),
+	state(new AlsaStopped(*this)),
+	handlePtr(nullptr, closeAlsaHandle) {
 
 	snd_pcm_t *handle;
 	auto res = snd_pcm_open(&handle, ALSA_DEVICE, SND_PCM_STREAM_PLAYBACK, 0);
@@ -84,6 +84,7 @@ bool AlsaHandle::isLooping() const {
 snd_pcm_t *AlsaHandle::getHandle() const {
 	return handlePtr.get();
 }
+
 namespace factory {
 
 SoundImpl *makeSoundImpl(Decoder *decoder) {

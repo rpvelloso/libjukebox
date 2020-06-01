@@ -16,6 +16,7 @@
 #include <limits>
 #include <algorithm>
 #include <cmath>
+#include <stdexcept>
 #include "SampleResolutionImpl.h"
 
 namespace jukebox {

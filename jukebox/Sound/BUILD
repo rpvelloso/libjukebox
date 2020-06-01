@@ -2,9 +2,33 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
 	name = "sound",
-	srcs = ["Sound.cpp"],
-	hdrs = ["Sound.h"],
-	deps = [":sound_impl"],
+	srcs = [
+		"FileWriterSoundImpl.cpp",
+		"FileWriterSoundImpl.h",
+		"Factory.cpp",
+		"Sound.cpp",
+		"Decorators/FadeOnStopSoundImpl.cpp",
+		"Decorators/FadeOnStopSoundImpl.h",
+	],
+	hdrs = [
+		"Factory.h",
+		"Sound.h",
+	],
+	deps = [
+		":sound_impl",
+		"//jukebox/Decoders:decoder",
+		"//jukebox/Decoders/Decorators",
+		"//jukebox/FileFormats:flac",
+#		"//jukebox/FileFormats:midi",
+		"//jukebox/FileFormats:mod",
+		"//jukebox/FileFormats:mp3",
+		"//jukebox/FileFormats:sound_file",
+		"//jukebox/FileFormats:vorbis",
+		"//jukebox/FileFormats:wave",
+	] + select({
+		"@bazel_tools//src/conditions:windows": ["//win/Sound:direct_sound"],
+		"//conditions:default": ["//linux/Sound:alsa_sound"],
+	}),
 )
 
 cc_library(
@@ -12,18 +36,6 @@ cc_library(
 	srcs = ["SoundImpl.cpp"],
 	hdrs = ["SoundImpl.h"],
 	deps = [
-		"//jukebox/FileFormats:sound_file",
+		"//jukebox/Decoders:decoder",
 	],
-)
-
-cc_library(
-	name = "factory",
-	hdrs = ["Factory.h"],
-	deps = [
-		":sound",
-		"//jukebox/FileFormats:sound_file",
-	] + select({
-		"@bazel_tools//src/conditions:windows": ["//win/Sound:direct_sound"],
-		"//conditions:default": ["//linux/Sound:alsa_sound"],
-	}),
 )
