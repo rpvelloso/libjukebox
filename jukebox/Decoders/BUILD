@@ -11,4 +11,4 @@ cc_library(
 )
 
 # jukebox/FileFormats/BUILD uses the specific decoder implementations
-exports_files(glob(["*Impl.cpp", "*Impl.h"]))
+exports_files(glob(["*Impl.cpp", "*Impl.h", "MIDI*"]))

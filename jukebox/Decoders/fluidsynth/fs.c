@@ -24,6 +24,7 @@
 #ifndef _FLUIDSYNTH_H
 #define _FLUIDSYNTH_H
 
+#include <pthread.h>
 #include <stdio.h>
 
 #ifdef __cplusplus
@@ -1986,25 +1987,24 @@ FLUIDSYNTH_API char* fluid_version_str(void);
 #endif /* _FLUIDSYNTH_VERSION_H */
 #include <stdlib.h>
 #include <stdio.h>
-#include <pthread.h>
 #include <stdint.h>
 #include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
 #include <errno.h>
 #include <stdarg.h>
-#include <unistd.h>
+#if HAVE_UNISTD_H
+#include <unistd.h> /* STDIN_FILENO */
+#endif
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#if HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 #include <limits.h>
-#include <pthread.h>
 #include <omp.h>
 #include <signal.h>
 #include <stdint.h>
-#include <unistd.h> /* STDIN_FILENO */
 /* FluidSynth - A Software Synthesizer
  *
  * Copyright (C) 2003  Peter Hanappe and others.
@@ -2130,8 +2130,6 @@ typedef uint64_t fluid_phase_t;
 #define SRC_UTILS_FLUID_GLIB_REMOVER_H_
 
 #include <stdlib.h>
-#include <stdio.h>
-#include <pthread.h>
 #include <stdint.h>
 
 #define TRUE 1
@@ -2263,12 +2261,22 @@ g_cond_new() {
 #define g_static_private_set(p, d, n) pthread_setspecific(*p, d)
 #define g_static_private_free(p) pthread_key_delete(*p)
 
+#ifdef HAVE_WINDOWS_H
+#define g_atomic_int_inc(v) InterlockedIncrement(v)
+#define g_atomic_int_get(v) InterlockedAdd(v, 0)
+#define g_atomic_int_set(v, vv) InterlockedCompareExchange(v, vv, *v)
+#define g_atomic_int_dec_and_test(v) (InterlockedDecrement(v, 1) == 0)
+#define g_atomic_int_compare_and_exchange(v, o, n) (InterlockedCompareExchange(v, n, o) != n)
+#define g_atomic_int_exchange_and_add(v, vv) InterlockedExchangeAdd(v, vv)
+#else
 #define g_atomic_int_inc(v) __sync_add_and_fetch(v, 1)
 #define g_atomic_int_get(v) __sync_add_and_fetch(v, 0)
 #define g_atomic_int_set(v, vv) __sync_val_compare_and_swap(v, *v, vv)
 #define g_atomic_int_dec_and_test(v) (__sync_sub_and_fetch(v, 1) == 0)
 #define g_atomic_int_compare_and_exchange(v, o, n) __sync_bool_compare_and_swap(v, o, n)
 #define g_atomic_int_exchange_and_add(v, vv) __sync_fetch_and_add(v, vv)
+#endif
+
 #define g_atomic_pointer_get g_atomic_int_get
 #define g_atomic_pointer_set g_atomic_int_set
 #define g_atomic_pointer_compare_and_exchange g_atomic_int_compare_and_exchange
@@ -2340,7 +2348,7 @@ g_thread_join(GThread *t) {
 #endif
 
 #if HAVE_UNISTD_H
-#include <unistd.h>
+#include <unistd.h> /* STDIN_FILENO */
 #endif
 
 #if HAVE_FCNTL_H
@@ -2383,10 +2391,6 @@ g_thread_join(GThread *t) {
 #include <limits.h>
 #endif
 
-#if HAVE_PTHREAD_H
-#include <pthread.h>
-#endif
-
 #if HAVE_OPENMP
 #include <omp.h>
 #endif
@@ -2417,9 +2421,45 @@ typedef guint64  uint64_t;
 
 #endif
 
-#if defined(WIN32) &&  HAVE_WINDOWS_H
+#if defined(WIN32) && HAVE_WINDOWS_H
+
 #include <winsock2.h>
 #include <ws2tcpip.h>	/* Provides also socklen_t */
+#include <windows.h>
+
+// https://stackoverflow.com/questions/10905892/equivalent-of-gettimeday-for-windows
+int gettimeofday(struct timeval * tp, struct timezone * tzp) {
+	// Note: some broken versions only have 8 trailing zero's, the correct epoch has 9 trailing zero's
+	// This magic number is the number of 100 nanosecond intervals since January 1, 1601 (UTC)
+	// until 00:00:00 January 1, 1970
+	static const uint64_t EPOCH = ((uint64_t) 116444736000000000ULL);
+
+	SYSTEMTIME  system_time;
+	FILETIME    file_time;
+	uint64_t    time;
+
+	GetSystemTime( &system_time );
+	SystemTimeToFileTime( &system_time, &file_time );
+	time =  ((uint64_t)file_time.dwLowDateTime )      ;
+	time += ((uint64_t)file_time.dwHighDateTime) << 32;
+
+	tp->tv_sec  = (long) ((time - EPOCH) / 10000000L);
+	tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
+	return 0;
+}
+
+// https://stackoverflow.com/questions/5801813/c-usleep-is-obsolete-workarounds-for-windows-mingw
+void usleep(__int64 usec) {
+	HANDLE timer;
+	LARGE_INTEGER ft;
+
+	ft.QuadPart = -(10*usec); // Convert to 100 nanosecond interval, negative value indicates relative time
+
+	timer = CreateWaitableTimer(NULL, TRUE, NULL);
+	SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0);
+	WaitForSingleObject(timer, INFINITE);
+	CloseHandle(timer);
+}
 
 /* WIN32 special defines */
 #define DSOUND_SUPPORT 1
@@ -2465,8 +2505,15 @@ typedef int fluid_socket_t;
 #endif
 
 #if defined(SUPPORTS_VLA)
+
+#if defined(HAVE_WINDOWS_H)
+#  define FLUID_DECLARE_VLA(_type, _name, _len) \
+     _type* _name = (_type*) _alloca(sizeof(_type) * (_len))
+#else
 #  define FLUID_DECLARE_VLA(_type, _name, _len) \
      _type _name[_len]
+#endif
+
 #else
 #  define FLUID_DECLARE_VLA(_type, _name, _len) \
      _type* _name = g_newa(_type, (_len))
@@ -3335,7 +3382,9 @@ int fluid_profile_is_cancel_req(void);
 
 #else   /* POSIX stuff */
 #define FLUID_PROFILE_CANCEL /* Profile cancellation is supported for linux */
+#if HAVE_UNISTD_H
 #include <unistd.h> /* STDIN_FILENO */
+#endif
 #include <sys/select.h> /* select() */
 #endif /* posix */
 

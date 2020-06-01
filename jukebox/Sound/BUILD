@@ -19,7 +19,7 @@ cc_library(
 		"//jukebox/Decoders:decoder",
 		"//jukebox/Decoders/Decorators",
 		"//jukebox/FileFormats:flac",
-#		"//jukebox/FileFormats:midi",
+		"//jukebox/FileFormats:midi",
 		"//jukebox/FileFormats:mod",
 		"//jukebox/FileFormats:mp3",
 		"//jukebox/FileFormats:sound_file",
