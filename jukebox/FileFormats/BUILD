@@ -68,6 +68,25 @@ cc_library(
 )
 
 cc_library(
+	name = "mod",
+	srcs = [
+		"ModFileImpl.cpp",
+		"//jukebox/Decoders:ModDecoderImpl.cpp",
+		"//jukebox/Decoders:ModDecoderImpl.h",
+	],
+	hdrs = [
+		"ModFileImpl.h",
+	],
+	deps = [
+		":file_loader",
+		":sound_file",
+		":sound_file_impl",
+		"//jukebox/Decoders:decoder",
+		"//jukebox/Decoders/micromod",
+	],
+)
+
+cc_library(
 	name = "sound_file",
 	srcs = ["SoundFile.cpp"],
 	hdrs = ["SoundFile.h"],

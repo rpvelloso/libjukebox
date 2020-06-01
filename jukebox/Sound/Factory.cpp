@@ -12,7 +12,8 @@
 #endif
 #include "jukebox/FileFormats/ModFileImpl.h"
 
-namespace jukebox::factory {
+namespace jukebox {
+namespace factory {
 
 // makeSoundImpl() is defined by the respective win/linux implementations
 
@@ -113,4 +114,5 @@ SoundFile loadModStream(std::istream &inp) {
     return SoundFile(new ModFileImpl(inp));
 }
 
+}
 }

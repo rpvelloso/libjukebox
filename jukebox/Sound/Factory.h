@@ -22,7 +22,8 @@
 #include "SoundImpl.h"
 #include "jukebox/FileFormats/SoundFile.h"
 
-namespace jukebox::factory {
+namespace jukebox {
+namespace factory {
 
 Sound makeSound(SoundFile &file);
 Sound makeSound(const std::string &filename, bool onMemory = false);
@@ -47,6 +48,7 @@ SoundFile loadMIDIStream(std::istream &inp);
 SoundFile loadModFile(const std::string &filename);
 SoundFile loadModStream(std::istream &inp);
 
+}
 }
 
 #endif

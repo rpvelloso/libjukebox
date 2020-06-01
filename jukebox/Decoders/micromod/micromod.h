@@ -124,15 +124,4 @@ void micromod_set_gain_obj( struct micromod_obj* obj, long value );
 */
 void micromod_get_audio_obj( struct micromod_obj* obj, short *output_buffer, long count );
 
-/*
-	Global instance versions (provided for compatiblity, shouldn't be used in new programs)
-*/
-
-__attribute__ ((deprecated)) long micromod_initialise( signed char *data, long sampling_rate );
-__attribute__ ((deprecated)) void micromod_get_string( long instrument, char *string );
-__attribute__ ((deprecated)) long micromod_calculate_song_duration( void );
-__attribute__ ((deprecated)) void micromod_set_position( long pos );
-__attribute__ ((deprecated)) long micromod_mute_channel( long channel );
-__attribute__ ((deprecated)) void micromod_set_gain( long value );
-__attribute__ ((deprecated)) void micromod_get_audio( short *output_buffer, long count );
 #endif
