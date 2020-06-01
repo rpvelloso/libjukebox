@@ -16,8 +16,7 @@
 #include <array>
 #include <iostream>
 #include <string>
-#include "jukebox/Mixer/Mixer.h"
-#include "jukebox/Sound/Factory.h"
+#include "libjukebox.h"
 
 std::string formatDuration(double duration) {
 	int hr = duration/3600;
