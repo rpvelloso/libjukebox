@@ -10,9 +10,9 @@
 #ifdef JUKEBOX_HAS_MIDI
 #include "jukebox/FileFormats/MIDIFileImpl.h"
 #endif
+#include "jukebox/FileFormats/ModFileImpl.h"
 
-namespace jukebox {
-namespace factory {
+namespace jukebox::factory {
 
 // makeSoundImpl() is defined by the respective win/linux implementations
 
@@ -50,6 +50,7 @@ SoundFile loadFile(const std::string &filename, bool onMemory)
     if (ext == "mid") return loadMIDIFile(filename);
 #endif
     if (ext == "wav") return loadWaveFile(filename, onMemory);
+    if (ext == "mod") return loadModFile(filename);
 
     throw std::runtime_error("error loading " + filename + ". invalid extension " + ext);
 }
@@ -104,5 +105,12 @@ SoundFile loadMIDIStream(std::istream &inp) {
 }
 #endif
 
+SoundFile loadModFile(const std::string &filename) {
+    return SoundFile(new ModFileImpl(filename));
 }
+
+SoundFile loadModStream(std::istream &inp) {
+    return SoundFile(new ModFileImpl(inp));
+}
+
 }
