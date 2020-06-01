@@ -1,1 +1,8 @@
 bazel-*
+*.o
+.cproject
+.d/
+.project
+.settings/
+.vscode/
+bin/

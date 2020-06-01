@@ -17,7 +17,7 @@
 #include <cstring>
 #include <algorithm>
 #include <functional>
-#include <iostream>
+
 #include "fluidsynth/soundfont.h"
 #include "jukebox/FileFormats/MIDIFileImpl.h"
 #include "MIDIDecoderImpl.h"

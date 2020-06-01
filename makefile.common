@@ -58,6 +58,7 @@ $(shell mkdir -p $(DEPDIR)/jukebox/Mixer >/dev/null)
 $(shell mkdir -p $(DEPDIR)/jukebox_test >/dev/null)
 $(shell mkdir -p $(DEPDIR)/jukebox_test/demo >/dev/null)
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
+CXXFLAGS += -DJUKEBOX_HAS_MIDI
 
 COMPILE.c = $(CC) $(DEPFLAGS) $(CFLAGS) $(TARGET_ARCH) -c
 COMPILE.cc = $(CXX) $(DEPFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
