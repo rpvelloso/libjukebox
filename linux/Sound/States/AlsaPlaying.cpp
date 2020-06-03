@@ -139,7 +139,7 @@ void AlsaPlaying::stop() {
 }
 
 bool AlsaPlaying::playing() const {
-	return playingStatus == PlayingStatus::PLAYING;
+	return true;
 }
 
 template<typename T>

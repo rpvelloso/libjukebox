@@ -1,8 +1,8 @@
 CC = gcc
-CXXFLAGS = -Wall -O3 -ggdb -std=c++1y -fPIC -I. -I./win/ -I/local/include #-flto
+CXXFLAGS = -Wall -O3 -ggdb -std=c++1y -fPIC -I. -I./win/ -I/mingw64/include -D__EMSCRIPTEN__ #-flto
 CFLAGS = -Wall -O3 -ggdb -fPIC -Wno-unknown-pragmas -Wno-incompatible-pointer-types -DHAVE_WINDOWS_H=1 #-flto
-BINS = ./bin/libjukebox.dll ./bin/test.exe ./bin/play.exe ./bin/loop.exe ./bin/soundShell.exe
-LDFLAGS = -ldxguid -ldsound -lwinmm -L/local/lib #-flto
+BINS = ./bin/libjukebox.dll ./bin/test.exe ./bin/play.exe ./bin/loop.exe ./bin/soundShell.exe ./bin/soundfontDemo.exe
+LDFLAGS = -ldxguid -ldsound -lwinmm -L/mingw64/lib #-flto
 
 include makefile.common
  
@@ -23,7 +23,9 @@ all							:	$(BINS)
 ./bin/loop.exe				:	genheader ./jukebox_test/demo/loop.o ./bin/libjukebox.dll
 	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/loop.o -Lbin -ljukebox -o ./bin/loop.exe #-flto 
 ./bin/soundShell.exe		:	genheader ./jukebox_test/demo/soundShell.o ./bin/libjukebox.dll
-	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/soundShell.o -L/local/lib -Lbin -ljukebox -llua -o ./bin/soundShell.exe #-flto 
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/soundShell.o -L/mingw64/lib -Lbin -ljukebox -llua -o ./bin/soundShell.exe #-flto 
+./bin/soundfontDemo.exe		:	genheader ./jukebox_test/demo/soundfontDemo.o ./bin/libjukebox.dll
+	g++ -std=c++1y -ggdb -Wall ./jukebox_test/demo/soundfontDemo.o -Lbin -ljukebox -o ./bin/soundfontDemo.exe #-flto 
 
 .PHONY		:	clean	genheader
 genheader	:

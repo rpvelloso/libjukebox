@@ -25,7 +25,9 @@ DirectSoundBuffer::DirectSoundBuffer(Decoder *decoder) :
 }
 
 DirectSoundBuffer::~DirectSoundBuffer() {
-	pause();
+	loop(false);
+	stop();
+	while (playing());
 }
 
 void DirectSoundBuffer::loop(bool l) {

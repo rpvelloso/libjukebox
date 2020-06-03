@@ -9,7 +9,7 @@
 #define str(a) #a
 std::string soundFontPath = xstr(SOUNDFONT_PATH);
 #else
-std::string soundFontPath = "";
+std::string soundFontPath = "./soundfont/";
 #endif
 
 int main(int argc, char **argv) {
@@ -38,8 +38,7 @@ int main(int argc, char **argv) {
 
 	std::cout << "Changing to GeneralUser GS" << std::endl;
 	jukebox::MIDIConfigurator::getInstance().setSoundFont(soundFontPath + "GeneralUser GS v1.471.sf2");
-	// TODO fix this bug that forces to use stop before reassigning it
-	sound.stop();
+
 	sound = jukebox::factory::makeSound(soundFile);
 	sound.play();
 	sound.loop(true);
@@ -47,8 +46,7 @@ int main(int argc, char **argv) {
 
 	std::cout << "Changing to GXSCC" << std::endl;
 	jukebox::MIDIConfigurator::getInstance().setSoundFont(soundFontPath + "GXSCC_gm_033.sf2");
-	// TODO fix this bug that forces to use stop before reassigning it
-	sound.stop();
+
 	sound = jukebox::factory::makeSound(soundFile);
 	sound.play();
 	sound.loop(true);

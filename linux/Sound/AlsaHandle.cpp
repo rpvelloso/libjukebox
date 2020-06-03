@@ -58,8 +58,10 @@ void AlsaHandle::stop() {
 }
 
 AlsaHandle::~AlsaHandle() {
-	pause();
-};
+	loop(false);
+	stop();
+	while (playing());
+}
 
 void AlsaHandle::loop(bool l) {
 	looping = l;

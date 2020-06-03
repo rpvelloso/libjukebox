@@ -116,6 +116,7 @@ void DirectSoundPlaying::pause() {
 }
 
 void DirectSoundPlaying::stop() {
+	playingStatus = PlayingStatus::STOPPED;
 	pDsb->Stop();
 }
 
@@ -140,7 +141,7 @@ void DirectSoundPlaying::setVolume(int vol) {
 }
 
 bool DirectSoundPlaying::playing() const {
-	return status() & DSBSTATUS_PLAYING;
+	return true; //status() & DSBSTATUS_PLAYING;
 }
 
 DWORD DirectSoundPlaying::status() const {
@@ -256,10 +257,10 @@ DWORD DirectSoundPlaying::startThread() {
 				offset = !offset;
 				WaitForSingleObject(event, INFINITE);
 			} while (
-				playing() &&
+				playingStatus == PlayingStatus::PLAYING &&
 				fillBuffer(offsets[offset], dsbdesc.dwBufferBytes / 2));
 
-			if (playing()) {
+			if (playingStatus == PlayingStatus::PLAYING) {
 				WaitForSingleObject(event, INFINITE);
 			}
 			pDsb->Stop();
