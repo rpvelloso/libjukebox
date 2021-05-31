@@ -14,7 +14,7 @@ cc_library(
 			"HAVE_WINDOWS_H",
 			"WIN32",
 		],
-		"//conditions:default": [],
+		"//conditions:default": ["HAVE_UNISTD_H"],
 	}),
 	deps = select({
 		"@bazel_tools//src/conditions:windows": [

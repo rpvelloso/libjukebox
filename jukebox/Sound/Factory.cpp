@@ -23,6 +23,10 @@ Sound makeSound(const std::string &filename, bool onMemory) {
 	return Sound(makeSoundImpl(new Decoder(loadFile(filename, onMemory))));
 }
 
+Sound makeSound(std::istream &inp, const std::string &filename, bool onMemory) {
+	return Sound(makeSoundImpl(new Decoder(loadFromStream(inp, filename, onMemory))));
+}
+
 Sound makeSoundOutputToFile(SoundFile &file, const std::string &filename) {
 	return Sound(new FileWriterSoundImpl(new Decoder(file), filename));
 }
@@ -31,16 +35,15 @@ Sound makeSoundOutputToFile(const std::string  &inputFile, const std::string &fi
 	return Sound(new FileWriterSoundImpl(new Decoder(loadFile(inputFile, onMemory)), filename));
 }
 
-// TODO: add more extensions and/or a way to autodetect the file format
-SoundFile loadFile(const std::string &filename, bool onMemory)
-{
-    auto fileExtension = [](std::string const & filename) {
-        auto p = filename.rfind('.');
-        std::string extension = p != std::string::npos ? filename.substr(p+1) : std::string();
-		std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
-        return extension;
-    };
+std::string fileExtension(std::string const & filename) {
+    auto p = filename.rfind('.');
+    std::string extension = p != std::string::npos ? filename.substr(p+1) : std::string();
+    std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+    return extension;
+}
 
+// TODO: add more extensions and/or a way to autodetect the file format
+SoundFile loadFile(const std::string &filename, bool onMemory) {
     auto ext = fileExtension(filename);
     if (ext == "ogg") return loadVorbisFile(filename, onMemory);
     if (ext == "mp3") return loadMP3File(filename, onMemory);
@@ -48,7 +51,18 @@ SoundFile loadFile(const std::string &filename, bool onMemory)
     if (ext == "mid") return loadMIDIFile(filename);
     if (ext == "wav") return loadWaveFile(filename, onMemory);
     if (ext == "mod") return loadModFile(filename);
+    throw std::runtime_error("error loading " + filename + ". invalid extension " + ext);
+}
 
+// TODO: add more extensions and/or a way to autodetect the file format
+SoundFile loadFromStream(std::istream &inp, const std::string &filename, bool onMemory) {
+    auto ext = fileExtension(filename);
+    if (ext == "ogg") return loadVorbisStream(inp, onMemory);
+    if (ext == "mp3") return loadMP3Stream(inp, onMemory);
+    if (ext == "flac") return loadFLACStream(inp, onMemory);
+    if (ext == "mid") return loadMIDIStream(inp);
+    if (ext == "wav") return loadWaveStream(inp, onMemory);
+    if (ext == "mod") return loadModStream(inp);
     throw std::runtime_error("error loading " + filename + ". invalid extension " + ext);
 }
 
