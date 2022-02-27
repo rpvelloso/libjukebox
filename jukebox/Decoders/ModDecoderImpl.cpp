@@ -21,8 +21,8 @@ namespace jukebox {
 
 ModDecoderImpl::ModDecoderImpl(ModFileImpl& fileImpl) :
 		DecoderImpl(fileImpl),
-        sampleSize(fileImpl.getNumChannels() * (fileImpl.getBitsPerSample() / 8)),
-		fileImpl(fileImpl) {
+		fileImpl(fileImpl),
+        sampleSize(fileImpl.getNumChannels() * (fileImpl.getBitsPerSample() / 8)) {
     auto result = 
         micromod_initialise_obj(
             &mmodobj, 
@@ -34,16 +34,19 @@ ModDecoderImpl::ModDecoderImpl(ModFileImpl& fileImpl) :
 }
 
 int ModDecoderImpl::getSamples(char* buf, int pos, int len) {
-    if (pos == 0)
+    if (pos == 0) {
         micromod_set_position_obj(&mmodobj, 0);
+    }
 
-	if (pos >= fileImpl.getDataSize())
+	if (pos >= fileImpl.getDataSize()) {
 		return 0;
+    }
 
 	memset(buf, 0, len);
 
-	if (pos + len > fileImpl.getDataSize())
+	if (pos + len > fileImpl.getDataSize()) {
 		len = fileImpl.getDataSize() - pos;
+    }
 
     micromod_get_audio_obj(&mmodobj, (int16_t *)buf, len/sampleSize);
 
