@@ -4,9 +4,9 @@ package(default_visibility = ["//visibility:public"])
 # you can also use the individual targets in the client side, instead, if you need faster compilation
 
 cc_library(
-    name = "jukebox",
-    deps = [
+	name = "jukebox",
+	deps = [
 		"//jukebox/Mixer:mixer",
 		"//jukebox/Sound:sound",
-    ],
+	],
 )

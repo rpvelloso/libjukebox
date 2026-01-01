@@ -1,9 +1,15 @@
-# win32
+module(
+    name = "jukebox",
+    version = "1.0.0",
+    compatibility_level = 1,
+)
+
+new_local_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:local.bzl", "new_local_repository")
 
 new_local_repository(
 	name = "win32_libs",
-	path = "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.18362.0/um/x64",
-#	path = "C:/Program Files (x86)/Windows Kits/8.1/Lib/winv6.3/um/x64",
+	# NOTE: replace with your own Windows libraries path
+	path = "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.26100.0/um/x64",
 	build_file_content = """
 package(default_visibility = ["//visibility:public"])
 
@@ -57,4 +63,3 @@ cc_library(
 )
 """,
 )
-

@@ -16,7 +16,17 @@
 #include <array>
 #include <iostream>
 #include <string>
-#include "libjukebox.h"
+#include "jukebox/Mixer/Mixer.h"
+#include "jukebox/Sound/Factory.h"
+#include "jukebox/Sound/Sound.h"
+
+#ifdef SOUND_PATH
+#define xstr(a) str(a)
+#define str(a) #a
+std::string soundPath = xstr(SOUND_PATH);
+#else
+std::string soundPath = "";
+#endif
 
 std::string formatDuration(double duration) {
 	int hr = duration/3600;
@@ -48,6 +58,7 @@ int main(int argc, char **argv) {
 	}
 
 	std::string filename1(argv[1]);
+	filename1 = soundPath + filename1;
 
 	std::cout << "ready to load " << filename1 << " as a file" << std::endl;
 
