@@ -22,5 +22,4 @@ cc_library(
 		],
 		"//conditions:default": [],
 	}),
-	includes = ["./pthread-win32"],
 )

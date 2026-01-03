@@ -12,13 +12,21 @@ std::string soundFontPath = xstr(SOUNDFONT_PATH);
 std::string soundFontPath = "./soundfont/";
 #endif
 
+#ifdef SOUND_PATH
+#define xstr(a) str(a)
+#define str(a) #a
+std::string soundPath = xstr(SOUND_PATH);
+#else
+std::string soundPath = "";
+#endif
+
 int main(int argc, char **argv) {
 	if( argc < 2 ) {
 		std::cerr << "you need to supply a .mid file as an argument" << std::endl;
 		return 1;
 	}
 
-	auto filename = std::string(argv[1]);
+	auto filename = soundPath + std::string(argv[1]);
 	std::cout << "ready to load " << filename << std::endl;
 	auto soundFile = jukebox::factory::loadFile(filename);
 
