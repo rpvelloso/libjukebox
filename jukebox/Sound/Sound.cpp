@@ -43,9 +43,8 @@ Sound& Sound::play() {
 }
 
 Sound& Sound::restart() {
-	impl->pause();
-	impl->setPosition(0);
 	loop(looping);
+	impl->setPosition(0);
 	impl->play();
 	return *this;
 }
