@@ -29,6 +29,10 @@ void AlsaStopped::play() {
 	alsa.setState<AlsaPlaying>();
 }
 
+void AlsaStopped::restart() {
+	play();
+}
+
 void AlsaStopped::pause() {
 	return;
 }

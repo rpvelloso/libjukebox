@@ -73,6 +73,9 @@ void FileWriterSoundImpl::play() {
 	}
 }
 
+void FileWriterSoundImpl::restart() {
+}
+
 void FileWriterSoundImpl::pause() {
 }
 

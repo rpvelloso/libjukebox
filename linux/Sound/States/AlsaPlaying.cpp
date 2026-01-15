@@ -33,7 +33,7 @@ public:
 
 	~StatusGuard() {
 		if (status != PlayingStatus::PAUSED) {
-			if (alsa.isLooping()) {
+			if (alsa.isLooping() || status == PlayingStatus::RESTARTING) {
 				alsa.setPosition(0);
 				alsa.setState<AlsaPlaying>();
 			} else {
@@ -126,6 +126,10 @@ AlsaPlaying::AlsaPlaying(AlsaState &state) :
 
 void AlsaPlaying::play() {
 	return;
+}
+
+void AlsaPlaying::restart() {
+	playingStatus = PlayingStatus::RESTARTING;
 }
 
 void AlsaPlaying::pause() {

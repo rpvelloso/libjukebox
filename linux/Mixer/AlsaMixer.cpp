@@ -14,6 +14,7 @@
  */
 
 #include <exception>
+#include <stdexcept>
 #include "AlsaMixer.h"
 
 namespace jukebox {

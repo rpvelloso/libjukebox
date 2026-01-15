@@ -34,6 +34,7 @@ public:
 	AlsaHandle(Decoder *decoder);
 	~AlsaHandle();
 	void play() override;
+	void restart() override;
 	void stop() override;
 	void pause() override;
 	int getVolume() const override;

@@ -30,6 +30,7 @@ public:
 	SoundImpl(Decoder *);
 	virtual ~SoundImpl() = default;
 	virtual void play() = 0;
+	virtual void restart() = 0;
 	virtual void stop() = 0;
 	virtual void pause() = 0;
 	virtual int getVolume() const = 0;

@@ -44,8 +44,7 @@ Sound& Sound::play() {
 
 Sound& Sound::restart() {
 	loop(looping);
-	impl->setPosition(0);
-	impl->play();
+	impl->restart();
 	return *this;
 }
 

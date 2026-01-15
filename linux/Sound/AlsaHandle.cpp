@@ -49,6 +49,10 @@ void AlsaHandle::play() {
 	state->play();
 }
 
+void AlsaHandle::restart() {
+	state->restart();
+}
+
 void AlsaHandle::pause() {
 	state->pause();
 }
