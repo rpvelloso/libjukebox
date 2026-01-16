@@ -40,6 +40,7 @@ class DummyImpl: public SoundImpl {
 	int getVolume() const override { return 0; }
 	void setVolume(int) override {}
 	void loop(bool) override {}
+	void restart() override {}
 	bool playing() const override { return false; }
 	int getPosition() const override { return 0; }
 	void setPosition(int pos) override {}
