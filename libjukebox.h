@@ -209,6 +209,7 @@ namespace factory {
 
 class Sound {
 public:
+ Sound();
  Sound(SoundImpl *impl);
  Sound(Sound &&) = default;
  Sound &operator=(Sound &&) = default;
