@@ -28,6 +28,7 @@ public:
 	DirectSoundStopped(DirectSoundState &state);
 	virtual ~DirectSoundStopped() = default;
 	void play() override;
+	void restart() override;
 	void pause() override;
 	void stop() override;
 	int getVolume() const override;

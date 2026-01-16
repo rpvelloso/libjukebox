@@ -29,6 +29,10 @@ void DirectSoundStopped::play() {
 	dsound.setState<DirectSoundPlaying>();
 }
 
+void DirectSoundStopped::restart() {
+    play();
+}
+
 void DirectSoundStopped::pause() {
 	return;
 }

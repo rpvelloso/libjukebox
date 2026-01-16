@@ -27,6 +27,7 @@ void AlsaPaused::play() {
 }
 
 void AlsaPaused::restart() {
+    alsa.setPosition(0);
 	play();
 }
 

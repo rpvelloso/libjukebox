@@ -110,6 +110,11 @@ void DirectSoundPlaying::play() {
 	return;
 }
 
+void DirectSoundPlaying::restart() {
+	playingStatus = PlayingStatus::RESTARTING;
+	pDsb->Stop();
+}
+
 void DirectSoundPlaying::pause() {
 	playingStatus = PlayingStatus::PAUSED;
 	pDsb->Stop();
@@ -197,7 +202,7 @@ public:
 	~HandleGuard() {
 		CloseHandle(handle);
 		if (status != PlayingStatus::PAUSED) {
-			if (dsound.isLooping()) {
+			if (dsound.isLooping() || status == PlayingStatus::RESTARTING) {
 				dsound.setPosition(0);
 				dsound.setState<DirectSoundPlaying>();
 			} else {
