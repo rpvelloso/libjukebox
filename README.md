@@ -20,6 +20,8 @@ Self-contained (i.e., no external dependencies) and platform independent (window
 - Extensible architecture allows implementation of custom effects and audio drivers.
 
 # Building
+
+apt install libasound2-dev liblua5.3-dev
 make -f makefile.linux
 or
 make -f makefile.mingw

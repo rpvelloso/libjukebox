@@ -26,6 +26,7 @@ public:
 	AlsaStopped(AlsaState &state);
 	virtual ~AlsaStopped() = default;
 	void play() override;
+	void restart() override;
 	void pause() override;
 	void stop() override;
 	bool playing() const override;

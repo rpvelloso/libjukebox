@@ -29,6 +29,10 @@ void FadeOnStopSoundImpl::play() {
 	impl->play();
 }
 
+void FadeOnStopSoundImpl::restart() {
+	impl->restart();
+}
+
 void FadeOnStopSoundImpl::pause() {
 	impl->pause();
 }

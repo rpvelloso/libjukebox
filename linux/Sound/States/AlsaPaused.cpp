@@ -26,6 +26,11 @@ void AlsaPaused::play() {
 	alsa.setState<AlsaPlaying>();
 }
 
+void AlsaPaused::restart() {
+    alsa.setPosition(0);
+	play();
+}
+
 void AlsaPaused::pause() {
 	return;
 }

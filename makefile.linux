@@ -1,5 +1,5 @@
 CXXFLAGS = -DALSA_DEVICE=\"default\" -Wall -O3 -ggdb -std=c++1y -fPIC -I. -I/usr/include/lua5.3 #-flto
-CFLAGS = -Wall -O3 -ggdb -fPIC -Wno-unknown-pragmas -Wno-incompatible-pointer-types #-flto
+CFLAGS = -Wall -O3 -ggdb -fPIC -Wno-unknown-pragmas -Wno-incompatible-pointer-types #-flto -DHAVE_SYS_TIME_H
 BINS = ./bin/libjukebox.so ./bin/test ./bin/play ./bin/loop ./bin/soundShell ./bin/soundfontDemo
 LDFLAGS = -lasound -lpthread #-flto
 

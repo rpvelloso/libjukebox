@@ -29,7 +29,8 @@ namespace jukebox {
 enum class PlayingStatus : int {
 	STOPPED = 0,
 	PAUSED = 1,
-	PLAYING = 2
+	PLAYING = 2,
+	RESTARTING = 3
 };
 
 class AlsaPlaying: public AlsaState {
@@ -37,6 +38,7 @@ public:
 	AlsaPlaying(AlsaState &state);
 	virtual ~AlsaPlaying() = default;
 	void play() override;
+	void restart() override;
 	void pause() override;
 	void stop() override;
 	bool playing() const override;

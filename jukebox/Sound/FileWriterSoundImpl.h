@@ -25,6 +25,7 @@ public:
 	FileWriterSoundImpl(Decoder *, std::string filename);
 	virtual ~FileWriterSoundImpl() = default;
 	void play() override;
+	void restart() override;
 	void pause() override;
 	void stop() override;
 	int getVolume() const override;

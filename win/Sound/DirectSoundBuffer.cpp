@@ -38,6 +38,10 @@ void DirectSoundBuffer::play() {
 	state->play();
 }
 
+void DirectSoundBuffer::restart() {
+	state->restart();
+}
+
 void DirectSoundBuffer::pause() {
 	state->pause();
 }

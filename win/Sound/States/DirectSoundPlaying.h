@@ -31,7 +31,8 @@ extern void ReleaseBuffer(LPDIRECTSOUNDBUFFER);
 enum class PlayingStatus : int {
 	STOPPED = 0,
 	PAUSED = 1,
-	PLAYING = 2
+	PLAYING = 2,
+	RESTARTING = 3
 };
 
 class DirectSoundPlaying: public DirectSoundState {
@@ -39,6 +40,7 @@ public:
 	DirectSoundPlaying(DirectSoundState &state);
 	virtual ~DirectSoundPlaying() = default;
 	void play() override;
+	void restart() override;
 	void pause() override;
 	void stop() override;
 	int getVolume() const override;

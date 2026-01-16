@@ -176,6 +176,7 @@ public:
  SoundImpl(Decoder *);
  virtual ~SoundImpl() = default;
  virtual void play() = 0;
+ virtual void restart() = 0;
  virtual void stop() = 0;
  virtual void pause() = 0;
  virtual int getVolume() const = 0;
@@ -268,11 +269,13 @@ namespace factory {
 
 Sound makeSound(SoundFile &file);
 Sound makeSound(const std::string &filename, bool onMemory = false);
+Sound makeSound(std::istream &inp, const std::string &filename, bool onMemory = false);
 Sound makeSoundOutputToFile(SoundFile &file, const std::string &filename);
 Sound makeSoundOutputToFile(const std::string &inputFile, const std::string &filename, bool onMemory = false);
 SoundImpl *makeSoundImpl(Decoder *decoder);
 
 SoundFile loadFile(const std::string &filename, bool onMemory = false);
+SoundFile loadFromStream(std::istream &inp, const std::string &filename, bool onMemory = false);
 
 SoundFile loadWaveFile(const std::string &filename, bool onMemory = false);
 SoundFile loadWaveStream(std::istream &inp, bool onMemory = false);
