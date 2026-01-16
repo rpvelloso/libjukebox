@@ -13,4 +13,5 @@ cc_library(
 		"PTW32_STATIC_LIB",
 		"PTW32_BUILD_INLINED",
 	],
+	includes = ["."],
 )

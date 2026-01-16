@@ -33,6 +33,24 @@ int normalize(int vol) { return std::max(0,std::min(vol,100)); }
 
 namespace jukebox {
 
+class DummyImpl: public SoundImpl {
+	void play() override {}
+	void stop() override {}
+	void pause() override {}
+	int getVolume() const override { return 0; }
+	void setVolume(int) override {}
+	void loop(bool) override {}
+	void restart() override {}
+	bool playing() const override { return false; }
+	int getPosition() const override { return 0; }
+	void setPosition(int pos) override {}
+public:
+	DummyImpl(): SoundImpl(0) {}
+};
+
+Sound::Sound() : impl(std::make_unique<DummyImpl>()) {
+}
+
 Sound::Sound(SoundImpl *impl) : impl(impl) {
 }
 

@@ -7,6 +7,11 @@ cc_binary(
 	data = [
 		"//jukebox_test/data:sound",
 	],
+	defines = select({
+		# goes back 6: jukebox_test/demo + 4 more paths
+		"@bazel_tools//src/conditions:windows": ["SOUND_PATH=../../../../../../jukebox_test/data/"],
+		"//conditions:default": [],
+	}),
 )
 
 cc_binary(
@@ -22,7 +27,10 @@ cc_binary(
 	],
 	defines = select({
 		# goes back 6: jukebox_test/demo + 4 more paths
-		"@bazel_tools//src/conditions:windows": ["SOUNDFONT_PATH=../../../../../../soundfont/"],
+		"@bazel_tools//src/conditions:windows": [
+			"SOUND_PATH=../../../../../../jukebox_test/data/",
+			"SOUNDFONT_PATH=../../../../../../soundfont/",
+		],
 		"//conditions:default": [],
 	}),
 )
