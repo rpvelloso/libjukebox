@@ -38,7 +38,7 @@ enum class PlayingStatus : int {
 class DirectSoundPlaying: public DirectSoundState {
 public:
 	DirectSoundPlaying(DirectSoundState &state);
-	virtual ~DirectSoundPlaying() = default;
+	~DirectSoundPlaying() override;
 	void play() override;
 	void restart() override;
 	void pause() override;
@@ -53,6 +53,7 @@ private:
 	std::unique_ptr<struct IDirectSoundBuffer, decltype(&ReleaseBuffer)> pDsb;
 	std::thread loadBufferThread;
 	std::atomic<PlayingStatus> playingStatus;
+	HANDLE notifyEvent = nullptr;
 
 	bool fillBuffer(int offset, size_t size);
 	DWORD startThread();
