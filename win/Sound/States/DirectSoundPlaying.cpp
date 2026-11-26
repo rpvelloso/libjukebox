@@ -106,6 +106,13 @@ DirectSoundPlaying::DirectSoundPlaying(DirectSoundState &state) :
       throw std::runtime_error("failed Play");
 }
 
+DirectSoundPlaying::~DirectSoundPlaying() {
+	if (notifyEvent != nullptr) {
+		CloseHandle(notifyEvent);
+		notifyEvent = nullptr;
+	}
+}
+
 void DirectSoundPlaying::play() {
 	return;
 }
@@ -113,16 +120,22 @@ void DirectSoundPlaying::play() {
 void DirectSoundPlaying::restart() {
 	playingStatus = PlayingStatus::RESTARTING;
 	pDsb->Stop();
+	if (notifyEvent != nullptr)
+		SetEvent(notifyEvent);
 }
 
 void DirectSoundPlaying::pause() {
 	playingStatus = PlayingStatus::PAUSED;
 	pDsb->Stop();
+	if (notifyEvent != nullptr)
+		SetEvent(notifyEvent);
 }
 
 void DirectSoundPlaying::stop() {
 	playingStatus = PlayingStatus::STOPPED;
 	pDsb->Stop();
+	if (notifyEvent != nullptr)
+		SetEvent(notifyEvent);
 }
 
 /*
@@ -194,13 +207,11 @@ bool DirectSoundPlaying::fillBuffer(int offset, size_t size) {
 
 class HandleGuard {
 public:
-	HandleGuard(HANDLE handle, std::atomic<PlayingStatus> &status, DirectSoundBuffer &dsound) :
-		handle(handle),
+	HandleGuard(std::atomic<PlayingStatus> &status, DirectSoundBuffer &dsound) :
 		status(status),
 		dsound(dsound) {
 	};
 	~HandleGuard() {
-		CloseHandle(handle);
 		if (status != PlayingStatus::PAUSED) {
 			if (dsound.isLooping() || status == PlayingStatus::RESTARTING) {
 				dsound.setPosition(0);
@@ -217,7 +228,6 @@ public:
 		}
 	};
 private:
-	HANDLE handle;
 	std::atomic<PlayingStatus> &status;
 	DirectSoundBuffer &dsound;
 };
@@ -239,13 +249,15 @@ DWORD DirectSoundPlaying::startThread() {
 	notifyPos[1].hEventNotify = notifyPos[0].hEventNotify;
 	notifyPos[2].dwOffset = dsbdesc.dwBufferBytes - 1; // end of buffer event
 	notifyPos[2].hEventNotify = notifyPos[0].hEventNotify;
+	notifyEvent = notifyPos[0].hEventNotify;
 
     bool reload = fillBuffer(0, dsbdesc.dwBufferBytes);
 
 	hr = notifyIface->SetNotificationPositions(reload?3:1, notifyPos);
 	notifyIface->Release();
 	if (FAILED(hr)) {
-		CloseHandle(notifyPos[0].hEventNotify);
+		CloseHandle(notifyEvent);
+		notifyEvent = nullptr;
 		throw std::runtime_error("failed SetNotificationPositions");
 	}
 
@@ -253,7 +265,7 @@ DWORD DirectSoundPlaying::startThread() {
 
 	loadBufferThread = std::thread(
 		[this](auto event){
-			HandleGuard handleGuard(event, playingStatus, dsound);
+			HandleGuard handleGuard(playingStatus, dsound);
 
 			size_t offsets[2] = {0, dsbdesc.dwBufferBytes / 2};
 
